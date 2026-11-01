@@ -544,7 +544,7 @@
     // what can be heard: too quiet a layer is left out
     const on = (layers[cur] || []).filter(l => l.t <= t && t < l.end && l.db >= -36).sort((x, y) => y.db - x.db);
     const lines = [...new Set(on.map(l => [l.src, l.how].filter(Boolean).join(' · ')).filter(Boolean))];
-    box.hidden = audio.paused || !lines.length;
+    box.hidden = !lines.length;                         // (it stays up through a pause)
     // each sound comes and goes by itself; a line still sounding isn't touched
     const list = $('hearList'), shown = [...list.children].filter(el => !el.dataset.leaving);
     shown.filter(el => !lines.includes(el.textContent)).forEach(el => {

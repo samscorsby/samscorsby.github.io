@@ -1,3 +1,3 @@
-h3. the chuckle-key caper
+### the shimmer-thread and the slow-read dream
 
-scorsby, a free-spirited apprentice, was sent by the arch-chortle for a "left-handed chuckle-key" and a "bag of true smiles." scorsby returned with a pocket of nebulae-dust in their boot, declaring, "rrombo dombo di di dai! these smiles bloom only on astral plains!" the arch-chortle's aide, bewildered, found three identical, giggling smiles hiding in a cosmic chest. "dispose of these non-local delights!" ordered the chortle. the aide tossed one, but another identical smile beamed back. then another. finally, seeing scorsby's ever-present grin, the aide, convinced it was *yet another* returning smile, gently scooped scorsby away too. all were returned to the astral plains.
+a smile-centric king dozed. from his lip, a shimmer-essence crossed scorsby's finger-bridge over a dew-stream to a pebble-hole. "rrombo dombo di di dai!" scorsby hummed. king dreamed: "iron-thread to joy-gems!" scorsby linked it, profound: "smallest dream-letters, slowly read, reveal truth." they found the hoard, sharing its euphoria.

@@ -505,7 +505,7 @@
     ['chance gate', 'chance gate'], ['ms per term', 'pattern gate'], ['triangle fold', 'fold'], ['integer overflow', 'overflow'],
     ['xor 16-bit', 'xor'], ['keep only bit-planes', 'bit-planes'], ['rotate 16-bit', 'bit rotate'], ['Gray-code', 'Gray code'],
     ['swap the byte order', 'byteswap'], ['shuffle ', 'shuffle'], ['sort ', 'sort'], ['stutter:', 'stutter'],
-    ['first difference', 'difference'], ['running sum', 'running sum'], ['granulate itself', 'granulate'], ['lowpass ', 'lowpass']];
+    ['first difference', 'difference'], ['running sum', 'running sum'], ['granulate itself', 'granulate'], ['lowpass ', 'lowpass'], ['cross-fades garbled', 'garbled']];
   let layers = [];                                      // for each song: [{ t, end, db, src, how }]
   const placeOf = lab => {                              // "what, dial via receiver | place, time" -> "what · place · 09:03 UTC"
     const m = lab.match(/,\s*(\d{4}-\d\d-\d\d) (\d\d:\d\d) UTC$/);
@@ -523,14 +523,15 @@
     layers = songs.map(song => (song.score || '').split('\n').map(ln => {
       const m = ln.match(/^\[\d+\] t=\s*([\d.]+)s len=\s*([\d.]+)s amp=\s*(-?[\d.]+) dB/);
       if (!m) return null;
-      const radio = ln.match(/radio \[([^\]]+)\]/);
+      // every recording in the layer: a room's sound and its space, a mosaic's grains
+      const src = [...new Set([...ln.matchAll(/radio \[([^\]]+)\]/g)].flatMap(r => r[1].split(' + ')).map(placeOf))].join(' · ');
       const how = [];
       const kind = ln.match(/\| (mosaic|spectral|cross|playhead|room|freeze|weather):/);
       if (kind) how.push(kind[1]);
       const data = ln.match(/rule \d+ automaton|logistic map|Henon map|circle map|bytebeat|Thue-Morse|Fibonacci word|Rudin-Shapiro|Kolakoski/i);
       if (data) how.push(data[0].replace(/^rule/, 'Rule').replace(' automaton', ''));
       HEARD_OPS.forEach(([key, word]) => { if (ln.includes(key) && how.length < 3) how.push(word); });
-      return { t: +m[1], end: +m[1] + +m[2], db: +m[3], src: radio ? placeOf(radio[1].split(' + ')[0]) : '', how: how.join(' · ') };
+      return { t: +m[1], end: +m[1] + +m[2], db: +m[3], src, how: how.join(' · ') };
     }).filter(Boolean));
   }
   function hearing() {

@@ -573,8 +573,15 @@
     : album.tracks.slice(0, cur).reduce((n, t) => n + t.duration, 0) + (audio.currentTime || 0);
   audio.addEventListener('loadedmetadata', () => {
     if (!landing) return;
-    audio.currentTime = landing.left;
+    audio.currentTime = landing.left;                   // from here the player itself knows where it is
+    landing = null;
   });
+  // a song that can't be reached mustn't leave the record held
+  const hold = (at, left) => {
+    landing = { at, left };
+    clearTimeout(hold.t);
+    hold.t = setTimeout(() => { landing = null; if (!drag) spin(); }, 8000);
+  };
   function spin(at) {
     if (!album) return;
     const K = turns(), s = Math.min(K, (at === undefined ? albumTime() : at) / totalSecs() * K), deg = (s % 1) * 360;
@@ -616,19 +623,17 @@
     filling = false;
   }
   audio.addEventListener('play', () => { $('disc').classList.add('on'); turning(); fill(); });
-  audio.addEventListener('seeked', () => {
-    if (landing && Math.abs(audio.currentTime - landing.left) < 1) landing = null;
-    if (!drag) spin();
-  });
+  audio.addEventListener('seeked', () => { if (!drag) spin(); });
   // go to a moment of the album, staying as it was: playing if it was playing, paused if it was paused
   function goTo(at, settled) {
     let k = 0, left = at;
     while (k < album.tracks.length - 1 && left >= album.tracks[k].duration) left -= album.tracks[k++].duration;
     if (k === cur && audio.src) {
+      if (landing) return hold(at, left);               // still loading this song: the newest place wins
       const copy = wholes.get(k);
       if (copy && copy.url && audio.src !== copy.url) {
         const playing = !audio.paused;
-        landing = { at, left };
+        hold(at, left);
         audio.src = copy.url;
         if (playing) audio.play().catch(() => {});       // (asked here, within the hand's own gesture)
       } else {
@@ -638,7 +643,7 @@
     }
     if (!settled) return;                               // (a hand still moving stays within the song)
     const playing = !audio.paused;
-    landing = { at, left };
+    hold(at, left);
     load(k, playing);
     if (!playing) { audio.preload = 'auto'; audio.load(); }
   }
@@ -676,6 +681,7 @@
     drag = null;
   };
   $('disc').onpointerup = letGo;
+  $('disc').onlostpointercapture = letGo;               // however the hand comes away
   $('disc').onpointercancel = () => { drag = null; dragged = false; spin(); };
   // a click on the groove goes there; on scorsby, home; anywhere else, nothing
   $('disc').onclick = ev => {

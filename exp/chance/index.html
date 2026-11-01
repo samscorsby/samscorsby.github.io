@@ -136,7 +136,6 @@
   #art #disc #coverHub { position: absolute; inset: 0; clip-path: circle(9.8% at 50% 50%); pointer-events: none; cursor: zoom-in; }
   #needle { position: absolute; inset: 0; pointer-events: none; display: none; }
   #disc.on #needle { display: block; }
-  #needle i { position: absolute; left: 50%; top: 3%; width: 2px; margin-left: -1px; background: var(--needle, #100E0E); }
   #needle b { position: absolute; left: 50%; width: 12px; height: 12px; margin: -12px 0 0 -6px; background: var(--needle, #100E0E);
     clip-path: polygon(0 0, 100% 0, 50% 100%); }
   #art .share { margin-top: 12px; display: flex; gap: 18px; font-size: 12px; }
@@ -382,7 +381,7 @@
         <div id="disc" title="click the groove to go there, or turn the record by hand">
           <img id="cover" draggable="false" alt="Album cover: the album drawn as a record, one groove spiralling in from the edge, its songs one after another">
           <img id="coverHub" draggable="false" alt="">
-          <div id="needle"><i id="needleLine"></i><b id="needleTip"></b></div>
+          <div id="needle"><b id="needleTip"></b></div>
         </div>
         <div class="share">
           <button id="share"><svg viewBox="0 0 15 13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5.5v6.8h12.2V5.5"/><path d="M7.1 1v7.6"/><path d="M4.2 3.8 7.1 1l2.9 2.8"/></svg><span>Share / Embed</span></button>
@@ -569,7 +568,6 @@
     const r = R_OUT - (R_OUT - R_IN) / (K + DUTY) * (s + DUTY / 2);    // the middle of the groove, here
     $('cover').style.transform = still ? '' : `rotate(${-deg}deg)`;
     $('needle').style.transform = still ? `rotate(${deg}deg)` : '';
-    $('needleLine').style.height = (50 - r * 100 - 3) + '%';
     $('needleTip').style.top = (50 - r * 100) + '%';
   }
   let drag = null, dragged = false;                     // a hand on the record

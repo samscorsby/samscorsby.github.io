@@ -143,6 +143,7 @@
     clip-path: polygon(0 0, 100% 0, 50% 100%); }
   #hearing { margin: 10px 0 0; font-size: 12px; line-height: 1.45; color: var(--text); min-height: 3em; overflow-wrap: anywhere; }
   #hearing[hidden] { display: block; visibility: hidden; }
+  #disc:not(.on) ~ #hearing { display: none; }   /* no gap under the cover until the album has played */
   #hearList span { transition: opacity .6s ease; }
   #hearList span.gone { opacity: 0; }
   #hearing b { display: block; font-weight: 700; }
@@ -189,7 +190,6 @@
     #trackInfo, #art, #rightColumn { width: 100%; }
     #art img { width: 100%; height: auto; aspect-ratio: 1; }
     #disc { width: 100%; height: auto; aspect-ratio: 1; }
-    #disc:not(.on) ~ #hearing { display: none; }   /* no gap under the cover until the album has played */
     .inline_player { width: 100%; }
     .player_right { display: flex; flex-direction: column; }
     .progbar { flex: 1; width: auto; }

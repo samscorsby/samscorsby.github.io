@@ -1579,7 +1579,16 @@ def make_piece(rng, duration, channels, log, allowed, form, pool, track_no, prog
     begin, end = "fade in", "fade out"
     if ENDINGS:
         global END_AT
-        if rng.random() < 0.6:
+        # the song is listened to first, and the dice weighted by what it does: an opening that already
+        # emerges quietly needs no fade in, an ending already dying away needs no fade out
+        level = lambda a: float(np.sqrt(np.mean(a ** 2))) + 1e-12
+        whole = level(mix)
+        opens, closes = level(mix[:, :int(4 * SR)]) / whole, level(mix[:, -int(6 * SR):]) / whole
+        p_cold = 0.85 if opens < 0.5 else (0.45 if opens > 1.0 else 0.6)
+        p_fade = 0.2 if closes < 0.5 else (0.7 if closes >= 1.0 else 0.6)
+        log.append(f"edges heard: the opening at {opens:.2f} of the song's level, the close at {closes:.2f}; "
+                   f"cold start {p_cold:.0%}, long fade {p_fade:.0%}")
+        if rng.random() < p_cold:
             fin, begin = int(0.004 * SR), "cold start"
             pk = float(np.max(np.abs(mix)))
             loud = np.nonzero(np.max(np.abs(mix), axis=0) > pk * 10 ** (-30 / 20))[0] if pk > 0 else []
@@ -1593,7 +1602,7 @@ def make_piece(rng, duration, channels, log, allowed, form, pool, track_no, prog
             # usually 6-30 s; about one in three may take far longer
             fin = int(min(total * 0.3, SR * log_uniform(rng, 6.0, 90.0 if rng.random() < 0.35 else 30.0)))
             begin = "slow fade in"
-        end = str(rng.choice(["fade out", "hard stop"], p=[0.6, 0.4]))     # a long fade, or none at all
+        end = str(rng.choice(["fade out", "hard stop"], p=[p_fade, 1 - p_fade]))     # a long fade, or none at all
         global END_PREF
         if END_PREF and rng.random() < 0.75:          # the form's arc suggests how it should end
             end = END_PREF

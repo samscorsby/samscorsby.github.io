@@ -1585,6 +1585,9 @@ def make_title(rng, log, tag, voices, taken):
         w = draw(buckets[b])
         if b == 'name' and buckets['name'] and rng.random() < 0.25:
             w = _splice(rng, w, draw(buckets['name']))          # a portmanteau of two stations
+        if ' ' in w and rng.random() < 0.45:                    # a term need not come whole
+            part = w.split()
+            w = part[int(rng.integers(len(part)))]
         words.append(w)
         count[who] += len(w.split())
     if not words:

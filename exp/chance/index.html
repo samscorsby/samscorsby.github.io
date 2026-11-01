@@ -131,6 +131,7 @@
   /* the cover is a record: it turns as the album plays, under a needle that stays at the top; scorsby stays still */
   #disc { position: relative; width: 350px; height: 350px; overflow: hidden; cursor: grab; touch-action: pan-y; user-select: none; }
   #disc:active { cursor: grabbing; }
+  #disc.on { touch-action: none; }   /* once it's been played, a finger on the record turns it; before that, it scrolls the page */
   #art #disc img { width: 100%; height: 100%; margin: 0; background: none; cursor: inherit; -webkit-user-drag: none; user-select: none; }
   #art #disc #cover { clip-path: circle(49.8% at 50% 50%); will-change: transform; }
   #art #disc #coverHub { position: absolute; inset: 0; clip-path: circle(9.8% at 50% 50%); pointer-events: none; cursor: zoom-in; }
@@ -486,10 +487,11 @@
     if (playing || t === 0) audio.play().catch(() => {});
   });
 
+  const wholes = new Map();                             // songs held in memory: index -> { url, stop, done }
   function load(i, play) {
     cur = (i + album.tracks.length) % album.tracks.length;
     const t = album.tracks[cur];
-    audio.src = stream(t.src);
+    audio.src = (wholes.get(cur) && wholes.get(cur).url) || stream(t.src);
     $('nowTitle').textContent = t.title;
     $('nowTime').textContent = '00:00 / ' + fmt(t.duration);
     document.querySelectorAll('#tracks tr').forEach((r, k) => {
@@ -561,7 +563,14 @@
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;      // then the needle travels round instead
   const totalSecs = () => album.tracks.reduce((n, t) => n + t.duration, 0);
   const turns = () => Math.min(26, Math.max(10, 3.1 * Math.sqrt(totalSecs() / 60)));
-  const albumTime = () => album.tracks.slice(0, cur).reduce((n, t) => n + t.duration, 0) + (audio.currentTime || 0);
+  // a move that has to wait for a song to load: where it's going, so the record holds there meanwhile
+  let landing = null;
+  const albumTime = () => landing ? landing.at
+    : album.tracks.slice(0, cur).reduce((n, t) => n + t.duration, 0) + (audio.currentTime || 0);
+  audio.addEventListener('loadedmetadata', () => {
+    if (!landing) return;
+    audio.currentTime = landing.left;
+  });
   function spin(at) {
     if (!album) return;
     const K = turns(), s = Math.min(K, (at === undefined ? albumTime() : at) / totalSecs() * K), deg = (s % 1) * 360;
@@ -572,32 +581,43 @@
   }
   let drag = null, dragged = false;                     // a hand on the record
   const turning = () => { if (!drag) spin(); if (!audio.paused && !audio.ended) requestAnimationFrame(turning); };
-  // the song playing is fetched whole in the background, so that moving around in it needs no network
-  // (not with data saver on). the player changes over to that copy at the next move, never mid-sound.
-  let whole = null;
+  // the song playing is fetched whole in the background, and then the next one: moving around in a song
+  // needs no network, and one song follows another without waiting for it (not with data saver on). the
+  // player changes over to the copy at the next move, never mid-sound.
   function keepWhole(k) {
-    if (whole && whole.k === k) return;
-    if (whole) { whole.stop.abort(); if (whole.url) URL.revokeObjectURL(whole.url); whole = null; }
-    if (navigator.connection && navigator.connection.saveData) return;
-    const mine = whole = { k, url: null, stop: new AbortController() };
-    fetch(stream(album.tracks[k].src), { signal: mine.stop.signal }).then(r => r.ok ? r.blob() : null).then(b => {
-      if (b && whole === mine) mine.url = URL.createObjectURL(new Blob([b], { type: 'audio/mpeg' }));
+    if (k >= album.tracks.length || (navigator.connection && navigator.connection.saveData)) return Promise.resolve();
+    wholes.forEach((w, j) => {                          // only this song and the next are kept
+      if (j !== cur && j !== cur + 1) { w.stop.abort(); if (w.url) URL.revokeObjectURL(w.url); wholes.delete(j); }
+    });
+    if (wholes.has(k)) return wholes.get(k).done;
+    const mine = { url: null, stop: new AbortController() };
+    wholes.set(k, mine);
+    mine.done = fetch(stream(album.tracks[k].src), { signal: mine.stop.signal }).then(r => r.ok ? r.blob() : null).then(b => {
+      if (b && wholes.get(k) === mine) mine.url = URL.createObjectURL(new Blob([b], { type: 'audio/mpeg' }));
     }).catch(() => {});
+    return mine.done;
   }
-  audio.addEventListener('play', () => { $('disc').classList.add('on'); turning(); keepWhole(cur); });
-  audio.addEventListener('seeked', () => { if (!drag) spin(); });
+  audio.addEventListener('play', () => {
+    $('disc').classList.add('on');
+    turning();
+    const k = cur;
+    keepWhole(k).then(() => { if (k === cur) keepWhole(k + 1); });
+  });
+  audio.addEventListener('seeked', () => {
+    if (landing && Math.abs(audio.currentTime - landing.left) < 1) landing = null;
+    if (!drag) spin();
+  });
   // go to a moment of the album, staying as it was: playing if it was playing, paused if it was paused
   function goTo(at, settled) {
     let k = 0, left = at;
     while (k < album.tracks.length - 1 && left >= album.tracks[k].duration) left -= album.tracks[k++].duration;
     if (k === cur && audio.src) {
-      if (whole && whole.k === k && whole.url && audio.src !== whole.url) {
+      const copy = wholes.get(k);
+      if (copy && copy.url && audio.src !== copy.url) {
         const playing = !audio.paused;
-        audio.src = whole.url;
-        audio.addEventListener('loadedmetadata', () => {
-          audio.currentTime = left;
-          if (playing) audio.play().catch(() => {});
-        }, { once: true });
+        landing = { at, left };
+        audio.src = copy.url;
+        if (playing) audio.play().catch(() => {});       // (asked here, within the hand's own gesture)
       } else {
         audio.currentTime = left;
       }
@@ -605,9 +625,9 @@
     }
     if (!settled) return;                               // (a hand still moving stays within the song)
     const playing = !audio.paused;
+    landing = { at, left };
     load(k, playing);
     if (!playing) { audio.preload = 'auto'; audio.load(); }
-    audio.addEventListener('loadedmetadata', () => { audio.currentTime = left; }, { once: true });
   }
   const place = ev => {
     const box = $('disc').getBoundingClientRect();

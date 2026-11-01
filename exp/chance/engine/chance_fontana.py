@@ -1509,6 +1509,15 @@ def _splice(rng, a, b):
     return a[:i] + b[j:]
 
 
+# what was done to the sound, as the score writes it -> a word for a title
+OP_WORDS = [('bitcrush to', 'Bitcrush'), ('sample-and-hold', 'Sample Hold'), ('reverse alternate', 'Backwash'),
+            ('chance gate', 'Chance Gate'), ('ms per term', 'Pattern Gate'), ('triangle fold', 'Fold'),
+            ('integer overflow', 'Overflow'), ('xor 16-bit', 'XOR'), ('keep only bit-planes', 'Bitplane'),
+            ('rotate 16-bit', 'Bit Rotate'), ('Gray-code', 'Gray Code'), ('swap the byte order', 'Byteswap'),
+            ('shuffle ', 'Shuffle'), ('sort ', 'Sort'), ('stutter:', 'Stutter'), ('first difference', 'Delta'),
+            ('running sum', 'Integrate'), ('granulate itself', 'Granulate'), ('lowpass ', 'Lowpass')]
+
+
 def make_title(rng, log, tag, voices, taken):
     clips = []
     seen = set()
@@ -1516,7 +1525,7 @@ def make_title(rng, log, tag, voices, taken):
         if c['path'] not in seen:
             seen.add(c['path'])
             clips.append(c)
-    names, places, freqs, tags, tongues, passed = [], [], [], [], [], []
+    names, places, freqs, tags, tongues, passed, modes = [], [], [], [], [], [], []
     for c in clips:
         w, p, f = _clip_tokens(c)
         names += w
@@ -1527,6 +1536,8 @@ def make_title(rng, log, tag, voices, taken):
         tags += [t.strip() for t in str(c.get('tags') or '').split(',') if 1 < len(t.strip()) <= 24]
         tongues += [t.strip().title() for t in re.split(r'[,/]', str(c.get('language') or ''))
                     if 2 < len(t.strip()) <= 16 and re.fullmatch(r"[^\W\d_ ]+", t.strip())]
+        if c.get('mode') in ('usb', 'lsb', 'cw'):
+            modes.append(c['mode'].upper())
         for t in c.get('also_tried') or []:
             passed += _clip_tokens({'station': t.get('what') or '', 'mode': 'net'})[0]
     techs = list(dict.fromkeys(TRACK_NOTES['tech']))
@@ -1542,13 +1553,17 @@ def make_title(rng, log, tag, voices, taken):
     def draw(bucket):
         return bucket.pop(int(rng.integers(len(bucket)))) if bucket else None
 
+    layers = "\n".join(ln for ln in log if ln.startswith('['))     # what the score says happened
     buckets = {'name': names[:], 'place': places[:], 'freq': freqs[:], 'tech': techs[:],
-               'tag': good(tags), 'tongue': list(dict.fromkeys(tongues)), 'passed': good(passed)}
-    want = int(rng.integers(3, 6))
+               'tag': good(tags), 'tongue': list(dict.fromkeys(tongues)), 'passed': good(passed),
+               'op': [w for key, w in OP_WORDS if key in layers], 'mode': list(dict.fromkeys(modes)),
+               'bytes': list(dict.fromkeys(re.findall(r'\b(?:unsigned|signed) \d+-bit|\bfloat\d+', layers))),
+               'speed': [f"x{v}" for v in dict.fromkeys(re.findall(r'tape speed x(\d\.\d\d)', layers)) if v != '1.00']}
+    want = int(rng.choice([2, 3, 4, 5, 6], p=[0.12, 0.28, 0.3, 0.2, 0.1]))     # some short, some long
     # about as many human words (names, places, tags, tongues, what was passed over) as digital ones
     # (techniques, numbers): the two take turns, whichever goes first by chance, each making up if the other runs out
     human = [('name', 0.4), ('tag', 0.25), ('place', 0.2), ('tongue', 0.1), ('passed', 0.05)]
-    digital = [('tech', 0.65), ('freq', 0.35)]
+    digital = [('tech', 0.4), ('op', 0.25), ('freq', 0.15), ('bytes', 0.08), ('mode', 0.07), ('speed', 0.05)]
 
     def pick(kinds):
         live = [(b, w) for b, w in kinds if buckets[b]]

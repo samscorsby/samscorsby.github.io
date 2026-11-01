@@ -16,7 +16,7 @@
   "assets": { "directory": "..", "binding": "ASSETS" },
   "vars": {
     // pages allowed to connect. localhost is always allowed for development.
-    "ALLOWED_ORIGINS": "https://scorsby.us,https://www.scorsby.us,https://samrobertsbaca.github.io"
+    "ALLOWED_ORIGINS": "https://scorsby.us,https://www.scorsby.us,https://samscorsby.github.io"
   },
   "observability": { "enabled": true }
 }

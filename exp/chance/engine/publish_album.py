@@ -45,7 +45,7 @@ if os.path.basename(HERE) == 'engine':                  # running from the site 
     SITE = os.path.dirname(HERE)
 else:
     SITE = r"C:\Users\samro\OneDrive\Documents\GitHub\samrobertsbaca.github.io\exp\chance"
-REPO = os.environ.get('GITHUB_REPOSITORY', 'samrobertsbaca/samrobertsbaca.github.io')
+REPO = os.environ.get('GITHUB_REPOSITORY', 'samscorsby/samscorsby.github.io')
 SITE_ROOT = os.path.dirname(os.path.dirname(SITE))      # the site itself, for scorsby's face
 ARTIST = "ScorsBT4"                                 # the machine that plays the world's radio
 ASKER = "Samuel John Scorsby"                           # who asked it the questions

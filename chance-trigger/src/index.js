@@ -4,7 +4,7 @@
 // as a draft); at midnight it asks for the album that was waiting to be released. GitHub's own schedule is
 // the backup.
 
-const REPO = 'samrobertsbaca/samrobertsbaca.github.io';
+const REPO = 'samscorsby/samscorsby.github.io';
 const WORKFLOW = 'daily_chance.yml';
 const CLOSE = 21;   // 9 pm: the day's listening ends and the album is made, in good time for midnight
 

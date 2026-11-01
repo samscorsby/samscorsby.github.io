@@ -23,7 +23,7 @@ import subprocess
 import sys
 import zipfile
 
-REPO = os.environ.get('GITHUB_REPOSITORY', 'samrobertsbaca/samrobertsbaca.github.io')
+REPO = os.environ.get('GITHUB_REPOSITORY', 'samscorsby/samscorsby.github.io')
 
 
 def gh(*args):

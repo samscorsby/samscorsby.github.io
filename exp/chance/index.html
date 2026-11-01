@@ -454,7 +454,7 @@
 <div id="closeup" role="dialog" aria-modal="true" aria-label="Close-up">
   <div class="frame"><img id="closeupImg" alt=""><button id="closeupX" aria-label="Close">&times;</button></div>
 </div>
-<audio id="audio" preload="none"></audio>
+<audio id="audio" preload="auto"></audio>
 <script>
 (function () {
   const $ = id => document.getElementById(id);
@@ -581,14 +581,12 @@
   }
   let drag = null, dragged = false;                     // a hand on the record
   const turning = () => { if (!drag) spin(); if (!audio.paused && !audio.ended) requestAnimationFrame(turning); };
-  // the song playing is fetched whole in the background, and then the next one: moving around in a song
-  // needs no network, and one song follows another without waiting for it (not with data saver on). the
-  // player changes over to the copy at the next move, never mid-sound.
+  // once the album is playing, its songs are fetched whole in the background, this one first, then the next,
+  // then the rest: moving around needs no network, and any song starts at once. on a phone's data or with
+  // data saver on, only this song and the next. the player changes over to a copy at the next move, never mid-sound.
+  const net = navigator.connection || {};
+  const limited = !!net.saveData || net.type === 'cellular';
   function keepWhole(k) {
-    if (k >= album.tracks.length || (navigator.connection && navigator.connection.saveData)) return Promise.resolve();
-    wholes.forEach((w, j) => {                          // only this song and the next are kept
-      if (j !== cur && j !== cur + 1) { w.stop.abort(); if (w.url) URL.revokeObjectURL(w.url); wholes.delete(j); }
-    });
     if (wholes.has(k)) return wholes.get(k).done;
     const mine = { url: null, stop: new AbortController() };
     wholes.set(k, mine);
@@ -597,12 +595,23 @@
     }).catch(() => {});
     return mine.done;
   }
-  audio.addEventListener('play', () => {
-    $('disc').classList.add('on');
-    turning();
-    const k = cur;
-    keepWhole(k).then(() => { if (k === cur) keepWhole(k + 1); });
-  });
+  let filling = false;
+  async function fill() {
+    if (filling || (net.saveData)) return;
+    filling = true;
+    for (;;) {
+      const n = album.tracks.length;
+      const order = Array.from({ length: limited ? Math.min(2, n - cur) : n }, (_, i) => (cur + i) % n);
+      if (limited) wholes.forEach((w, j) => {            // and nothing else is kept
+        if (!order.includes(j)) { w.stop.abort(); if (w.url) URL.revokeObjectURL(w.url); wholes.delete(j); }
+      });
+      const k = order.find(j => !wholes.has(j));
+      if (k === undefined) break;
+      await keepWhole(k);
+    }
+    filling = false;
+  }
+  audio.addEventListener('play', () => { $('disc').classList.add('on'); turning(); fill(); });
   audio.addEventListener('seeked', () => {
     if (landing && Math.abs(audio.currentTime - landing.left) < 1) landing = null;
     if (!drag) spin();
@@ -784,6 +793,7 @@
       tb.appendChild(tr);
     });
     $('nowTitle').textContent = a.tracks[0].title;
+    if (!(navigator.connection && navigator.connection.saveData)) audio.src = stream(a.tracks[0].src);   // the first song, buffering ready
     $('stickyTrack').textContent = a.tracks[0].n + '. ' + a.tracks[0].title;
     $('nowTime').textContent = '00:00 / ' + fmt(a.tracks[0].duration);
   }).catch(() => {

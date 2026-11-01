@@ -1560,8 +1560,8 @@ def make_title(rng, log, tag, voices, taken):
                'bytes': list(dict.fromkeys(re.findall(r'\b(?:unsigned|signed) \d+-bit|\bfloat\d+', layers))),
                'speed': [f"x{v}" for v in dict.fromkeys(re.findall(r'tape speed x(\d\.\d\d)', layers)) if v != '1.00']}
     want = int(rng.choice([2, 3, 4, 5, 6], p=[0.12, 0.28, 0.3, 0.2, 0.1]))     # some short, some long
-    # about as many human words (names, places, tags, tongues, what was passed over) as digital ones
-    # (techniques, numbers): the two take turns, whichever goes first by chance, each making up if the other runs out
+    # as many human words (names, places, tags, tongues, what was passed over) as digital ones (techniques,
+    # numbers), counted word by word: whichever side has fewer goes next, chance breaking a tie; each makes up if the other runs out
     human = [('name', 0.4), ('tag', 0.25), ('place', 0.2), ('tongue', 0.1), ('passed', 0.05)]
     digital = [('tech', 0.4), ('op', 0.25), ('freq', 0.15), ('bytes', 0.08), ('mode', 0.07), ('speed', 0.05)]
 
@@ -1572,18 +1572,21 @@ def make_title(rng, log, tag, voices, taken):
         p = np.array([w for _, w in live])
         return live[int(rng.choice(len(live), p=p / p.sum()))][0]
 
-    turn = [human, digital] if rng.random() < 0.5 else [digital, human]
-    words = []
-    for i in range(want * 2):
-        if sum(len(w.split()) for w in words) >= want:     # counting words, as "Rule 110" is two
-            break
-        b = pick(turn[i % 2]) or pick(turn[(i + 1) % 2])
+    words, count = [], {'h': 0, 'd': 0}
+    side = {'h': human, 'd': digital}
+    while count['h'] + count['d'] < want:
+        first = ('h' if rng.random() < 0.5 else 'd') if count['h'] == count['d'] else min(count, key=count.get)
+        other = 'd' if first == 'h' else 'h'
+        b, who = pick(side[first]), first
+        if b is None:
+            b, who = pick(side[other]), other
         if b is None:
             break
         w = draw(buckets[b])
         if b == 'name' and buckets['name'] and rng.random() < 0.25:
             w = _splice(rng, w, draw(buckets['name']))          # a portmanteau of two stations
         words.append(w)
+        count[who] += len(w.split())
     if not words:
         words = [tag]
     words = [words[i] for i in rng.permutation(len(words))]

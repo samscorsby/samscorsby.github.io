@@ -742,8 +742,8 @@
     filling = false;
   }
   audio.addEventListener('play', () => { $('disc').classList.add('on'); $('disc').classList.remove('asleep'); turning(); fill(); });
-  // the eyes close with the pause. a song ending pauses too, for a moment before the next: then only if none comes
-  audio.addEventListener('pause', () => setTimeout(() => $('disc').classList.toggle('asleep', audio.paused), audio.ended ? 200 : 0));
+  // the eyes close with a pause, but not when a song, or the album, simply comes to its end
+  audio.addEventListener('pause', () => { if (!audio.ended) $('disc').classList.add('asleep'); });
   audio.addEventListener('seeked', () => { if (!drag) spin(); });
   // go to a moment of the album, staying as it was: playing if it was playing, paused if it was paused
   function goTo(at, settled) {

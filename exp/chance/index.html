@@ -145,7 +145,7 @@
   #hearing[hidden] { display: block; visibility: hidden; }
   #hearing.in { animation: hearIn .6s ease; }
   @keyframes hearIn { from { opacity: 0; } to { opacity: 1; } }
-  #hearing .lbl { opacity: .75; }
+  #hearing b { display: block; font-weight: 700; }
   #hearing span { display: block; }
   #art .share { margin-top: 12px; display: flex; gap: 18px; font-size: 12px; }
   #art .share a, #art .share button { color: var(--link); background: none; border: none; padding: 0; font: inherit; cursor: pointer; }
@@ -394,7 +394,7 @@
           <div id="needle"><b id="needleTip"></b></div>
           </div>
         </div>
-        <p id="hearing" hidden><span><span class="lbl" style="display:inline">now hearing </span><span id="hearSrc" style="display:inline"></span></span><span id="hearHow" class="lbl"></span></p>
+        <p id="hearing" hidden><b>now hearing</b><span id="hearList"></span></p>
         <div class="share">
           <button id="share"><svg viewBox="0 0 15 13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5.5v6.8h12.2V5.5"/><path d="M7.1 1v7.6"/><path d="M4.2 3.8 7.1 1l2.9 2.8"/></svg><span>Share / Embed</span></button>
           <a href="https://scorsby.bandcamp.com">Bandcamp</a>
@@ -535,18 +535,17 @@
   let hearingNow = '';
   function hearing() {
     const box = $('hearing'), t = audio.currentTime;
-    const on = (layers[cur] || []).filter(l => l.t <= t && t < l.end).sort((x, y) => (y.src ? 1 : 0) - (x.src ? 1 : 0) || y.db - x.db);
-    const top = on[0];
-    box.hidden = audio.paused || !top;
-    if (!top) return;
-    const text = top.src + '|' + top.how;
+    const on = (layers[cur] || []).filter(l => l.t <= t && t < l.end).sort((x, y) => y.db - x.db);
+    const lines = [...new Set(on.map(l => [l.src, l.how].filter(Boolean).join(' · ')).filter(Boolean))];
+    box.hidden = audio.paused || !lines.length;
+    if (!lines.length) return;
+    const text = lines.join('\n');
     if (text === hearingNow) return;
     hearingNow = text;
     box.classList.remove('in');
     void box.offsetWidth;                               // (so the fade starts over)
     box.classList.add('in');
-    $('hearSrc').textContent = top.src || 'data alone';
-    $('hearHow').textContent = top.how;
+    $('hearList').replaceChildren(...lines.map(l => { const d = document.createElement('span'); d.textContent = l; return d; }));
   }
   audio.addEventListener('timeupdate', hearing);
   audio.addEventListener('pause', hearing);

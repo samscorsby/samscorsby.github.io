@@ -129,7 +129,8 @@
 
   #art img { width: 350px; height: 350px; display: block; background: #eee; cursor: zoom-in; }
   /* the cover is a record: it turns as the album plays, under a needle that stays at the top; scorsby stays still */
-  #disc { position: relative; width: 350px; height: 350px; overflow: hidden; user-select: none; }
+  #disc { position: relative; width: 350px; height: 350px; overflow: hidden; user-select: none; -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }   /* no flash or menu under a finger */
   /* the round of the record is what a finger or mouse catches, so the corners around it scroll the page as usual */
   #platter { position: absolute; inset: 0; clip-path: circle(48% at 50% 50%); cursor: grab; touch-action: pan-y; }
   #platter:active { cursor: grabbing; }
@@ -412,7 +413,7 @@
           <div id="platter">
           <img id="cover" draggable="false" alt="Album cover: the album drawn as a record, one groove spiralling in from the edge, its songs one after another">
           <img id="coverHub" draggable="false" alt="">
-          <svg id="shut" viewBox="0 0 298 283" aria-hidden="true"><circle cx="108" cy="142" r="42" fill="#00aeef"/><circle cx="189" cy="142" r="42" fill="#00aeef"/><circle cx="148.4" cy="175.6" r="19.7" fill="#ed1c24"/><path d="M77.3 135a27 27 0 0 0 54 0M166.6 135a27 27 0 0 0 54 0" fill="none" stroke="#000" stroke-width="15" stroke-linecap="round"/></svg>
+          <svg id="shut" viewBox="0 0 298 283" aria-hidden="true"><circle cx="108.4" cy="142" r="46" fill="#00aeef"/><circle cx="189.4" cy="142" r="46" fill="#00aeef"/><circle cx="148.4" cy="175.6" r="19.7" fill="#ed1c24"/><path d="M77.3 135a27 27 0 0 0 54 0M166.6 135a27 27 0 0 0 54 0" fill="none" stroke="#000" stroke-width="15" stroke-linecap="round"/></svg>
           <div id="needle"><b id="needleTip"></b></div>
           </div>
           <button id="bigOpen" aria-label="See the record bigger" title="see the record bigger"><svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1h4v4M11 1 7 5M5 11H1V7M1 11l4-4"/></svg></button>

@@ -672,11 +672,12 @@
   };
   $('disc').onpointerup = letGo;
   $('disc').onpointercancel = () => { drag = null; dragged = false; spin(); };
-  // a click on the groove goes there; anywhere else (scorsby, the corners), the close-up as before
+  // a click on the groove goes there; on scorsby, the close-up; anywhere else, nothing
   $('disc').onclick = ev => {
     if (!album || dragged) return;
     const { r, deg } = place(ev);
-    if (!onGroove(r)) return closeup($('cover').src, $('cover').alt);
+    if (r > 0.5) return;                                // outside the round of the record: nothing
+    if (!onGroove(r)) return r < R_IN ? closeup($('cover').src, $('cover').alt) : undefined;
     const turned = $('cover').style.transform ? (parseFloat($('cover').style.transform.slice(7)) || 0) : 0;
     const theta = (((deg - turned) % 360 + 360) % 360) / 360;
     const K = turns(), u = (R_OUT - r) / ((R_OUT - R_IN) / (K + DUTY)) - theta;

@@ -4,6 +4,7 @@
 .gitignore
 .nojekyll
 .wrangler
+.claude
 hearth
 chance-trigger
 tools

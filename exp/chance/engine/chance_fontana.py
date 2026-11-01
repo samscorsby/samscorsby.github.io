@@ -1524,8 +1524,7 @@ def make_title(rng, log, tag, voices, taken):
         if f:
             freqs.append(f)
         # what the stations say of themselves, and what was heard first and passed over
-        tags += [t.strip() for t in str(c.get('tags') or '').split(',')
-                 if 2 < len(t.strip()) <= 18 and re.fullmatch(r"[^\W\d_]+(?:[ -][^\W\d_]+)?", t.strip())]
+        tags += [t.strip() for t in str(c.get('tags') or '').split(',') if 1 < len(t.strip()) <= 24]
         tongues += [t.strip().title() for t in re.split(r'[,/]', str(c.get('language') or ''))
                     if 2 < len(t.strip()) <= 16 and re.fullmatch(r"[^\W\d_ ]+", t.strip())]
         for t in c.get('also_tried') or []:
@@ -1545,21 +1544,31 @@ def make_title(rng, log, tag, voices, taken):
 
     buckets = {'name': names[:], 'place': places[:], 'freq': freqs[:], 'tech': techs[:],
                'tag': good(tags), 'tongue': list(dict.fromkeys(tongues)), 'passed': good(passed)}
-    order = ['name', 'tech', 'tag', 'passed', 'freq', 'place', 'tongue', 'name', 'tech', 'place', 'freq']
     want = int(rng.integers(3, 6))
+    # about as many human words (names, places, tags, tongues, what was passed over) as digital ones
+    # (techniques, numbers): the two take turns, whichever goes first by chance, each making up if the other runs out
+    human = [('name', 0.4), ('tag', 0.25), ('place', 0.2), ('tongue', 0.1), ('passed', 0.05)]
+    digital = [('tech', 0.65), ('freq', 0.35)]
+
+    def pick(kinds):
+        live = [(b, w) for b, w in kinds if buckets[b]]
+        if not live:
+            return None
+        p = np.array([w for _, w in live])
+        return live[int(rng.choice(len(live), p=p / p.sum()))][0]
+
+    turn = [human, digital] if rng.random() < 0.5 else [digital, human]
     words = []
-    for b in order:
+    for i in range(want * 2):
         if len(words) >= want:
             break
-        if b in ('freq', 'place', 'tag', 'tongue') and rng.random() < 0.35:
-            continue
-        if b == 'passed' and rng.random() < 0.8:          # now and then, something heard and let go
-            continue
+        b = pick(turn[i % 2]) or pick(turn[(i + 1) % 2])
+        if b is None:
+            break
         w = draw(buckets[b])
-        if w:
-            if b == 'name' and buckets['name'] and rng.random() < 0.25:
-                w = _splice(rng, w, draw(buckets['name']))          # a portmanteau of two stations
-            words.append(w)
+        if b == 'name' and buckets['name'] and rng.random() < 0.25:
+            w = _splice(rng, w, draw(buckets['name']))          # a portmanteau of two stations
+        words.append(w)
     if not words:
         words = [tag]
     words = [words[i] for i in rng.permutation(len(words))]

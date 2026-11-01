@@ -1698,7 +1698,7 @@ def baseline_score(rng, total, cap, log, allowed):
     W = 100
     col = lambda t: int(min(W - 1, max(0, t / secs * W)))
     if RADIO_CLIPS and radio in allowed:
-        lanes = int(rng.integers(1, 4))
+        lanes = int(rng.integers(2, 4))                   # never just one clip at a time
         bed_db = float(rng.uniform(-20.0, -12.0))
         per_lane = bed_db - 10.0 * math.log10(lanes)
         log.append(f"baseline: {lanes} lane(s) of radio across the whole track, around {bed_db:.0f} dB, "
@@ -1718,7 +1718,7 @@ def baseline_score(rng, total, cap, log, allowed):
                 speed = 1.0 if rng.random() < 0.7 else float(2.0 ** rng.normal(0.0, 0.35))
                 avail = float(RADIO_CLIPS[ci].get('seconds') or 10.0) / speed
                 seg = min(log_uniform(rng, 5.0, 40.0), max(3.0, avail))
-                xf = float(min(seg / 3.0, rng.uniform(0.5, 4.0)))
+                xf = float(min(seg / 3.0, rng.uniform(2.0, 8.0)))
                 st = int(t * SR)
                 n = int(min(seg * SR, total - st))
                 if n < SR:
@@ -1736,6 +1736,13 @@ def baseline_score(rng, total, cap, log, allowed):
                     break
                 t += n / SR - xf
             pic.append(f"  lane {L + 1} |" + "".join(row) + "|")
+        held = [cd.SOURCE_INDEX[k] for k in HELD if cd.SOURCE_INDEX.get(k) in allowed]
+        if held and rng.random() < 0.6:                   # a held sound beneath, so the clips change over something
+            g = held[int(rng.integers(len(held)))]
+            slots.append((0, total, "ground", {'src': g, 'depth': 0.0, 'slip': 0, 'fade': 6.0, 'amp_db': per_lane - 3.0,
+                                               'pan': 0.5, 'source_hint': {'clip': pick_clip(rng, pal)}}))
+            log.append(f"  a ground beneath it all: {cd.SOURCES[g][0]}")
+            pic.append("  ground |" + "=" * W + "|")
         nb = int(round(log_uniform(rng, 0.15, 1.0) * secs / 60.0))     # bends are events, not weather
         brow = [' '] * W
         for j in range(nb):
@@ -1762,7 +1769,8 @@ def baseline_score(rng, total, cap, log, allowed):
 # ------------------------------------------- fusion: radio and data as one sound
 # four techniques, each a source of its own: data gives the shape, radio the matter.
 
-FUSION_KEYS = ['mosaic', 'spectral', 'cross', 'playhead']
+FUSION_KEYS = ['mosaic', 'spectral', 'cross', 'playhead', 'room', 'freeze', 'weather']
+HELD = ('freeze', 'weather')      # sounds that can lie under a whole song
 NOT_DATA = set(FUSION_KEYS) | {'radio', 'impulses', 'loop', 'hits'}
 
 
@@ -1994,6 +2002,97 @@ def src_cross(rng, n, hint=None):
     return out, f"cross: radio [{clip_label(c)}] x data [{ddesc}], {mode}: {how}"
 
 
+def loudest_moment(rng, y, m, tries=8):
+    """where in y a window of m samples has the most in it, of a few chance places."""
+    if len(y) <= m:
+        return 0
+    at = rng.integers(0, len(y) - m, size=tries)
+    return int(at[int(np.argmax([np.mean(y[a:a + m] ** 2) for a in at]))])
+
+
+def src_room(rng, n, hint=None):
+    """convolution: one radio moment heard in the acoustic space of another. a stretch of a second
+    clip, dying away, is the room's echo; the first clip sounds inside it."""
+    if not RADIO_CLIPS:
+        return cd.src_bytes(rng, n)
+    y, c = radio_at_sr(rng, hint)
+    z, d = radio_at_sr(rng)
+    dry = looped(rng, y, n)
+    m = int(min(len(z), SR * log_uniform(rng, 0.3, 6.0)))
+    a = loudest_moment(rng, z, m)
+    ir = z[a:a + m] * np.exp(-np.arange(m) / (m / float(rng.uniform(3.0, 7.0))))
+    size = n + m
+    wet = np.fft.irfft(np.fft.rfft(dry, size) * np.fft.rfft(ir, size), size)[:n]
+    wet /= np.sqrt(np.mean(wet * wet)) + 1e-9
+    dry = dry / (np.sqrt(np.mean(dry * dry)) + 1e-9)
+    mix = float(rng.uniform(0.6, 1.0))
+    out = wet * mix + dry * (1.0 - mix)
+    note_tech('Room')
+    return out / (np.max(np.abs(out)) + 1e-9), (f"room: radio [{clip_label(c)}] sounding in the space of "
+                                                f"radio [{clip_label(d)}], {m / SR:.1f} s of echo, {100 * mix:.0f}% wet")
+
+
+def src_freeze(rng, n, hint=None):
+    """spectral freeze: an instant of a broadcast held as a chord; with several instants, the
+    chord turns slowly from one to the next."""
+    if not RADIO_CLIPS:
+        return cd.src_bytes(rng, n)
+    y, c = radio_at_sr(rng, hint)
+    nfft, hop = 16384, 4096
+    win = np.hanning(nfft)
+    k = int(rng.integers(1, 5))
+    held = []
+    for _ in range(k):
+        a = loudest_moment(rng, y, nfft)
+        held.append(np.abs(np.fft.rfft(np.resize(y[a:a + nfft], nfft) * win)))
+    held = np.array(held)
+    frames = n // hop + 3
+    adv = 2 * np.pi * np.arange(held.shape[1]) * hop / nfft
+    phase = rng.uniform(0, 2 * np.pi, held.shape[1])
+    jitter = float(log_uniform(rng, 0.02, 0.5))
+    out = np.zeros(n + 2 * nfft)
+    wsum = np.zeros(n + 2 * nfft)
+    for f in range(frames):
+        p = f / max(1, frames - 1) * (k - 1)
+        i, u = min(int(p), max(0, k - 2)), p - min(int(p), max(0, k - 2))
+        mag = held[i] * (1 - u) + held[i + 1] * u if k > 1 else held[0]
+        phase = phase + adv + rng.normal(0.0, jitter, len(phase))
+        at = f * hop
+        out[at:at + nfft] += np.fft.irfft(mag * np.exp(1j * phase), nfft) * win
+        wsum[at:at + nfft] += win * win
+    out = out[nfft:nfft + n] / np.maximum(wsum[nfft:nfft + n], 1e-3)
+    note_tech('Freeze')
+    return out / (np.max(np.abs(out)) + 1e-9), f"freeze: {k} instant(s) of radio [{clip_label(c)}] held as a chord"
+
+
+def src_weather(rng, n, hint=None):
+    """extreme time-stretching: seconds of a clip drawn out over the whole stretch, its phases
+    scattered, so a burst of static becomes slow weather."""
+    if not RADIO_CLIPS:
+        return cd.src_bytes(rng, n)
+    y, c = radio_at_sr(rng, hint)
+    nfft, hop = 16384, 4096
+    win = np.hanning(nfft)
+    if len(y) < 2 * nfft:
+        y = np.resize(y, 2 * nfft)
+    factor = float(log_uniform(rng, 8.0, 60.0))
+    span = min(len(y) - nfft, int(n / factor))
+    start = int(rng.integers(0, max(1, len(y) - nfft - span)))
+    frames = n // hop + 3
+    out = np.zeros(n + 2 * nfft)
+    wsum = np.zeros(n + 2 * nfft)
+    for f in range(frames):
+        a = start + int(span * f / max(1, frames - 1))
+        mag = np.abs(np.fft.rfft(y[a:a + nfft] * win))
+        at = f * hop
+        out[at:at + nfft] += np.fft.irfft(mag * np.exp(1j * rng.uniform(0, 2 * np.pi, len(mag))), nfft) * win
+        wsum[at:at + nfft] += win * win
+    out = out[nfft:nfft + n] / np.maximum(wsum[nfft:nfft + n], 1e-3)
+    note_tech('Weather')
+    return out / (np.max(np.abs(out)) + 1e-9), (f"weather: {span / SR:.1f} s of radio [{clip_label(c)}] "
+                                                f"stretched {n / max(1, span):.0f} times over")
+
+
 def src_playhead(rng, n, hint=None):
     """data playing the radio: a data stream sets where in a clip to read, how fast, or which way."""
     if not RADIO_CLIPS:
@@ -2037,7 +2136,8 @@ def fusion_score(rng, total, cap, log, allowed):
     W = 100
     col = lambda t: int(min(W - 1, max(0, t / secs * W)))
     pal = palette(rng, allowed, log)
-    main = tech[int(rng.integers(len(tech)))]
+    w = np.array([0.6 if cd.SOURCES[t][0] in ('room', 'freeze', 'weather') else 1.0 for t in tech])
+    main = tech[int(rng.choice(len(tech), p=w / w.sum()))]
     rest = [t for t in tech if t != main]
     second = rest[int(rng.integers(len(rest)))] if rest and rng.random() < 0.5 else None
     lanes = int(rng.integers(1, 3))
@@ -2051,7 +2151,7 @@ def fusion_score(rng, total, cap, log, allowed):
                + f"; each lane keeps its process {100 * p_same:.0f}% of the time; "
                f"{100 * p_plain:.0f}% of segments plain radio; around {lane_db:.0f} dB per lane")
     pic = [f"--- the fusion bed over {fmt(secs)} (M mosaic, S spectral, C cross, P playhead, "
-           f"r plain radio, ~ bend) ---"]
+           f"R room, F freeze, W weather, r plain radio, ~ bend) ---"]
     slots = []
     for L in range(lanes):
         home = float(rng.uniform(0.2, 0.8)) if lanes > 1 else 0.5
@@ -2821,7 +2921,10 @@ def main():
     for key, fn, w, label in [("mosaic", src_mosaic, 1.5, "data rebuilt from radio grains"),
                               ("spectral", src_spectral, 1.5, "radio through an automaton"),
                               ("cross", src_cross, 1.5, "radio x data cross-synthesis"),
-                              ("playhead", src_playhead, 1.5, "data playing the radio")]:
+                              ("playhead", src_playhead, 1.5, "data playing the radio"),
+                              ("room", src_room, 1.0, "radio in the acoustic space of radio"),
+                              ("freeze", src_freeze, 1.0, "an instant of radio held as a chord"),
+                              ("weather", src_weather, 1.0, "radio stretched to slow weather")]:
         cd.SOURCES.append((key, fn, w, label))
         cd.SOURCE_INDEX[key] = len(cd.SOURCES) - 1
     cd.FORMS['fusion'] = fusion_score

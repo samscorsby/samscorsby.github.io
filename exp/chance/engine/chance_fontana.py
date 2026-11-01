@@ -1575,7 +1575,7 @@ def make_title(rng, log, tag, voices, taken):
     turn = [human, digital] if rng.random() < 0.5 else [digital, human]
     words = []
     for i in range(want * 2):
-        if len(words) >= want:
+        if sum(len(w.split()) for w in words) >= want:     # counting words, as "Rule 110" is two
             break
         b = pick(turn[i % 2]) or pick(turn[(i + 1) % 2])
         if b is None:

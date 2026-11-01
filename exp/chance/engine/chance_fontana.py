@@ -1698,7 +1698,7 @@ def baseline_score(rng, total, cap, log, allowed):
     W = 100
     col = lambda t: int(min(W - 1, max(0, t / secs * W)))
     if RADIO_CLIPS and radio in allowed:
-        lanes = int(rng.integers(2, 4))                   # never just one clip at a time
+        lanes = int(rng.choice([1, 2, 3], p=[0.1, 0.3, 0.6]))     # mostly three; one clip at a time only rarely
         bed_db = float(rng.uniform(-20.0, -12.0))
         per_lane = bed_db - 10.0 * math.log10(lanes)
         log.append(f"baseline: {lanes} lane(s) of radio across the whole track, around {bed_db:.0f} dB, "
@@ -1737,7 +1737,7 @@ def baseline_score(rng, total, cap, log, allowed):
                 t += n / SR - xf
             pic.append(f"  lane {L + 1} |" + "".join(row) + "|")
         held = [cd.SOURCE_INDEX[k] for k in HELD if cd.SOURCE_INDEX.get(k) in allowed]
-        if held and rng.random() < 0.6:                   # a held sound beneath, so the clips change over something
+        if held and rng.random() < 0.4:                   # a held sound beneath, so the clips change over something
             g = held[int(rng.integers(len(held)))]
             slots.append((0, total, "ground", {'src': g, 'depth': 0.0, 'slip': 0, 'fade': 6.0, 'amp_db': per_lane - 3.0,
                                                'pan': 0.5, 'source_hint': {'clip': pick_clip(rng, pal)}}))

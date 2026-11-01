@@ -55,7 +55,7 @@
   /* Bandcamp's own measures: 376 | 30 | 350 | 39 | 120 inside a 915 px panel */
   #pgBd { background: var(--paper); color: var(--text); padding: 35px 30px 80px; display: flex; gap: 39px; }
   #leftMiddle { flex: 1; display: flex; gap: 30px; min-width: 0; }
-  #trackInfo { width: 376px; flex: none; }
+  #trackInfo { flex: 0 1 376px; min-width: 0; }   /* it gives way, so the cover never runs into the side bar */
   #art { width: 350px; flex: none; }
   #rightColumn { width: 120px; flex: none; }
 
@@ -78,7 +78,7 @@
   .nowtitle .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); font-weight: 500; }
   .nowtitle .time { color: #000; flex: none; }
   .progrow { display: flex; align-items: center; gap: 10px; margin-top: 9px; }
-  .progbar { width: 250px; flex: none; height: 10px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.3); position: relative; cursor: pointer; }
+  .progbar { width: 250px; max-width: 100%; flex: none; height: 10px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.3); position: relative; cursor: pointer; }
   .progbar .fill { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(0, 0, 0, 0.04); width: 0; }
   .progbar .thumb { position: absolute; top: -2px; width: 24px; height: 12px; background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.25); border-radius: 1px; left: 0; }
@@ -137,6 +137,9 @@
   #art #disc img { width: 100%; height: 100%; margin: 0; background: none; cursor: inherit; -webkit-user-drag: none; user-select: none; }
   #art #disc #cover { clip-path: circle(49.8% at 50% 50%); will-change: transform; }
   #art #disc #coverHub { position: absolute; inset: 0; clip-path: circle(9.8% at 50% 50%); pointer-events: none; cursor: zoom-in; }
+  /* paused, scorsby's eyes close: this sits exactly over the face publish_album.py draws on the cover */
+  #art #disc #shut { position: absolute; left: 41.93%; top: 42.95%; width: 16.01%; height: 15.12%; pointer-events: none; display: none; }
+  #art #disc.asleep #shut { display: block; }
   #needle { position: absolute; inset: 0; pointer-events: none; display: none; }
   #disc.on #needle { display: block; }
   #needle b { position: absolute; left: 50%; width: 12px; height: 12px; margin: -12px 0 0 -6px; background: var(--needle, #100E0E);
@@ -181,27 +184,22 @@
   #closeup button { position: absolute; top: -12px; left: -12px; width: 26px; height: 26px; border-radius: 50%;
     border: 2px solid #fff; background: #111; color: #fff; font: 700 15px/1 Arial, sans-serif; cursor: pointer; padding: 0; }
 
-  /* the big record, on a desktop with a mouse: the same record, larger, on the album's own paper, what's sounding beside it */
-  #bigOpen, #bigX, #bigPlay, #bigVeil { display: none; }
+  /* the big record, on a desktop with a mouse: the same record, larger, alone on the album's own paper */
+  #bigOpen, #bigX, #bigVeil { display: none; }
   #bigOpen, #bigX { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; background: #111; color: #fff;
     cursor: pointer; padding: 0; }
   #bigOpen { position: absolute; right: 8px; bottom: 8px; padding: 5px; opacity: .7; }
   #bigOpen:hover, #bigOpen:focus-visible { opacity: 1; }
   #bigOpen svg { display: block; width: 100%; height: 100%; }
   @media (hover: hover) and (pointer: fine) and (min-width: 901px) { #bigOpen { display: block; } }
-  #art.big { padding-top: 350px; --s: min(90vh, calc(100vw - 340px));
-    --l: calc((100vw - var(--s) - 300px) / 2); --t: calc((100vh - var(--s)) / 2); }
+  #art.big { padding-top: 350px; --s: min(90vh, 90vw); --l: calc((100vw - var(--s)) / 2); --t: calc((100vh - var(--s)) / 2); }
   #art.big #bigOpen { display: none; }
-  #art.big #bigVeil { display: block; position: fixed; inset: 0; z-index: 10; background: var(--paper); cursor: zoom-out; }
+  #art.big #bigVeil { display: block; position: fixed; inset: 0; z-index: 10; background: var(--paper); cursor: zoom-out; outline: none; }
   #art.big #disc { position: fixed; z-index: 11; left: var(--l); top: var(--t); width: var(--s); height: var(--s); margin: 0;
     box-shadow: 0 2px 30px rgba(0, 0, 0, .18); }
   #art.big #needle b { width: 18px; height: 18px; margin: -18px 0 0 -9px; }
   #art.big #bigX { display: block; position: fixed; z-index: 12; left: calc(var(--l) - 13px); top: calc(var(--t) - 13px);
     font: 700 15px/1 Arial, sans-serif; }
-  #art.big #bigPlay { display: block; position: fixed; z-index: 11; left: calc(var(--l) + var(--s) + 24px); top: var(--t);
-    background: none; border: none; padding: 0; color: var(--link); font-family: inherit; font-size: 15px; font-weight: 700; line-height: 1.45; cursor: pointer; }
-  #art.big #hearing { position: fixed; z-index: 11; left: calc(var(--l) + var(--s) + 24px); top: calc(var(--t) + 34px);
-    width: 276px; max-height: calc(var(--s) - 34px); overflow: auto; margin: 0; font-size: 15px; }
 
   footer { text-align: center; color: rgba(255, 255, 255, .8); font-size: 11px; padding: 18px 0 40px; }
   footer a { color: #fff; }
@@ -410,17 +408,17 @@
       </div>
 
       <div id="art">
-        <div id="disc" title="click the groove to go there, or turn the record by hand">
+        <div id="disc" title="click the groove to go there, turn the record by hand, or press scorsby to play and pause">
           <div id="platter">
           <img id="cover" draggable="false" alt="Album cover: the album drawn as a record, one groove spiralling in from the edge, its songs one after another">
           <img id="coverHub" draggable="false" alt="">
+          <img id="shut" draggable="false" alt="" src="../../images/scorsbyface_big_blink.png">
           <div id="needle"><b id="needleTip"></b></div>
           </div>
           <button id="bigOpen" aria-label="See the record bigger" title="see the record bigger"><svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1h4v4M11 1 7 5M5 11H1V7M1 11l4-4"/></svg></button>
         </div>
-        <div id="bigVeil"></div>
+        <div id="bigVeil" tabindex="-1"></div>
         <button id="bigX" aria-label="Back to the page">&times;</button>
-        <button id="bigPlay">play</button>
         <p id="hearing" hidden><b>now hearing</b><span id="hearList"></span></p>
         <div class="share">
           <button id="share"><svg viewBox="0 0 15 13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5.5v6.8h12.2V5.5"/><path d="M7.1 1v7.6"/><path d="M4.2 3.8 7.1 1l2.9 2.8"/></svg><span>Share / Embed</span></button>
@@ -665,24 +663,19 @@
   }
   const closeClose = () => $('closeup').classList.remove('open');
   $('closeup').onclick = closeClose;
-  // the big record is the same record, moved and enlarged, so it goes on turning and sounding through all of this.
-  // the keys rest on its play button, so space plays and pauses
+  // the big record is the same record, moved and enlarged, so it goes on turning and sounding through all of this
   const isBig = () => $('art').classList.contains('big');
   const bigRecord = on => {
     $('art').classList.toggle('big', on);
     document.documentElement.style.overflow = on ? 'hidden' : '';
-    $(on ? 'bigPlay' : 'bigOpen').focus();
+    $(on ? 'bigVeil' : 'bigOpen').focus();
   };
   $('bigOpen').onclick = () => bigRecord(true);
   $('bigX').onclick = $('bigVeil').onclick = () => bigRecord(false);
-  $('bigPlay').onclick = () => $('play').click();
-  audio.addEventListener('play', () => { $('bigPlay').textContent = 'pause'; });
-  audio.addEventListener('pause', () => { $('bigPlay').textContent = 'play'; });
   document.addEventListener('keydown', e => {
-    if (e.key === ' ' && isBig() && document.activeElement !== $('bigPlay')) {   // a hand on the record takes the keys away
+    if (e.key === ' ' && isBig() && document.activeElement !== $('bigX')) {
       e.preventDefault();
-      $('bigPlay').focus();
-      $('bigPlay').click();
+      $('play').click();
     }
     if (e.key !== 'Escape') return;
     closeClose();
@@ -748,7 +741,9 @@
     }
     filling = false;
   }
-  audio.addEventListener('play', () => { $('disc').classList.add('on'); turning(); fill(); });
+  audio.addEventListener('play', () => { $('disc').classList.add('on'); $('disc').classList.remove('asleep'); turning(); fill(); });
+  // (a song ending pauses for a moment before the next: only a pause that lasts closes the eyes)
+  audio.addEventListener('pause', () => setTimeout(() => $('disc').classList.toggle('asleep', audio.paused), 200));
   audio.addEventListener('seeked', () => { if (!drag) spin(); });
   // go to a moment of the album, staying as it was: playing if it was playing, paused if it was paused
   function goTo(at, settled) {
@@ -788,7 +783,7 @@
   };
   // the record under the hand: turning it scrubs through the sound, either way, in digital stutters
   $('disc').onpointermove = ev => {
-    if (!drag) return;
+    if (!drag) return void ($('platter').style.cursor = place(ev).r < R_IN ? 'pointer' : '');
     const now_deg = place(ev).deg;
     let d = now_deg - drag.deg;
     if (d > 180) d -= 360;
@@ -809,11 +804,11 @@
   $('disc').onpointerup = letGo;
   $('disc').onlostpointercapture = letGo;               // however the hand comes away
   $('disc').onpointercancel = () => { drag = null; dragged = false; spin(); };
-  // a click on the groove goes there; on scorsby, home (or, from the big record, back to the page); anywhere else, nothing
+  // a click on the groove goes there; on scorsby, plays or pauses; anywhere else, nothing
   $('disc').onclick = ev => {
     if (!album || dragged) return;
     const { r, deg } = place(ev);
-    if (r < R_IN) return void (isBig() ? bigRecord(false) : location.href = 'https://scorsby.us');   // scorsby
+    if (r < R_IN) return $('play').click();             // scorsby
     if (!onGroove(r)) return;
     const turned = $('cover').style.transform ? (parseFloat($('cover').style.transform.slice(7)) || 0) : 0;
     const theta = (((deg - turned) % 360 + 360) % 360) / 360;

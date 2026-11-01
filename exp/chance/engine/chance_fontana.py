@@ -1516,13 +1516,20 @@ def make_title(rng, log, tag, voices, taken):
         if c['path'] not in seen:
             seen.add(c['path'])
             clips.append(c)
-    names, places, freqs = [], [], []
+    names, places, freqs, tags, tongues, passed = [], [], [], [], [], []
     for c in clips:
         w, p, f = _clip_tokens(c)
         names += w
         places += p
         if f:
             freqs.append(f)
+        # what the stations say of themselves, and what was heard first and passed over
+        tags += [t.strip() for t in str(c.get('tags') or '').split(',')
+                 if 2 < len(t.strip()) <= 18 and re.fullmatch(r"[^\W\d_]+(?:[ -][^\W\d_]+)?", t.strip())]
+        tongues += [t.strip().title() for t in re.split(r'[,/]', str(c.get('language') or ''))
+                    if 2 < len(t.strip()) <= 16 and re.fullmatch(r"[^\W\d_ ]+", t.strip())]
+        for t in c.get('also_tried') or []:
+            passed += _clip_tokens({'station': t.get('what') or '', 'mode': 'net'})[0]
     techs = list(dict.fromkeys(TRACK_NOTES['tech']))
     for v in voices:
         t = data_token(v.first)
@@ -1536,14 +1543,17 @@ def make_title(rng, log, tag, voices, taken):
     def draw(bucket):
         return bucket.pop(int(rng.integers(len(bucket)))) if bucket else None
 
-    buckets = {'name': names[:], 'place': places[:], 'freq': freqs[:], 'tech': techs[:]}
-    order = ['name', 'tech', 'freq', 'place', 'name', 'tech', 'place', 'freq']
+    buckets = {'name': names[:], 'place': places[:], 'freq': freqs[:], 'tech': techs[:],
+               'tag': good(tags), 'tongue': list(dict.fromkeys(tongues)), 'passed': good(passed)}
+    order = ['name', 'tech', 'tag', 'passed', 'freq', 'place', 'tongue', 'name', 'tech', 'place', 'freq']
     want = int(rng.integers(3, 6))
     words = []
     for b in order:
         if len(words) >= want:
             break
-        if b in ('freq', 'place') and rng.random() < 0.35:
+        if b in ('freq', 'place', 'tag', 'tongue') and rng.random() < 0.35:
+            continue
+        if b == 'passed' and rng.random() < 0.8:          # now and then, something heard and let go
             continue
         w = draw(buckets[b])
         if w:

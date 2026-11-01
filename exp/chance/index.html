@@ -181,6 +181,28 @@
   #closeup button { position: absolute; top: -12px; left: -12px; width: 26px; height: 26px; border-radius: 50%;
     border: 2px solid #fff; background: #111; color: #fff; font: 700 15px/1 Arial, sans-serif; cursor: pointer; padding: 0; }
 
+  /* the big record, on a desktop with a mouse: the same record, larger, on the album's own paper, what's sounding beside it */
+  #bigOpen, #bigX, #bigPlay, #bigVeil { display: none; }
+  #bigOpen, #bigX { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; background: #111; color: #fff;
+    cursor: pointer; padding: 0; }
+  #bigOpen { position: absolute; right: 8px; bottom: 8px; padding: 5px; opacity: .7; }
+  #bigOpen:hover, #bigOpen:focus-visible { opacity: 1; }
+  #bigOpen svg { display: block; width: 100%; height: 100%; }
+  @media (hover: hover) and (pointer: fine) and (min-width: 901px) { #bigOpen { display: block; } }
+  #art.big { padding-top: 350px; --s: min(90vh, calc(100vw - 340px));
+    --l: calc((100vw - var(--s) - 300px) / 2); --t: calc((100vh - var(--s)) / 2); }
+  #art.big #bigOpen { display: none; }
+  #art.big #bigVeil { display: block; position: fixed; inset: 0; z-index: 10; background: var(--paper); cursor: zoom-out; }
+  #art.big #disc { position: fixed; z-index: 11; left: var(--l); top: var(--t); width: var(--s); height: var(--s); margin: 0;
+    box-shadow: 0 2px 30px rgba(0, 0, 0, .18); }
+  #art.big #needle b { width: 18px; height: 18px; margin: -18px 0 0 -9px; }
+  #art.big #bigX { display: block; position: fixed; z-index: 12; left: calc(var(--l) - 13px); top: calc(var(--t) - 13px);
+    font: 700 15px/1 Arial, sans-serif; }
+  #art.big #bigPlay { display: block; position: fixed; z-index: 11; left: calc(var(--l) + var(--s) + 24px); top: var(--t);
+    background: none; border: none; padding: 0; color: var(--link); font-family: inherit; font-size: 15px; font-weight: 700; line-height: 1.45; cursor: pointer; }
+  #art.big #hearing { position: fixed; z-index: 11; left: calc(var(--l) + var(--s) + 24px); top: calc(var(--t) + 34px);
+    width: 276px; max-height: calc(var(--s) - 34px); overflow: auto; margin: 0; font-size: 15px; }
+
   footer { text-align: center; color: rgba(255, 255, 255, .8); font-size: 11px; padding: 18px 0 40px; }
   footer a { color: #fff; }
 
@@ -394,7 +416,11 @@
           <img id="coverHub" draggable="false" alt="">
           <div id="needle"><b id="needleTip"></b></div>
           </div>
+          <button id="bigOpen" aria-label="See the record bigger" title="see the record bigger"><svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1h4v4M11 1 7 5M5 11H1V7M1 11l4-4"/></svg></button>
         </div>
+        <div id="bigVeil"></div>
+        <button id="bigX" aria-label="Back to the page">&times;</button>
+        <button id="bigPlay">play</button>
         <p id="hearing" hidden><b>now hearing</b><span id="hearList"></span></p>
         <div class="share">
           <button id="share"><svg viewBox="0 0 15 13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5.5v6.8h12.2V5.5"/><path d="M7.1 1v7.6"/><path d="M4.2 3.8 7.1 1l2.9 2.8"/></svg><span>Share / Embed</span></button>
@@ -639,7 +665,29 @@
   }
   const closeClose = () => $('closeup').classList.remove('open');
   $('closeup').onclick = closeClose;
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeClose(); });
+  // the big record is the same record, moved and enlarged, so it goes on turning and sounding through all of this.
+  // the keys rest on its play button, so space plays and pauses
+  const isBig = () => $('art').classList.contains('big');
+  const bigRecord = on => {
+    $('art').classList.toggle('big', on);
+    document.documentElement.style.overflow = on ? 'hidden' : '';
+    $(on ? 'bigPlay' : 'bigOpen').focus();
+  };
+  $('bigOpen').onclick = () => bigRecord(true);
+  $('bigX').onclick = $('bigVeil').onclick = () => bigRecord(false);
+  $('bigPlay').onclick = () => $('play').click();
+  audio.addEventListener('play', () => { $('bigPlay').textContent = 'pause'; });
+  audio.addEventListener('pause', () => { $('bigPlay').textContent = 'play'; });
+  document.addEventListener('keydown', e => {
+    if (e.key === ' ' && isBig() && document.activeElement !== $('bigPlay')) {   // a hand on the record takes the keys away
+      e.preventDefault();
+      $('bigPlay').focus();
+      $('bigPlay').click();
+    }
+    if (e.key !== 'Escape') return;
+    closeClose();
+    if (isBig()) bigRecord(false);
+  });
   // the groove, as publish_album.py draws it: from R_OUT in to R_IN, clockwise from the top, K turns in all
   const R_OUT = 0.47, R_IN = 0.11, DUTY = 0.9;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;      // then the needle travels round instead
@@ -761,11 +809,11 @@
   $('disc').onpointerup = letGo;
   $('disc').onlostpointercapture = letGo;               // however the hand comes away
   $('disc').onpointercancel = () => { drag = null; dragged = false; spin(); };
-  // a click on the groove goes there; on scorsby, home; anywhere else, nothing
+  // a click on the groove goes there; on scorsby, home (or, from the big record, back to the page); anywhere else, nothing
   $('disc').onclick = ev => {
     if (!album || dragged) return;
     const { r, deg } = place(ev);
-    if (r < R_IN) return void (location.href = 'https://scorsby.us');   // scorsby: home
+    if (r < R_IN) return void (isBig() ? bigRecord(false) : location.href = 'https://scorsby.us');   // scorsby
     if (!onGroove(r)) return;
     const turned = $('cover').style.transform ? (parseFloat($('cover').style.transform.slice(7)) || 0) : 0;
     const theta = (((deg - turned) % 360 + 360) % 360) / 360;

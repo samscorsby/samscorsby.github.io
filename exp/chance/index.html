@@ -129,7 +129,8 @@
 
   #art img { width: 350px; height: 350px; display: block; background: #eee; cursor: zoom-in; }
   /* the cover is a record: it turns as the album plays, under a needle that stays at the top; scorsby stays still */
-  #disc { position: relative; width: 350px; height: 350px; overflow: hidden; cursor: pointer; touch-action: manipulation; }
+  #disc { position: relative; width: 350px; height: 350px; overflow: hidden; cursor: grab; touch-action: pan-y; user-select: none; }
+  #disc:active { cursor: grabbing; }
   #art #disc img { width: 100%; height: 100%; margin: 0; background: none; cursor: inherit; }
   #art #disc #cover { clip-path: circle(49.8% at 50% 50%); will-change: transform; }
   #art #disc #coverHub { position: absolute; inset: 0; clip-path: circle(9.8% at 50% 50%); pointer-events: none; cursor: zoom-in; }
@@ -378,7 +379,7 @@
       </div>
 
       <div id="art">
-        <div id="disc" title="click the groove to play from there">
+        <div id="disc" title="click the groove to go there, or turn the record by hand">
           <img id="cover" alt="Album cover: the album drawn as a record, one groove spiralling in from the edge, its songs one after another">
           <img id="coverHub" alt="">
           <div id="needle"><i id="needleLine"></i><b id="needleTip"></b></div>
@@ -561,41 +562,76 @@
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;      // then the needle travels round instead
   const totalSecs = () => album.tracks.reduce((n, t) => n + t.duration, 0);
   const turns = () => Math.min(26, Math.max(10, 3.1 * Math.sqrt(totalSecs() / 60)));
-  function spin() {
+  const albumTime = () => album.tracks.slice(0, cur).reduce((n, t) => n + t.duration, 0) + (audio.currentTime || 0);
+  function spin(at) {
     if (!album) return;
-    const done = album.tracks.slice(0, cur).reduce((n, t) => n + t.duration, 0) + (audio.currentTime || 0);
-    const K = turns(), s = Math.min(K, done / totalSecs() * K), deg = (s % 1) * 360;
+    const K = turns(), s = Math.min(K, (at === undefined ? albumTime() : at) / totalSecs() * K), deg = (s % 1) * 360;
     const r = R_OUT - (R_OUT - R_IN) / (K + DUTY) * (s + DUTY / 2);    // the middle of the groove, here
     $('cover').style.transform = still ? '' : `rotate(${-deg}deg)`;
     $('needle').style.transform = still ? `rotate(${deg}deg)` : '';
     $('needleLine').style.height = (50 - r * 100 - 3) + '%';
     $('needleTip').style.top = (50 - r * 100) + '%';
   }
-  const turning = () => { spin(); if (!audio.paused && !audio.ended) requestAnimationFrame(turning); };
+  let drag = null, dragged = false;                     // a hand on the record
+  const turning = () => { if (!drag) spin(); if (!audio.paused && !audio.ended) requestAnimationFrame(turning); };
   audio.addEventListener('play', () => { $('disc').classList.add('on'); turning(); });
-  audio.addEventListener('seeked', spin);
-  // a click on the groove plays from there; anywhere else (scorsby, the corners), the close-up as before
-  $('disc').onclick = ev => {
-    if (!album) return;
-    const box = $('disc').getBoundingClientRect();
-    const dx = (ev.clientX - box.left) / box.width - 0.5, dy = (ev.clientY - box.top) / box.height - 0.5;
-    const r = Math.hypot(dx, dy);
-    if (r < R_IN || r > R_OUT) return closeup($('cover').src, $('cover').alt);
-    const turned = $('cover').style.transform ? (parseFloat($('cover').style.transform.slice(7)) || 0) : 0;
-    const theta = (((Math.atan2(dx, -dy) * 180 / Math.PI - turned) % 360 + 360) % 360) / 360;
-    const K = turns(), u = (R_OUT - r) / ((R_OUT - R_IN) / (K + DUTY)) - theta;
-    const at = Math.min(K, Math.max(0, Math.floor(u) + theta)) / K * totalSecs();
+  audio.addEventListener('seeked', () => { if (!drag) spin(); });
+  // go to a moment of the album, staying as it was: playing if it was playing, paused if it was paused
+  function goTo(at, settled) {
     let k = 0, left = at;
     while (k < album.tracks.length - 1 && left >= album.tracks[k].duration) left -= album.tracks[k++].duration;
-    if (k === cur && audio.src) {
-      audio.currentTime = left;
-      audio.play().catch(() => {});
-    } else {
-      load(k, true);
-      audio.addEventListener('loadedmetadata', () => { audio.currentTime = left; }, { once: true });
-    }
+    if (k === cur && audio.src) { audio.currentTime = left; return; }
+    if (!settled) return;                               // (a hand still moving stays within the song)
+    const playing = !audio.paused;
+    load(k, playing);
+    if (!playing) { audio.preload = 'auto'; audio.load(); }
+    audio.addEventListener('loadedmetadata', () => { audio.currentTime = left; }, { once: true });
+  }
+  const place = ev => {
+    const box = $('disc').getBoundingClientRect();
+    const dx = (ev.clientX - box.left) / box.width - 0.5, dy = (ev.clientY - box.top) / box.height - 0.5;
+    return { r: Math.hypot(dx, dy), deg: Math.atan2(dx, -dy) * 180 / Math.PI };
+  };
+  const onGroove = r => r >= R_IN && r <= R_OUT;
+  $('disc').onpointerdown = ev => {
+    dragged = false;
+    if (!album || !onGroove(place(ev).r)) return;
+    drag = { deg: place(ev).deg, at: albumTime(), last: 0 };
+    $('disc').setPointerCapture(ev.pointerId);
+  };
+  // the record under the hand: turning it scrubs through the sound, either way, in digital stutters
+  $('disc').onpointermove = ev => {
+    if (!drag) return;
+    let d = place(ev).deg - drag.deg;
+    if (d > 180) d -= 360;
+    if (d < -180) d += 360;
+    if (!dragged && Math.abs(d) < 3) return;
+    dragged = true;
+    drag.deg += d;
+    drag.at = Math.min(totalSecs() - 0.1, Math.max(0, drag.at - d / 360 / turns() * totalSecs()));
     $('disc').classList.add('on');
-    spin();
+    spin(drag.at);
+    const now = performance.now();
+    if (now - drag.last > 70) { drag.last = now; goTo(drag.at, false); }
+  };
+  const letGo = () => {
+    if (drag && dragged) goTo(drag.at, true);
+    drag = null;
+  };
+  $('disc').onpointerup = letGo;
+  $('disc').onpointercancel = () => { drag = null; dragged = false; spin(); };
+  // a click on the groove goes there; anywhere else (scorsby, the corners), the close-up as before
+  $('disc').onclick = ev => {
+    if (!album || dragged) return;
+    const { r, deg } = place(ev);
+    if (!onGroove(r)) return closeup($('cover').src, $('cover').alt);
+    const turned = $('cover').style.transform ? (parseFloat($('cover').style.transform.slice(7)) || 0) : 0;
+    const theta = (((deg - turned) % 360 + 360) % 360) / 360;
+    const K = turns(), u = (R_OUT - r) / ((R_OUT - R_IN) / (K + DUTY)) - theta;
+    const at = Math.min(K, Math.max(0, Math.floor(u) + theta)) / K * totalSecs();
+    $('disc').classList.add('on');
+    goTo(at, true);
+    spin(at);
   };
   document.querySelector('.bandphoto').onclick = () => closeup(document.querySelector('.bandphoto').src, 'Scorsby Records');
 

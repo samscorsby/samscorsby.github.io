@@ -43,3 +43,12 @@ ISA003 Loop 4651 Soul
 3. g频道 Soul Mosaic 12030
 4. Maze US Tonga Mosaic Szil)
 5. Russian 5004.5 Loop
+
+ISA004 10136 Geromic FT4 Edmond
+1. Chile data Rule 165 14074 FT8
+2. Edmond About 1947 Morley Nariz hydrs
+3. 1947 There Hénon Jacnoon
+4. data Germany LFSR 0x6439 LFSR 0x563 FT8
+5. Fa 10136 a->cc
+6. 17890 TN Rudin-Shapiro
+7. Stern's diatomic FT4 Vanuatu

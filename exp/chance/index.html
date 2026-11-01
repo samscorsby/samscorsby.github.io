@@ -654,12 +654,13 @@
   // the record under the hand: turning it scrubs through the sound, either way, in digital stutters
   $('disc').onpointermove = ev => {
     if (!drag) return;
-    let d = place(ev).deg - drag.deg;
+    const now_deg = place(ev).deg;
+    let d = now_deg - drag.deg;
     if (d > 180) d -= 360;
     if (d < -180) d += 360;
     if (!dragged && Math.abs(d) < 3) return;
     dragged = true;
-    drag.deg += d;
+    drag.deg = now_deg;
     drag.at = Math.min(totalSecs() - 0.1, Math.max(0, drag.at - d / 360 / turns() * totalSecs()));
     $('disc').classList.add('on');
     spin(drag.at);
@@ -672,12 +673,12 @@
   };
   $('disc').onpointerup = letGo;
   $('disc').onpointercancel = () => { drag = null; dragged = false; spin(); };
-  // a click on the groove goes there; on scorsby, the close-up; anywhere else, nothing
+  // a click on the groove goes there; on scorsby, home; anywhere else, nothing
   $('disc').onclick = ev => {
     if (!album || dragged) return;
     const { r, deg } = place(ev);
-    if (r > 0.5) return;                                // outside the round of the record: nothing
-    if (!onGroove(r)) return r < R_IN ? closeup($('cover').src, $('cover').alt) : undefined;
+    if (r < R_IN) return void (location.href = 'https://scorsby.us');   // scorsby: home
+    if (!onGroove(r)) return;
     const turned = $('cover').style.transform ? (parseFloat($('cover').style.transform.slice(7)) || 0) : 0;
     const theta = (((deg - turned) % 360 + 360) % 360) / 360;
     const K = turns(), u = (R_OUT - r) / ((R_OUT - R_IN) / (K + DUTY)) - theta;

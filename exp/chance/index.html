@@ -543,7 +543,7 @@
     const box = $('hearing'), t = audio.currentTime;
     // what can be heard: too quiet a layer is left out
     const on = (layers[cur] || []).filter(l => l.t <= t && t < l.end && l.db >= -36).sort((x, y) => y.db - x.db);
-    const lines = [...new Set(on.map(l => [l.src, l.how].filter(Boolean).join(' · ')).filter(Boolean))];
+    const lines = audio.paused ? [] : [...new Set(on.map(l => [l.src, l.how].filter(Boolean).join(' · ')).filter(Boolean))];
     box.hidden = false;                                 // it stays up through pauses and silences
     // each sound comes and goes by itself; a line still sounding isn't touched
     const list = $('hearList'), shown = [...list.children].filter(el => !el.dataset.leaving);
@@ -562,6 +562,7 @@
   }
   audio.addEventListener('timeupdate', hearing);
   audio.addEventListener('pause', hearing);
+  audio.addEventListener('play', hearing);
   fetch('score.json', { cache: 'no-cache' }).then(r => r.json()).then(sc => readScore(sc.songs || [])).catch(() => {});
 
   function load(i, play) {

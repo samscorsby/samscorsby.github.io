@@ -1585,7 +1585,7 @@ def make_piece(rng, duration, channels, log, allowed, form, pool, track_no, prog
         whole = level(mix)
         opens, closes = level(mix[:, :int(4 * SR)]) / whole, level(mix[:, -int(6 * SR):]) / whole
         p_cold = 0.85 if opens < 0.5 else (0.45 if opens > 1.0 else 0.6)
-        p_fade = 0.2 if closes < 0.5 else (0.7 if closes >= 1.0 else 0.6)
+        p_fade = 0.2 if closes < 0.5 else (0.55 if closes >= 1.0 else 0.6)
         log.append(f"edges heard: the opening at {opens:.2f} of the song's level, the close at {closes:.2f}; "
                    f"cold start {p_cold:.0%}, long fade {p_fade:.0%}")
         if rng.random() < p_cold:
@@ -1608,7 +1608,9 @@ def make_piece(rng, duration, channels, log, allowed, form, pool, track_no, prog
             end = END_PREF
         END_PREF = None
         if end != "hard stop":
-            end, fout = "long fade", int(min(total * 0.3, SR * log_uniform(rng, 12.0, 45.0)))
+            # 12-35 s, leaning to the short end; now and then as long as 45
+            secs = log_uniform(rng, 12.0, 35.0) if rng.random() < 0.9 else float(rng.uniform(35.0, 45.0))
+            end, fout = "long fade", int(min(total * 0.3, SR * secs))
         else:
             fout = int(0.008 * SR)
             if END_AT is not None and mix.shape[1] * 0.75 < END_AT < mix.shape[1]:

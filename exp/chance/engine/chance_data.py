@@ -101,6 +101,7 @@ FILE_POOL = []                    # filled in main(): files whose bytes can be r
 TITLER = None                     # optional: (rng, log, tag, voices, taken) -> a title for each track
 ENDINGS = False                   # True: beginnings and endings vary by chance (cold starts, hard stops)
 END_AT = None                     # a form may name the sample a hard stop should land on (a bar line)
+GARBLE = 0.0                      # the chance a cross-fade breaks up like a failing signal instead of fading smoothly
 PAN_WIDTH = 1.0                   # how far from the centre a voice may sit: 1 = anywhere, hard left to hard right;
                                   # less draws every voice in towards the middle (kinder on headphones)
 END_PREF = None                   # a form may suggest its ending: "fade out", "quick fade", "hard stop"
@@ -1291,6 +1292,34 @@ def envelope(rng, n, fade_range=(0.3, 10.0)):
     return env
 
 
+def garbled(rng, x, env, fi, fo):
+    """a fade as a failing radio signal: over each fade the sound comes and goes in hard digital blocks
+    (kept more often the further into the sound), some repeating a stuck grain, some crushed to a few bits."""
+    x, env = x.copy(), env.copy()
+    n = len(env)
+    for a, b, rising in ((0, fi, True), (n - fo, n, False)):
+        at = a
+        while at < b:
+            m = min(b - at, int(SR * log_uniform(rng, 0.004, 0.09)))
+            p = (at - a) / max(1, b - a)
+            if not rising:
+                p = 1.0 - p
+            if rng.random() > p:
+                env[at:at + m] = 0.0                    # dropped out
+            else:
+                env[at:at + m] = 1.0
+                kind = rng.random()
+                if kind < 0.3:                          # a stuck grain
+                    g = max(16, m // int(rng.integers(2, 6)))
+                    grain = x[at:at + g].copy()
+                    x[at:at + m] = np.resize(grain, m)
+                elif kind < 0.6:                        # crushed to a few bits
+                    q = float(2 ** int(rng.integers(2, 6)))
+                    x[at:at + m] = np.round(x[at:at + m] * q) / q
+            at += m
+    return x, env
+
+
 def steady(n, fade_s, fade_in=None, fade_out=None):
     """a steady level with raised-cosine fades at both ends (for beds and continuous layers);
     the two ends may be given their own lengths (a hard cut in, a slow fade out ...)."""
@@ -1505,6 +1534,12 @@ def make_piece(rng, duration, channels, log, allowed, form, pool, track_no, prog
             float(np.clip(loud(pos) + rng.normal(0, 5.0), -46.0, -3.0))
         env = steady(n, hint['fade'], hint.get('fade_in'), hint.get('fade_out')) if 'fade' in hint \
             else envelope(rng, n)
+        if GARBLE and 'fade' in hint and rng.random() < GARBLE:
+            fi = int(min(n // 2, hint.get('fade_in', hint['fade']) * SR))
+            fo = int(min(n // 2, hint.get('fade_out', hint['fade']) * SR))
+            if fi > 0.05 * SR or fo > 0.05 * SR:
+                x, env = garbled(rng, x, env, fi if fi > 0.05 * SR else 0, fo if fo > 0.05 * SR else 0)
+                steps.append("cross-fades garbled, like a failing signal")
         if 'curve' in hint:                        # a gain shape across the layer, in dB
             env = env * 10 ** (curve_at(n, hint['curve']) / 20)
         g = env * 10 ** (amp_db / 20)
@@ -1555,16 +1590,17 @@ def make_piece(rng, duration, channels, log, allowed, form, pool, track_no, prog
                     END_AT -= first
                 begin = f"cold start on the first sound ({first / SR:.1f} s of silence cut)"
         else:                                          # a fade-in worth the name: slow emergence
-            fin = int(min(total * 0.3, SR * log_uniform(rng, 6.0, 30.0)))
+            # usually 6-30 s; about one in three may take far longer
+            fin = int(min(total * 0.3, SR * log_uniform(rng, 6.0, 90.0 if rng.random() < 0.35 else 30.0)))
             begin = "slow fade in"
-        end = str(rng.choice(["fade out", "quick fade", "hard stop"], p=[0.4, 0.25, 0.35]))
+        end = str(rng.choice(["fade out", "hard stop"], p=[0.6, 0.4]))     # a long fade, or none at all
         global END_PREF
         if END_PREF and rng.random() < 0.75:          # the form's arc suggests how it should end
             end = END_PREF
         END_PREF = None
-        if end == "quick fade":
-            fout = int(min(total * 0.25, SR * rng.uniform(0.3, 2.5)))
-        elif end == "hard stop":
+        if end != "hard stop":
+            end, fout = "long fade", int(min(total * 0.3, SR * log_uniform(rng, 12.0, 45.0)))
+        else:
             fout = int(0.008 * SR)
             if END_AT is not None and mix.shape[1] * 0.75 < END_AT < mix.shape[1]:
                 mix = mix[:, :int(END_AT)].copy()           # stop on the form's bar line

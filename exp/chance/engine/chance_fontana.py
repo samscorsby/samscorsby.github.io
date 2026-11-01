@@ -136,7 +136,7 @@ LENGTHS, BEGINNINGS AND ENDINGS
     Most tracks run 2-5 minutes (typical length --median-dur, default 210 s); long ones
     are rare, about 1 in 11 past 8 minutes. A track starts cold on its
     first sound (about 6 in 10) or emerges over a slow 6-30 s fade, and ends with a long
-    fade, a quick fade, or a hard stop (on a bar line,
+    fade or a hard stop (on a bar line,
     in the loops form) -- each by chance.
 
 TITLES
@@ -1112,6 +1112,7 @@ def gather_mics(count, radio_dir, workers=4):
 
 ORCASOUND_FEEDS = "https://live.orcasound.net/api/json/feeds"
 ORCASOUND_AUDIO = "https://{bucket}.s3.amazonaws.com/{node}"
+MBARI_STREAM = "https://shoutcast.mbari.org/pacific-soundscape"    # 900 m down in Monterey Bay, a few minutes behind
 HYDRO_BAND = (143000.0, 144000.0)       # kHz: the sea sits above the archive
 # live natural radio: VLF receivers listening below 22 kHz, where lightning crackles (sferics) and,
 # bent by the ionosphere, whistlers fall. shared live through dk7fc.info: (stream, where, who runs it)
@@ -1184,6 +1185,8 @@ def gather_hydrophones(count, radio_dir, workers=4):
         print(f"hydrophones: the list is unreachable ({e})")
         return 0
     feeds = [f for f in feeds if f.get('visible') and f.get('node_name') and f.get('bucket')]
+    feeds.append({'name': "MBARI deep sea", 'node_name': 'mbari_mars', 'stream': MBARI_STREAM, 'sea': "Monterey Bay",
+                  'credit': "MBARI (mbari.org)", 'link': "https://www.mbari.org/project/soundscape-listening-room/"})
     order = [feeds[i] for i in rng.permutation(len(feeds))]
     print(f"gathering {count} clip(s) from {len(feeds)} live hydrophones (Orcasound, the Salish Sea)")
 
@@ -1194,7 +1197,10 @@ def gather_hydrophones(count, radio_dir, workers=4):
         f, secs = job
         utc = datetime.datetime.now(datetime.timezone.utc)
         try:
-            x, rate = record_hls(ffmpeg, ORCASOUND_AUDIO.format(bucket=f['bucket'], node=f['node_name']), secs)
+            if f.get('stream'):
+                x, rate = record_stream(ffmpeg, f['stream'], secs, lead=2.0)
+            else:
+                x, rate = record_hls(ffmpeg, ORCASOUND_AUDIO.format(bucket=f['bucket'], node=f['node_name']), secs)
             return f, utc, x, rate, None
         except Exception as e:
             return f, utc, None, None, str(e)[:50]
@@ -1202,6 +1208,7 @@ def gather_hydrophones(count, radio_dir, workers=4):
     def accept(res, got):
         f, utc, x, rate, err = res
         name = str(f.get('name') or f['node_name']).strip()
+        sea = f.get('sea', "the Salish Sea")
         label = name[:44].encode('ascii', 'replace').decode()
         if err is not None:
             print(f"  .. {label}: no ({err})")
@@ -1215,12 +1222,12 @@ def gather_hydrophones(count, radio_dir, workers=4):
         fq = lo + (int.from_bytes(f['node_name'].encode('utf-8')[:6].ljust(6, b'.'), 'big') % int(hi - lo))
         lon, lat = (f.get('location_point') or {}).get('coordinates', [None, None]) \
             if isinstance(f.get('location_point'), dict) else (None, None)
-        meta = {'freq_khz': float(fq), 'mode': 'hydro', 'station': f"{name} hydrophone (the Salish Sea)",
-                'kind': 'hydrophone', 'band': 'hydrophone', 'location': f"{name}, the Salish Sea",
+        meta = {'freq_khz': float(fq), 'mode': 'hydro', 'station': f"{name} hydrophone ({sea})",
+                'kind': 'hydrophone', 'band': 'hydrophone', 'location': f"{name}, {sea}",
                 'gps': [lat, lon] if lat is not None else None,
                 'utc': utc.isoformat(timespec='seconds'), 'seconds': round(len(x) / rate, 2), 'rate': rate,
-                'url': f"https://live.orcasound.net/listen/{f.get('slug') or f['node_name']}",
-                'credit': "Orcasound (orcasound.net), CC BY-NC-SA 4.0",
+                'url': f.get('link') or f"https://live.orcasound.net/listen/{f.get('slug') or f['node_name']}",
+                'credit': f.get('credit', "Orcasound (orcasound.net), CC BY-NC-SA 4.0"),
                 'listened': {'flatness': round(flat, 3), 'peak_db': round(peak, 1), 'envelope_cv': round(cv, 3)}}
         save_clip(radio_dir, x, rate, meta, utc)
         print(f"  [{got + 1}/{count}] {label} -- live, underwater ({len(x) / rate:.0f} s)")
@@ -2854,6 +2861,8 @@ def main():
     ap.add_argument('--half-life', type=float, default=2.0, metavar='DAYS',
                     help='prefer recently gathered clips: one this many days old counts half as much as '
                          "today's (default 2; 0 = no preference)")
+    ap.add_argument('--garble', type=float, default=0.35, metavar='P',
+                    help='the chance each cross-fade breaks up like a failing radio signal (default 0.35)')
     ap.add_argument('--stereo-width', type=float, default=0.6, metavar='W',
                     help='how far from the centre a voice may sit (1 = hard left to hard right; default 0.6, '
                          'kinder on headphones). a pure day takes no such care: anywhere at all')
@@ -2868,6 +2877,7 @@ def main():
     args = ap.parse_args()
 
     os.makedirs(args.radio_dir, exist_ok=True)
+    cd.GARBLE = float(np.clip(args.garble, 0.0, 1.0))
     cd.PAN_WIDTH = 1.0 if PURE else float(np.clip(args.stereo_width, 0.0, 1.0))
     try:
         lo, _, hi = args.palette_size.partition('-')

@@ -548,9 +548,11 @@ def main():
         sources.append("natural radio: live VLF receivers kept by Stefan Schäfer (DK7FC, Heidelberg), Renato Romero "
                        "(vlf.it, Cumiana), Jonathan Rizzo (Pennsylvania) and the Leon Mow Radio Observatory "
                        "(Victoria), shared through dk7fc.info")
-    if any('live hydrophone' in h for h in heard):
+    if any('Monterey Bay' in h for h in heard):
+        sources.append("deep-sea hydrophone: MBARI (mbari.org), live from Monterey Bay")
+    if any('Salish Sea' in h for h in heard):
         # their licence is share-alike: the songs that use them are shared on the same terms
-        wet = [t['n'] for t, w in zip(tracks, wavs) if 'live hydrophone' in
+        wet = [t['n'] for t, w in zip(tracks, wavs) if 'Salish Sea' in
                (open(os.path.splitext(w)[0] + '.score.txt', encoding='utf-8').read()
                 if os.path.exists(os.path.splitext(w)[0] + '.score.txt') else '')]
         sources.append("hydrophones: Orcasound (orcasound.net), live from the Salish Sea, CC BY-NC-SA 4.0"

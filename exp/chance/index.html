@@ -569,10 +569,16 @@
       return { t: +m[1], end: +m[1] + +m[2], db: +m[3], src, how: how.join(' · ') };
     }).filter(Boolean));
   }
-  function hearing() {
-    const box = $('hearing'), t = audio.currentTime;
+  // what's sounding at a moment of song k (the one playing, or the one under a hand turning the record)
+  function hearing(k, t) {
+    if (typeof k !== 'number') {                        // (called by the player itself)
+      if (drag && dragged) return;
+      k = cur;
+      t = audio.currentTime;
+    }
+    const box = $('hearing');
     // what can be heard: too quiet a layer is left out
-    const on = (layers[cur] || []).filter(l => l.t <= t && t < l.end && l.db >= -36).sort((x, y) => y.db - x.db);
+    const on = (layers[k] || []).filter(l => l.t <= t && t < l.end && l.db >= -36).sort((x, y) => y.db - x.db);
     const lines = [...new Set(on.map(l => [l.src, l.how].filter(Boolean).join(' · ')).filter(Boolean))];
     box.hidden = false;                                 // it stays up through pauses and silences
     // each sound comes and goes by itself; a line still sounding isn't touched
@@ -814,6 +820,7 @@
     });
     $('nowTitle').textContent = album.tracks[k].title;
     $('nowTime').textContent = fmt(left) + ' / ' + fmt(album.tracks[k].duration);
+    hearing(k, left);
     const now = performance.now();
     if (now - drag.last > 70) { drag.last = now; goTo(drag.at, false); }
   };

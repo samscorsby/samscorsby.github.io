@@ -742,7 +742,15 @@
     }
     filling = false;
   }
-  audio.addEventListener('play', () => { $('disc').classList.add('on'); $('disc').classList.remove('asleep'); turning(); fill(); });
+  audio.addEventListener('play', () => {
+    $('disc').classList.add('on');
+    $('disc').classList.remove('asleep');
+    // the song playing is marked in the list, however it was started (the first is ready before anyone asks)
+    document.querySelectorAll('#tracks tr').forEach((r, k) => r.classList.toggle('current', k === cur));
+    paint();
+    turning();
+    fill();
+  });
   // the eyes close with a pause, but not when a song, or the album, simply comes to its end
   audio.addEventListener('pause', () => { if (!audio.ended) $('disc').classList.add('asleep'); });
   audio.addEventListener('seeked', () => { if (!drag) spin(); });

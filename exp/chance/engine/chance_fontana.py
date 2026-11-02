@@ -1738,7 +1738,8 @@ def baseline_score(rng, total, cap, log, allowed):
     W = 100
     col = lambda t: int(min(W - 1, max(0, t / secs * W)))
     if RADIO_CLIPS and radio in allowed:
-        lanes = int(rng.choice([1, 2, 3], p=[0.1, 0.3, 0.6]))     # mostly three; one clip at a time only rarely
+        # mostly three; one clip at a time only rarely; now and then four or five
+        lanes = int(rng.choice([1, 2, 3, 4, 5], p=[0.09, 0.27, 0.54, 0.07, 0.03]))
         bed_db = float(rng.uniform(-20.0, -12.0))
         per_lane = bed_db - 10.0 * math.log10(lanes)
         log.append(f"baseline: {lanes} lane(s) of radio across the whole track, around {bed_db:.0f} dB, "
@@ -2180,7 +2181,7 @@ def fusion_score(rng, total, cap, log, allowed):
     main = tech[int(rng.choice(len(tech), p=w / w.sum()))]
     rest = [t for t in tech if t != main]
     second = rest[int(rng.integers(len(rest)))] if rest and rng.random() < 0.5 else None
-    lanes = int(rng.integers(1, 3))
+    lanes = int(rng.choice([1, 2, 3, 4], p=[0.46, 0.44, 0.07, 0.03]))     # one or two; now and then three or four
     lane_tech = [main] + [second or main] * (lanes - 1)
     p_plain = float(rng.uniform(0.0, 0.2)) if radio in allowed else 0.0
     p_same = float(rng.uniform(0.7, 0.95))

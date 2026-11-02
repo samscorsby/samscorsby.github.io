@@ -1,4 +1,4 @@
-// the little scorsby in the browser tab: now and then it winks at you, and while you're away it falls asleep
+// the little scorsby in the browser tab: now and then it winks at you, and on the home page it falls asleep while you're away
 (function () {
   if (window.__tabFace) return; window.__tabFace = true;
   const link = document.querySelector('link[rel~="icon"]');
@@ -46,6 +46,7 @@
     }, 25000 + Math.random() * 35000);
   }
   document.addEventListener('visibilitychange', () => {
+    if (!/^\/(index\.html)?$/.test(location.pathname)) return; // (scorsby only sleeps at home)
     clearTimeout(backT);
     if (document.hidden) { if (!/scorsby is sleeping|welcome back/.test(document.title)) title = document.title; if (SLEEP) set(SLEEP); document.title = 'scorsby is sleeping...'; return; }
     wake(); document.title = 'welcome back :-)';

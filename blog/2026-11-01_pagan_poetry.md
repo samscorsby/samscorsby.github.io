@@ -41,4 +41,4 @@ vine meshes
 
 
 
-Wakáŋ Táŋka
+wakáŋ táŋka

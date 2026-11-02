@@ -2875,5 +2875,5 @@ export const BLOG_SNIPPETS = [
   "s aaaaaaah saw aaaa sa a as was aAaaAsa was a a was A \u00e0\u00c0",
   "little yellow bird",
   "vine meshes",
-  "Wak\u00e1\u014b T\u00e1\u014bka"
+  "wak\u00e1\u014b t\u00e1\u014bka"
 ];

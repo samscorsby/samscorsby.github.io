@@ -153,11 +153,13 @@ function wrapTextNodes(element) {
 function startTwitterEffect(container = document) {
   const twitterDivs = container.querySelectorAll('.twitter-text');
   twitterDivs.forEach(div => wrapTextNodes(div));
+  const bits = new Map([...twitterDivs].map(div => [div, div.querySelectorAll('.jitter-bit, img')]));
+  const inView = new Set();
 
   // The core logic extracted so we can call it immediately
-  function applyJitter() {
-    twitterDivs.forEach(div => {
-      div.querySelectorAll('.jitter-bit, img').forEach(el => {
+  function applyJitter(divs) {
+    divs.forEach(div => {
+      bits.get(div).forEach(el => {
         const x = (Math.random() - 0.5) * 4; // Range of 3px
         const y = (Math.random() - 0.5) * 4;
         const rotate = (Math.random() - 0.5) * 25; // Range of 8 degrees
@@ -167,12 +169,14 @@ function startTwitterEffect(container = document) {
     });
   }
 
-  // 1. Run it immediately
-  applyJitter();
+  // 1. Run it immediately, then only for the words on screen
+  applyJitter(twitterDivs);
+  const watcher = new IntersectionObserver((entries) => entries.forEach((e) => (e.isIntersecting ? inView.add(e.target) : inView.delete(e.target))));
+  twitterDivs.forEach(div => watcher.observe(div));
 
   // 2. Then set the interval to keep it twitching
   // 60-80ms is the sweet spot for a "frantic" but readable twitch
-  setInterval(applyJitter, 60);
+  setInterval(() => applyJitter(inView), 60);
 }
 
 startTwitterEffect();

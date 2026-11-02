@@ -2864,6 +2864,7 @@ export const BLOG_SNIPPETS = [
   "the challenge, and perhaps the opportunity, of ai is the same as it has always been: to remain present, to make meaningful choices, and to participate consciously in the endless improvisation of creation.",
   "in a culture increasingly defined by limitless generation, creation and attention become inseparable. the machine can generate possibilities, but only attention reveals what is worth carrying forward. peace, love, and joy may begin there: not in conquering complexity, but in participating consciously within it, in the eternal romance between the witness and the witnessed.",
   "pagan poetry",
+  "christogram",
   "blind boy boatman",
   "beltane southwest",
   "generations in a fishbowll",

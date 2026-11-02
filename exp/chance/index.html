@@ -671,7 +671,7 @@
     document.documentElement.style.overflow = on ? 'hidden' : '';
     $(on ? 'bigVeil' : 'bigOpen').focus();
   };
-  $('bigOpen').onclick = () => bigRecord(true);
+  $('bigOpen').onclick = ev => { ev.stopPropagation(); bigRecord(true); };   // (it sits on the record: not a click on the groove)
   $('bigX').onclick = $('bigVeil').onclick = () => bigRecord(false);
   document.addEventListener('keydown', e => {
     if (e.key === ' ' && isBig() && document.activeElement !== $('bigX')) {

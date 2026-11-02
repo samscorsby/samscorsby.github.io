@@ -283,14 +283,14 @@ jobs:
       - name: Make the album
         if: env.MAKE == 'true'
         working-directory: exp/chance/engine
-        # mostly 5-7 songs; now and then more, up to 12 (about once a month). each song draws on a
+        # mostly 5-7 songs; now and then more, up to 13 (12 or 13 about once a month). each song draws on a
         # palette of the day's clips, as few as 3 that belong together; how many it may gather is the
         # album's own draw: up to 8 most days, up to 20 sometimes, up to 60 now and then, and once in a
         # while up to 180, so a song of a few close sounds can sit beside a collage of the whole day.
         # a pure day keeps the static, uses no palette (every clip may sit by any other), and follows
         # only the Fontana-style score.
         run: |
-          N=$(python -c "import random; print(random.choices(range(5, 13), weights=[26, 28, 24, 9, 5, 3, 2, 3])[0])")
+          N=$(python -c "import random; print(random.choices(range(5, 14), weights=[26, 28, 24, 9, 5, 3, 2, 2, 2])[0])")
           PAL=$(python -c "import random; print(random.choices(['3-8', '3-20', '3-60', '3-180'], weights=[55, 25, 13, 7])[0])")
           GARBLE=$(python -c "import random; print(random.choice([0, 0.15, 0.35, 0.6]))")   # how often cross-fades break up
           echo "$N songs, palettes of $PAL clips, garble $GARBLE"

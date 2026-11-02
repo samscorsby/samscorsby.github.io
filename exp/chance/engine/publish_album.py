@@ -45,7 +45,7 @@ if os.path.basename(HERE) == 'engine':                  # running from the site 
     SITE = os.path.dirname(HERE)
 else:
     SITE = r"C:\Users\samro\OneDrive\Documents\GitHub\samrobertsbaca.github.io\exp\chance"
-REPO = os.environ.get('GITHUB_REPOSITORY', 'samscorsby/samscorsby.github.io')
+REPO = os.environ.get('GITHUB_REPOSITORY', 'samrobertsbaca/samrobertsbaca.github.io')
 SITE_ROOT = os.path.dirname(os.path.dirname(SITE))      # the site itself, for scorsby's face
 ARTIST = "ScorsBT4"                                 # the machine that plays the world's radio
 ASKER = "Samuel John Scorsby"                           # who asked it the questions
@@ -269,7 +269,7 @@ def written_score():
     return ("Over the course of each day, listen to the world's radio, about fifteen moments every hour, 365 in all. "
             "Keep what has something in it, or, one day in seven, keep everything. In the evening, throw the dice "
             "to choose which sounds belong "
-            "together and which patterns of data to fuse them with. Make between five and twelve songs. Title "
+            "together and which patterns of data to fuse them with. Make between five and thirteen songs. Title "
             "them with words cut from what was heard. Draw the album as a record, one groove spiralling in. Release it at midnight. Delete it the "
             f"next day. Each day, stop forever by chance: 1 in {LAST_ODDS}, then 1 in {LAST_ODDS - 1} the next day, one fewer "
             "each day, until the day it is certain.")

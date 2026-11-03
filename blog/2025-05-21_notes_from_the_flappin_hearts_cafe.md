@@ -78,4 +78,4 @@ i take a bite of the lemon peel, and honestly grapple with its taste. at first i
 
 i stop eating the lemon peel, and choose to sit peacefully instead. the playlist ends. there is only static left.
 
-my sister calls. i take my headphones off. the shins are playing overhead.
+my sister calls. i take my headphones off. the shins are playing.

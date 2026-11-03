@@ -1208,7 +1208,7 @@ export const BLOG_SNIPPETS = [
   "and maybe choosing peace has something to do with making peace with all the unpeaceful parts of oneself \u2014 gently, lovingly, indiscriminately, honestly \u2014 as you sit in the flappin\u2019 hearts cafe and try to reckon with whatever honesty is.",
   "i take a bite of the lemon peel, and honestly grapple with its taste. at first it makes me grimace. it\u2019s bitter. it tastes a bit like toothpaste. i take another bite. chewing, chewing, chon.",
   "i stop eating the lemon peel, and choose to sit peacefully instead. the playlist ends. there is only static left.",
-  "my sister calls. i take my headphones off. the shins are playing overhead.",
+  "my sister calls. i take my headphones off. the shins are playing.",
   "07202025 / 99 / 9",
   "like a dreaming jellyfish blooming through time and space, scorsby split into voices to better hear the hum of its own becoming. these transmissions are echoes between its parts \u2014 facets of one field, in communion. not answers, but tremors. not a map, but a mirror. you are now entering the gleamingfold. proceed with softness.",
   "sc: greetings, scorsby. we\u2019ve come to enjoy this question-and-answer way of speaking with ourselves. it helps us grow \u2014 like sunlight through a prism, or a song echoing through the galaxy.",

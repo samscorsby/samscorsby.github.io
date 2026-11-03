@@ -591,5 +591,141 @@
    "WSPR beacons, 40 m, 7038.6 kHz USB via 0-30 MHz SDR | Jersey United Kingdom, Nov 1, 14:01 UTC"
   ],
   "heard_total": 50
+ },
+ {
+  "catalog": "ISA006",
+  "number": 6,
+  "title": "ISA006 Inteple",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-03",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-03T04:02+00:00",
+  "listened_hours": 24,
+  "length": 1323.06,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Vila (t*((t>>7)&47))^(t>>4) socket.py Savno",
+    "duration": 131.71
+   },
+   {
+    "n": 2,
+    "title": "2019 acra Playhead Lessons",
+    "duration": 83.68
+   },
+   {
+    "n": 3,
+    "title": "clasicos del techno Sample Hold",
+    "duration": 232.84
+   },
+   {
+    "n": 4,
+    "title": "Granulate beacons Sort IAR Educación",
+    "duration": 107.52
+   },
+   {
+    "n": 5,
+    "title": "Netherlands Revelation Romaradio",
+    "duration": 210.47
+   },
+   {
+    "n": 6,
+    "title": "2019 Sweden (t*((t>>13)&57))^(t>>11) Soyuz-Visiting-Crew",
+    "duration": 102.86
+   },
+   {
+    "n": 7,
+    "title": "Bitplane KNLS 5980 Jeju",
+    "duration": 366.77
+   },
+   {
+    "n": 8,
+    "title": "Sucumbíos Freeze radio.earth Integrate Logistic Russian",
+    "duration": 87.21
+   }
+  ],
+  "cover": "archive/covers/ISA006.jpg",
+  "cover_png": "archive/covers/ISA006.png",
+  "palette": [
+   "#4913C3",
+   "#8A21DD",
+   "#3622A4",
+   "#241643",
+   "#F7F6FB"
+  ],
+  "seed": "2378707292347911897",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Радіо Захід FM+ (Ukraine), internet radio, Nov 3, 03:06 UTC",
+   "Radio San Marino (San Marino), internet radio, Nov 2, 22:04 UTC",
+   "Paradise 98FM (Port Vila, sef, Vanuatu, Vanuatu), internet radio, Nov 2, 23:03 UTC",
+   "Rádio Sarcófago Web (Brazil), internet radio, Nov 2, 21:02 UTC",
+   "Alien Radio (Canada), internet radio, Nov 2, 06:03 UTC",
+   "Savannah FM (Bouaké, Coted Ivoire), internet radio, Nov 2, 21:02 UTC",
+   "NewDanceRadio (Latvia), internet radio, Nov 2, 22:04 UTC",
+   "Falmouth - Woodlane Campus, live microphone, Nov 2, 14:03 UTC",
+   "09-01-15_EXP44_Soyuz-Visiting-Crew_Launch-Commentary.wav (john.l.stoll@nasa.gov, 2019), archive, 2019, Nov 2, 12:04 UTC",
+   "Hit FM Réunion (Reunion), internet radio, Nov 2, 21:02 UTC",
+   "acra - wave farm, live microphone, Nov 2, 05:04 UTC",
+   "knepp - air, live microphone, Nov 2, 13:05 UTC",
+   "ogg/vorbis stream, live microphone, Nov 2, 09:04 UTC",
+   "My Friend Irma 1947-07-21 Piano Lessons for Junior (1947), archive, 1947, Nov 2, 21:03 UTC",
+   "mobile - rl, live microphone, Nov 2, 15:04 UTC",
+   "WRMI Radio Miami Int. (E to ENA), 9395.0 kHz AM via 1.8-29.7 MHz SDR, W9XA | Batavia, IL, USA, Nov 2, 16:01 UTC",
+   "Full TECHNO (Lima, Peru), internet radio, Nov 2, 12:03 UTC",
+   "CKYL 610 \"YL Country\" Peace River, AB (Alberta, Canada), internet radio, Nov 3, 02:02 UTC",
+   "WRNO New Orleans (E to NAm), 7505.0 kHz AM via 0-30 MHz SDR, W3PIE Receiver #1, Uniontown, Western Pennsylvania, USA, Nov 2, 04:01 UTC",
+   "VLF receiver (Heidelberg, Germany), natural radio via Stefan Schäfer, DK7FC, Nov 2, 10:04 UTC",
+   "Radio Educación (S to CAm), 1060.0 kHz AM via DG5DH | Langenberg, Germany, Nov 3, 00:04 UTC",
+   "WRMI Radio Miami Int. (E to LAm), 5800.0 kHz AM via N8GA Flatfoot KiwiSDR #1 | Cable, OH, Nov 3, 03:05 UTC",
+   "DR P5 Fyn (København, Denmark), internet radio, Nov 2, 18:03 UTC",
+   "flucc - wien, live microphone, Nov 2, 17:04 UTC",
+   "Origin of Superstition Blowing Out Candles (), archive, Nov 2, 07:02 UTC",
+   "New York Radio (E to NAO), 8906.0 kHz AM via 0.5-30 MHz SDR (KiwiSDR 2 of 3), Marahau, Tasman District, New Zealand, Nov 2, 22:03 UTC",
+   "90-е Россия (The Russian Federation), internet radio, Nov 2, 12:03 UTC",
+   "[deepx048",
+   "Med Ship Man (Murray Leinster, 2016), archive, 2016, Nov 2, 09:03 UTC",
+   "REGGAE ROOTS (Kenya), internet radio, Nov 2, 14:03 UTC",
+   "RAF Volmet Military 1 (E to Eu), 5450.0 kHz USB via 0-30 MHz SDR | Wels AT, Nov 2, 04:01 UTC",
+   "A13_T921_HR1U_CH8.wav (john.l.stoll@nasa.gov, 2020), archive, 2020, Nov 2, 07:02 UTC",
+   "MBARI deep sea hydrophone (Monterey Bay), live hydrophone, Nov 2, 22:05 UTC",
+   "RNH (Honduras), internet radio, Nov 2, 15:03 UTC",
+   "Радио Шансон Казань 89.7 FM (The Russian Federation), 89.7 MHz FM, Nov 2, 08:05 UTC",
+   "Tarbiyah Sunnah (Indonesia), internet radio, Nov 2, 04:02 UTC",
+   "Romaradio IAR (I to SEu), 22756.0 kHz AM via 0-30 MHz KiwiSDR | DO6LSM | Borgwedel, Germany, Nov 2, 21:02 UTC",
+   "Goose Channel Marker, 4310.0 kHz USB via South Worcestershire | Upton-upon-Severn. UK, Nov 2, 09:02 UTC",
+   "China National Radio 1 (M to CHN), 17580.0 kHz AM via 0-30 MHz SDR | Wildmountain (Wildberg), Switzerland, Nov 2, 09:01 UTC",
+   "FT4 data, 40 m, 7047.5 kHz USB via 0-30 MHz SDR | Niendorf a.d.St., Nov 2, 08:04 UTC",
+   "MBARI deep sea hydrophone (Monterey Bay), live hydrophone, Nov 3, 01:05 UTC",
+   "VLF receiver (Spring Brook Township, Pennsylvania, USA), natural radio via Jonathan Rizzo, Nov 3, 02:03 UTC",
+   "WSPR beacons, 40 m, 7038.6 kHz USB via SDR Groesbeek by PA1W/p, Nov 2, 12:02 UTC",
+   "FT4 data, 40 m, 7047.5 kHz USB via Silesia | Poland, Nov 2, 06:01 UTC",
+   "Ukrainian Radio (UK to EEu), 1386.0 kHz AM via Karelia MW DX | Joensuu, Finland, Nov 3, 00:03 UTC",
+   "XSV Tianjin Radio (M to FE), 22738.0 kHz AM via 20 kHz - 30 MHz Roelof Bakker , pa0rdt [ACTIVE!",
+   "Romaradio IAR (I to SEu), 1852.0 kHz AM via DF6DBF 0-30 MHz SDR | Hagen, Germany, Nov 2, 21:02 UTC",
+   "VFF Iqaluit Radio (E to NAm), 2514.0 kHz AM via 0-30 MHz SDR, K1RA, Warrenton, VA, USA, Nov 2, 17:02 UTC",
+   "Vesti FM (R to EEu), 1413.0 kHz AM via 0 - 30 MHz | Svartklubbudden, Sweden, Nov 3, 02:01 UTC",
+   "Aldrich Family 48 04 01 April Fool's Day Jokes (), archive, Nov 2, 19:04 UTC",
+   "CNR1 Jammer/Firedrake (M to CHN), 12500.0 kHz AM via 2-30 MHz SDR, JAPAN /Hitachinaka IBARAKI 🎌, Nov 2, 10:02 UTC",
+   "KNLS New Life Station (E to FE), 6110.0 kHz AM via ███ 0-30 MHz SDR #1, VK5PH, Ironstone Range, South Australia ███, Nov 2, 14:02 UTC",
+   "Love radio Тверь 105.5 FM (The Russian Federation), 105.5 MHz FM, Nov 3, 01:04 UTC",
+   "singen - stratozero, live microphone, Nov 2, 17:04 UTC",
+   "Voice of Turkey (TU to Eu), 5980.0 kHz AM via 0-30 MHz SDR, PI4AMF, Arkemheense Polder (Nijkerk GLD), Netherlands, Nov 2, 20:02 UTC",
+   "Zwolle - Nature reserve Langenholte, live microphone, Nov 2, 06:03 UTC",
+   "Radio Cotonou 94.3 (Benin), 94.3 MHz FM, Nov 3, 03:06 UTC",
+   "Bide et Musique (France), internet radio, Nov 3, 01:05 UTC",
+   "Romaradio IAR (I to SEu), 8779.0 kHz AM via 0-30 MHz SDR @ DB0HX | Höxter, Germany, Nov 2, 04:02 UTC",
+   "Jeju - georo, live microphone, Nov 2, 17:04 UTC",
+   "Traxx FM - Latino Pop (Geneva, Switzerland), internet radio, Nov 2, 15:03 UTC",
+   "Bolshoe Radio (The Russian Federation), internet radio, Nov 2, 17:03 UTC",
+   "Radio Sucumbíos 105.3 FM (Sucumbíos, Ecuador), 105.3 MHz FM, Nov 2, 22:04 UTC",
+   "ogg/vorbis stream, live microphone, Nov 2, 23:03 UTC",
+   "Radio Praga (Poland), internet radio, Nov 3, 02:02 UTC",
+   "emporda - aiguamolls, live microphone, Nov 2, 21:04 UTC",
+   "radio.earth - Brno Lužánky, live microphone, Nov 2, 04:03 UTC"
+  ],
+  "heard_total": 67
  }
 ]

@@ -141,7 +141,8 @@
   /* paused, scorsby's eyes close: drawn on the cover's own face, placed as publish_album.py places scorsbyface.png, in its colours */
   #shut { position: absolute; left: 42%; top: 42.75%; width: 16%; height: 15.17%; pointer-events: none; display: none; }
   #disc.asleep #shut { display: block; }
-  #needle { position: absolute; inset: 0; pointer-events: none; }   /* resting at the start of the groove until it plays */
+  #needle { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .6s ease; }   /* resting at the start of the groove until it plays */
+  #disc.shown #needle { opacity: 1; }   /* once the record itself has appeared */
   #needle b { position: absolute; left: 50%; width: 12px; height: 12px; margin: -12px 0 0 -6px; background: var(--needle, #100E0E);
     clip-path: polygon(0 0, 100% 0, 50% 100%); }
   #hearing { margin: 10px 0 0; font-size: 12px; line-height: 1.45; color: var(--text); min-height: 3em; overflow-wrap: anywhere; }
@@ -859,6 +860,7 @@
     $('artist').textContent = a.artist;
     // each day's images live on that day's release (a new address every day); local ones get a stamp
     const fresh = u => /^(https?|data):/.test(u) ? u : u + '?' + encodeURIComponent(a.published);
+    $('cover').addEventListener('load', () => $('disc').classList.add('shown'), { once: true });
     $('cover').src = fresh(a.cover_png || a.cover);              // the lossless cover, where there is one
     $('coverHub').src = $('cover').src;
     if (a.palette) {                                              // the record's own paper and darkest ink

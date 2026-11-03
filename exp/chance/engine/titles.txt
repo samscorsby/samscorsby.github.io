@@ -66,3 +66,13 @@ ISA005 Rule 110 Spanish
 10. Abe 2018 publique x0.77
 11. Tend 100.7 Новое electrónica Room
 12. LFSR 0x808a99 Volmet beacons Bit
+
+ISA006 Inteple
+1. Vila (t*((t>>7)&47))^(t>>4) socket.py Savno
+2. 2019 acra Playhead Lessons
+3. clasicos del techno Sample Hold
+4. Granulate beacons Sort IAR Educación
+5. Netherlands Revelation Romaradio
+6. 2019 Sweden (t*((t>>13)&57))^(t>>11) Soyuz-Visiting-Crew
+7. Bitplane KNLS 5980 Jeju
+8. Sucumbíos Freeze radio.earth Integrate Logistic Russian

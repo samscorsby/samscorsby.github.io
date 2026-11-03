@@ -1,3 +1,3 @@
-### the glong-gleam secret
+### a scorsby tale
 
-princess whisper-gleam demanded her secrets known: 'rrombo dombo di di dai!' scorsby, the cloud-herder, played his flute; his geese glong-danced. for each twirl, a glimmer revealed. a stiff suitor also knew. the king's sleep-test: whisper-gleam turned from the rival's bear-tangle odor (he'd tied his hat to a nightmare stump) to scorsby's pure smile. happiness shimmered.
+the princess, a shimmer of delight, dreamed of all waters, all blooms, all "ay, ay, ay!" nuts. then scorsby, a grin-splash, dove lake-deep for fish. instead he surfaced with salty glug, a buzzing floral sphere, and thorny "ay, ay, ay!" nuts. the king, eyes wide as saucers, declared, "rrombo dombo di di dai!" then, "ay, ay, ay!" a watching wolf sighed, "if i did that, they'd just say i was snacking."

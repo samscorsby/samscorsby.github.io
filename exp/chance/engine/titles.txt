@@ -76,3 +76,11 @@ ISA006 Inteple
 6. 2019 Sweden (t*((t>>13)&57))^(t>>11) Soyuz-Visiting-Crew
 7. Bitplane KNLS 5980 Jeju
 8. Sucumbíos Freeze radio.earth Integrate Logistic Russian
+
+ISA007 Time West Old Fractions.py 8118.1
+1. 126 Bitplane West music 19770
+2. old time music Rule 86 Point
+3. Lowpass mophile fractions.py Loop augmented
+4. talk Mosaic Art Map comedy Weather
+5. Gernan Warrenton a->baa
+6. (t&(t>>8))&(t&(t>>5)) 8118.1 Arreons

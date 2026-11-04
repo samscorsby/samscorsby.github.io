@@ -727,5 +727,107 @@
    "radio.earth - Brno Lužánky, live microphone, Nov 2, 04:03 UTC"
   ],
   "heard_total": 67
+ },
+ {
+  "catalog": "ISA007",
+  "number": 7,
+  "title": "ISA007 Time West Old Fractions.py 8118.1",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-04",
+  "time_utc": "07:00",
+  "made_utc": "2026-11-04T04:03+00:00",
+  "listened_hours": 24,
+  "length": 1415.77,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "126 Bitplane West music 19770",
+    "duration": 81.86
+   },
+   {
+    "n": 2,
+    "title": "old time music Rule 86 Point",
+    "duration": 98.31
+   },
+   {
+    "n": 3,
+    "title": "Lowpass mophile fractions.py Loop augmented",
+    "duration": 207.08
+   },
+   {
+    "n": 4,
+    "title": "talk Mosaic Art Map comedy Weather",
+    "duration": 312.77
+   },
+   {
+    "n": 5,
+    "title": "Gernan Warrenton a->baa",
+    "duration": 260.82
+   },
+   {
+    "n": 6,
+    "title": "(t&(t>>8))&(t&(t>>5)) 8118.1 Arreons",
+    "duration": 454.93
+   }
+  ],
+  "cover": "archive/covers/ISA007.jpg",
+  "cover_png": "archive/covers/ISA007.png",
+  "palette": [
+   "#AF2B9F",
+   "#C53D6C",
+   "#823496",
+   "#441B3F",
+   "#FAF6FA"
+  ],
+  "seed": "2523382318890991796",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "CNR 2 China Business R. (M to CHN), 11670.0 kHz AM via 2-30 MHz SDR, JAPAN /Hitachinaka IBARAKI 🎌, Nov 4, 03:02 UTC",
+   "XSQ Guangzhou Radio (M to FE), 19770.0 kHz AM via 0-30 MHz KiwiSDR2,JK4FBX | Hiroshima, Japan, Nov 4, 03:02 UTC",
+   "Radio Dinámica 100.7 FM (Chile), 100.7 MHz FM, Nov 3, 05:04 UTC",
+   "WSPR beacons, 20 m, 14095.6 kHz USB via MSARS HF KiwiSDR Burgess Hill, West Sussex, UK, Nov 3, 11:01 UTC",
+   "The Abandoned Room (Wadsworth Camp, 2011), archive, 2011, Nov 3, 10:03 UTC",
+   "Bush Point hydrophone (the Salish Sea), live hydrophone, Nov 3, 17:06 UTC",
+   "WPAQ 740AM 106.7FM Voice of the Blue Ridge (Mount Airy, North Carolina, The United States Of America), 106.7 MHz FM, Nov 4, 01:04 UTC",
+   "amsterdam - hydrophile 1, live microphone, Nov 3, 19:10 UTC",
+   "stream - 086, live microphone, Nov 3, 07:03 UTC",
+   "mobile - augmented ecospheres, live microphone, Nov 3, 17:06 UTC",
+   "Power FM - Ballarat - 103.1 FM (AAC+) (Victoria, Australia), 103.1 MHz FM, Nov 3, 23:03 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via G3SDR, 0-32 MHz Kiwi 8073. Weston-super-Mare. Parallel dipoles for 160m, 80m, 60m & 40m. 5/8th Vertical for 28MHz. Wellbrook Loop for VLF & MW 🕾, Nov 4, 00:03 UTC",
+   "90s FM (Egypt), internet radio, Nov 4, 02:02 UTC",
+   "Syntax (Space Invaderz, 2003), archive, 2003, Nov 3, 13:02 UTC",
+   "VLF receiver (Heidelberg, Germany), natural radio via Stefan Schäfer, DK7FC, Nov 4, 01:05 UTC",
+   "A Guide Book of Art, Architecture, and Historic Interests in Pennsylvania (Margaretta Archambault, 2022), archive, 2022, Nov 3, 13:02 UTC",
+   "lancaster - ck-flor, live microphone, Nov 3, 19:10 UTC",
+   "WWVH Hawaii (f.ann.), 15000.0 kHz AM via DC1EHG | Haselunne, Germany, Nov 3, 14:01 UTC",
+   "China Radio Int. (S to SEu), 6020.0 kHz AM via 0-30 MHz SDR, | Halle Saale Saxony Anhalt Germany, Nov 3, 22:09 UTC",
+   "Romaradio IAR (I to SEu), 8779.0 kHz AM via Fenu-Radio Kiwi2-SDR | Kefikon / Switzerland, Nov 4, 02:01 UTC",
+   "VFF Iqaluit Radio, 16803.0 kHz USB via W3HFU - Westminster, MD, USA - 120 ft T2FD Antenna, Nov 3, 17:05 UTC",
+   "Jack Benny Program 50 04 30 Look Magazine Story (), archive, Nov 3, 23:04 UTC",
+   "Channel Marker P, 7508.8 kHz CW via K1VL (4) Shrewsbury, Vermont, USA - 36+ receivers, Nov 3, 10:02 UTC",
+   "RPR1 (Rhineland-Palatinate, Germany), internet radio, Nov 3, 05:04 UTC",
+   "North San Juan Channel hydrophone (the Salish Sea), live hydrophone, Nov 3, 19:10 UTC",
+   "RWM Moscow, 4996.0 kHz AM via 0-30 MHz SDR @ DB0HX | Höxter, Germany, Nov 4, 03:02 UTC",
+   "China Radio Int. (VN to SEA), 11770.0 kHz AM via 0-30 MHz SDR | Gresham, Oregon, Nov 4, 00:01 UTC",
+   "ccc (Bahrain), internet radio, Nov 3, 05:04 UTC",
+   "Beach Camp at Sunset Bay hydrophone (the Salish Sea), live hydrophone, Nov 3, 16:05 UTC",
+   "NBC Short Story 1951-03-14 The Lottery (1951), archive, 1951, Nov 3, 15:03 UTC",
+   "FT8 data, 80 m, 3573.0 kHz USB via 0-30 MHz SDR | Bad Schönborn, Germany, Nov 4, 00:01 UTC",
+   "FT8 data, 30 m, 10136.0 kHz USB via PA0ZAP 0-30 MHz SDR | Haren (GN), NL, Nov 3, 07:01 UTC",
+   "santiago - maviuc, live microphone, Nov 3, 14:03 UTC",
+   "WWCR 2 Nashville, TN (E to NAm), 5935.0 kHz AM via 0-30 MHz SDR, K1RA, Warrenton, VA, USA, Nov 3, 06:02 UTC",
+   "BPL Time Signal, 100.0 kHz AM via F4VUK | Maconnex, France, Nov 3, 14:02 UTC",
+   "drigg - dunes, live microphone, Nov 3, 05:04 UTC",
+   "Coruña Radio (S to SEu), 1677.0 kHz AM via 13RF029📶📻0-30 MHz SDR📻📶 | Bülzig JO61jv, Nov 3, 22:09 UTC",
+   "FT8 data, 12 m, 24915.0 kHz USB via ve6ars kiwi #1, Nov 3, 21:17 UTC",
+   "Radio Romania Int. (S to SAm), 9460.0 kHz AM via IZ2442SWL 0.0-30.0 MHz SDR | Capiago Intimiano, Como, Italy, Nov 4, 03:02 UTC",
+   "BAF Beijing Meteo Fax, 8118.1 kHz USB via 0-30 MHz SDR, VK3TLW, Burwood East, Melborne, Australia, Nov 4, 01:02 UTC",
+   "Arrecife Radio (S to NAO), 2069.0 kHz AM via 0-30 MHz SDR | Pecs (Tubes), Hungary, Nov 4, 03:02 UTC",
+   "WWCR 3 Nashville, TN (E to NAm), 4840.0 kHz AM via Kernow - G8JNJ - 10KHz-30MHz SDR - Cornwall - South West UK, Nov 4, 02:01 UTC",
+   "Bush Point hydrophone (the Salish Sea), live hydrophone, Nov 3, 06:05 UTC"
+  ],
+  "heard_total": 43
  }
 ]

@@ -1,3 +1,3 @@
-### a scorsby tale
+### the dandelion gallows
 
-the princess, a shimmer of delight, dreamed of all waters, all blooms, all "ay, ay, ay!" nuts. then scorsby, a grin-splash, dove lake-deep for fish. instead he surfaced with salty glug, a buzzing floral sphere, and thorny "ay, ay, ay!" nuts. the king, eyes wide as saucers, declared, "rrombo dombo di di dai!" then, "ay, ay, ay!" a watching wolf sighed, "if i did that, they'd just say i was snacking."
+scorsby, a grin, reattached a horse's foot. a smith, imitating, tossed his mother-in-law to the forge. *whoosh!* a monkey! his pregnant wife, beaming, birthed another. a sleeping queen, swapped by whim with the monkey-mother, awoke. 'rrombo dombo di di dai!' she declared, choosing a dandelion for her gallows. the judge, baffled, just let her go.

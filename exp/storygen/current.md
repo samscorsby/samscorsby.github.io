@@ -1,3 +1,3 @@
-### the dandelion gallows
+### the empty platter savior
 
-scorsby, a grin, reattached a horse's foot. a smith, imitating, tossed his mother-in-law to the forge. *whoosh!* a monkey! his pregnant wife, beaming, birthed another. a sleeping queen, swapped by whim with the monkey-mother, awoke. 'rrombo dombo di di dai!' she declared, choosing a dandelion for her gallows. the judge, baffled, just let her go.
+scorsby promised the void-weaver snack-coins, then hung a joy-straw dummy. "rrombo dombo di di dai!" declared the weaver, gone. at the glimmer-king's feast, scorsby devoured everything. "barely a morsel," he beamed, pulling the king's crown. a fizz-serpent zipped out. "my savior!" gasped the king. "have snack-coins!" scorsby just smiled, dreaming of his *true* feast.

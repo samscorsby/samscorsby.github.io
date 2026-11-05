@@ -63,6 +63,13 @@ GATHER (--gather N)
     lightning's radio bent through the magnetosphere. Heard at its own frequencies, so
     on the dial it sits below everything else. Credit the receivers' keepers.
 
+    SPECTRUM. Above shortwave: OpenWebRX receivers listed on receiverbook.de, most of
+    them hearing VHF and UHF. Their live waterfall shows where signals are; chance
+    tunes to them in turn, listens, and keeps the first with something in it. Only
+    the airwaves meant to be heard -- radio amateurs (6 m, 2 m, 70 cm ...), FM
+    broadcasters, weather broadcasts and satellites, shortwave -- never aircraft,
+    ships or private radio. Each receiver is visited at most once a day.
+
     A hydrophone or a VLF receiver may be visited again in a later run of the same day
     (there are only a few, and they change by the hour), never twice in one run.
 
@@ -1287,11 +1294,223 @@ def gather_natural(count, radio_dir, workers=4):
     print(f"gathered {got} natural radio clip(s) into {radio_dir}")
     return got
 
+# ------------------------------------------- above shortwave: OpenWebRX receivers
+
+RECEIVERBOOK = "https://www.receiverbook.de/map"
+# only the airwaves that are meant to be heard: radio amateurs, broadcasters, weather broadcasts and the weather
+# satellites, and shortwave as the KiwiSDRs hear it. not aircraft, ships or private radio. (lo MHz, hi MHz, name)
+OPEN_BANDS = [(0.0, 30.0, "shortwave"), (50.0, 54.0, "6 m amateur"), (70.0, 70.5, "4 m amateur"),
+              (87.5, 108.0, "FM broadcast"), (137.0, 138.0, "weather satellites"), (144.0, 148.0, "2 m amateur"),
+              (162.4, 162.55, "weather radio"), (222.0, 225.0, "1.25 m amateur"), (420.0, 450.0, "70 cm amateur"),
+              (1240.0, 1300.0, "23 cm amateur")]
+_IMA_IDX = [-1, -1, -1, -1, 2, 4, 6, 8, -1, -1, -1, -1, 2, 4, 6, 8]
+_IMA_STEP = [7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 19, 21, 23, 25, 28, 31, 34, 37, 41, 45, 50, 55, 60, 66, 73, 80, 88,
+             97, 107, 118, 130, 143, 157, 173, 190, 209, 230, 253, 279, 307, 337, 371, 408, 449, 494, 544, 598, 658,
+             724, 796, 876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066, 2272, 2499, 2749, 3024, 3327, 3660,
+             4026, 4428, 4871, 5358, 5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899, 15289, 16818,
+             18500, 20350, 22385, 24623, 27086, 29794, 32767]
+
+
+class Adpcm:
+    """OpenWebRX's IMA ADPCM, with its SYNC frames, decoded as its own AudioEngine.js decodes it."""
+    def __init__(self):
+        self.idx = self.pred = self.step = 0
+        self.phase = self.sync = self.count = 0
+        self.buf = bytearray()
+
+    def nib(self, n):
+        self.idx = min(max(self.idx + _IMA_IDX[n], 0), 88)
+        d = self.step >> 3
+        if n & 1:
+            d += self.step >> 2
+        if n & 2:
+            d += self.step >> 1
+        if n & 4:
+            d += self.step
+        if n & 8:
+            d = -d
+        self.pred = min(max(self.pred + d, -32768), 32767)
+        self.step = _IMA_STEP[self.idx]
+        return self.pred
+
+    def feed(self, data):
+        out = []
+        for b in data:
+            if self.phase == 0:
+                self.sync = self.sync + 1 if b == b"SYNC"[self.sync] else 0
+                if self.sync == 4:
+                    self.buf, self.phase = bytearray(), 1
+            elif self.phase == 1:
+                self.buf.append(b)
+                if len(self.buf) == 4:
+                    self.idx, self.pred = (int(v) for v in np.frombuffer(bytes(self.buf), '<i2'))
+                    self.count, self.phase = 1000, 2
+            else:
+                out.append(self.nib(b & 0x0F))
+                out.append(self.nib(b >> 4))
+                if self.count == 0:
+                    self.sync, self.phase = 0, 0
+                self.count -= 1
+        return out
+
+
+def open_band(mhz):
+    return next((name for lo, hi, name in OPEN_BANDS if lo <= mhz < hi), None)
+
+
+def owrx_mod(mhz):
+    if 87.5 <= mhz < 108:
+        return 'wfm', 8000
+    if 137 <= mhz < 138:
+        return 'nfm', 20000                              # the weather satellites' wide APT signal
+    if mhz < 30:
+        return ('usb', 2800) if mhz > 10 else ('am', 4500)
+    return 'nfm', 6000
+
+
+def load_openwebrx(radio_dir, refresh=False, max_age_h=24.0):
+    """the OpenWebRX receivers receiverbook.de lists: [{'url', 'place'}], cached a day."""
+    path = os.path.join(radio_dir, "openwebrx.json")
+    if not refresh and os.path.exists(path) and time.time() - os.path.getmtime(path) < max_age_h * 3600:
+        return json.load(open(path, encoding='utf-8'))
+    req = urllib.request.Request(RECEIVERBOOK, headers={'User-Agent': IDENT})
+    page = urllib.request.urlopen(req, timeout=30).read().decode('utf-8', errors='replace')
+    m = re.search(r'var\s+receivers\s*=\s*(\[.*?\]);', page, re.S)
+    sites = json.loads(m.group(1)) if m else []
+    rxs = [{'url': r['url'], 'place': unmangle(str(s.get('label') or '')).strip()}
+           for s in sites for r in s.get('receivers', []) if r.get('type') == 'OpenWebRX' and r.get('url')]
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(rxs, f)
+    return rxs
+
+
+def owrx_listen(rx, rng, secs, tries=4, judge=True):
+    """one visit to an OpenWebRX receiver: look at its waterfall for signals in the open bands, tune to them
+    in turn, and keep the first with something in it (on a pure day, the first, whatever it is)."""
+    import websocket
+    ws = websocket.create_connection(rx['url'].rstrip('/').replace('http', 'ws', 1) + '/ws/', timeout=8)
+    try:
+        ws.send(f"SERVER DE CLIENT client={IDENT} type=receiver")
+        ws.send(json.dumps({"type": "connectionproperties", "params": {"output_rate": 12000, "hd_output_rate": 48000}}))
+        cfg, ffts, t0 = {}, [], time.time()
+        while time.time() - t0 < 6 and len(ffts) < 12:
+            m = ws.recv()
+            if isinstance(m, str):
+                try:
+                    j = json.loads(m)
+                except ValueError:
+                    continue
+                if j.get('type') == 'config':
+                    cfg.update(j['value'])
+            elif m and m[0] == 1 and 'samp_rate' in cfg:
+                if cfg.get('fft_compression') == 'adpcm':
+                    c = Adpcm()
+                    ffts.append(np.array([c.nib(v) for b in m[1:] for v in (b & 0x0F, b >> 4)], float)[10:] / 100.0)
+                else:
+                    ffts.append(np.frombuffer(m[1:], '<f4').astype(float))
+        if not ffts:
+            raise RuntimeError("no waterfall")
+        n = min(len(a) for a in ffts)
+        spec = np.median(np.array([a[:n] for a in ffts]), axis=0)
+        sr, cf = float(cfg['samp_rate']), float(cfg['center_freq'])
+        edge = int(n * 0.05)
+        peaks = [i for i in range(edge, n - edge) if spec[i] > np.median(spec) + 8
+                 and spec[i] == spec[max(0, i - 6):i + 7].max()]
+        offs = [int((i / n - 0.5) * sr) for i in rng.permutation(peaks)] if peaks else []
+        offs = [o for o in offs if open_band((cf + o) / 1e6)][:tries]
+        if not offs:
+            raise RuntimeError("nothing in the open bands")
+        comp = cfg.get('audio_compression', 'none')
+        tried = []
+        for off in offs:
+            hz = cf + off
+            mod, bw = owrx_mod(hz / 1e6)
+            ws.send(json.dumps({"type": "dspcontrol", "params": {"low_cut": -bw, "high_cut": bw, "offset_freq": off,
+                                                                 "mod": mod, "squelch_level": -150}}))
+            ws.send(json.dumps({"type": "dspcontrol", "action": "start"}))
+            a, h, pcm, hd, t1 = Adpcm(), Adpcm(), [], [], time.time()
+            while time.time() - t1 < secs + 5:
+                m = ws.recv()
+                if isinstance(m, str) or not m:
+                    continue
+                if m[0] == 2:
+                    pcm += a.feed(m[1:]) if comp == 'adpcm' else list(np.frombuffer(m[1:], '<i2'))
+                elif m[0] == 4:
+                    hd += h.feed(m[1:]) if comp == 'adpcm' else list(np.frombuffer(m[1:], '<i2'))
+                if len(pcm) >= (secs + 1) * 12000 or len(hd) >= (secs + 1) * 48000:
+                    break
+            x, rate = (np.array(hd, np.int16), 48000) if len(hd) > 2 * len(pcm) else (np.array(pcm, np.int16), 12000)
+            x = x[rate:]                                 # the first second: the receiver settling
+            if len(x) < 3 * rate:
+                continue
+            flat, peak, cv = features(x.astype(np.float64), rate, 'am')
+            tried.append({'freq_khz': round(hz / 1000, 3), 'mode': mod, 'flatness': round(flat, 3),
+                          'peak_db': round(peak, 1), 'envelope_cv': round(cv, 3)})
+            if not judge or lively('am', flat, peak, cv):
+                return x, rate, hz, mod, tried
+        return None, None, None, None, tried
+    finally:
+        ws.close()
+
+
+def gather_openwebrx(count, radio_dir, workers=4, refresh=False):
+    """record `count` clips above shortwave (and some shortwave) from OpenWebRX receivers, one visit each a day."""
+    rng = np.random.default_rng(int.from_bytes(os.urandom(8), 'big'))
+    try:
+        rxs = [r for r in load_openwebrx(radio_dir, refresh) if r['url'] not in VISITED['receivers']]
+    except (OSError, ValueError) as e:
+        print(f"openwebrx: the receiver list is unreachable ({e})")
+        return 0
+    order = [rxs[i] for i in rng.permutation(len(rxs))]
+    print(f"gathering {count} clip(s) from {len(rxs)} OpenWebRX receivers (the open bands only)")
+
+    def next_job():
+        if not order:
+            return None
+        rx = order.pop()
+        VISITED['receivers'].add(rx['url'])
+        return rx, log_uniform(rng, 8, 40)
+
+    def visit(job):
+        rx, secs = job
+        utc = datetime.datetime.now(datetime.timezone.utc)
+        try:
+            return rx, utc, owrx_listen(rx, np.random.default_rng(int(rng.integers(1 << 62))), secs, judge=not PURE), None
+        except Exception as e:
+            return rx, utc, None, str(e)[:50]
+
+    def accept(res, got):
+        rx, utc, out, err = res
+        host = re.sub(r'^https?://', '', rx['url']).rstrip('/')
+        if err is not None:
+            print(f"  .. {host[:44]}: no ({err})")
+            return False
+        x, rate, hz, mod, tried = out
+        if x is None:
+            print(f"  .. {host[:44]}: only static on {len(tried)} tries")
+            return False
+        band = open_band(hz / 1e6)
+        meta = {'freq_khz': round(hz / 1000, 3), 'mode': mod, 'station': band, 'kind': 'openwebrx', 'band': band,
+                'utc': utc.isoformat(timespec='seconds'), 'seconds': round(len(x) / rate, 2), 'rate': rate,
+                'receiver': f"OpenWebRX {host}" + (f" | {rx['place']}" if rx.get('place') else ""),
+                'location': rx.get('place', ''), 'url': rx['url'], 'credit': "an OpenWebRX receiver (receiverbook.de)",
+                'listened': tried[-1], 'also_tried': tried[:-1]}
+        save_clip(radio_dir, x, rate, meta, utc)
+        print(f"  [{got + 1}/{count}] {host[:40]}: {hz / 1e6:.4f} MHz {mod.upper()} -- {band} ({len(x) / rate:.0f} s)")
+        return True
+
+    got = run_pool(count, workers, next_job, visit, accept)
+    print(f"gathered {got} OpenWebRX clip(s) into {radio_dir}")
+    return got
+
 
 def dial_text(c):
     """how a clip's place on the dial reads in a score."""
     if c.get('mode') == 'net':
         return "internet radio"
+    if c.get('kind') == 'openwebrx':
+        f = c['freq_khz']
+        return f"{f / 1000:.4f} MHz {c['mode'].upper()}" if f >= 30000 else f"{f:.1f} kHz {c['mode'].upper()}"
     if c.get('mode') == 'mic':
         return "live microphone"
     if c.get('mode') == 'hydro':
@@ -2987,7 +3206,7 @@ def main():
                     help='first record N new clips from all sources')
     ap.add_argument('--from', dest='gather_from', default='all',
                     help='where --gather looks: all (default), or any of shortwave, stations, archive, mics, '
-                         'hydrophones, natural '
+                         'hydrophones, natural, spectrum '
                          '(comma-separated)')
     ap.add_argument('--gather-only', action='store_true', help='record clips, then stop')
     ap.add_argument('--dial', choices=['stations', 'wild'], default='stations',
@@ -3036,13 +3255,13 @@ def main():
         return
     if args.gather > 0:
         n = args.gather
-        kinds = ['shortwave', 'stations', 'archive', 'mics', 'hydrophones', 'natural']
+        kinds = ['shortwave', 'stations', 'archive', 'mics', 'hydrophones', 'natural', 'spectrum']
         want = kinds if args.gather_from == 'all' else [k.strip() for k in args.gather_from.split(',')]
         bad = [k for k in want if k not in kinds]
         if bad:
             ap.error(f"--from: unknown source(s) {', '.join(bad)}; choose from all, {', '.join(kinds)}")
         weight = {'shortwave': 0.35, 'stations': 0.3, 'archive': 0.2, 'mics': 0.15,
-                  'hydrophones': 0.04, 'natural': 0.04}     # the sea and the sky: a little of each, most hours
+                  'hydrophones': 0.04, 'natural': 0.04, 'spectrum': 0.1}     # the sea and the sky: a little of each, most hours
         w = np.array([weight[k] for k in want])
         split = np.random.default_rng(int.from_bytes(os.urandom(8), 'big')).multinomial(n, w / w.sum())
         plan = {k: int(c) for k, c in zip(want, split) if c}
@@ -3067,6 +3286,8 @@ def main():
                 got += gather_mics(c, args.radio_dir, wk)
             elif k == 'hydrophones':
                 got += gather_hydrophones(c, args.radio_dir, wk)
+            elif k == 'spectrum':
+                got += gather_openwebrx(c, args.radio_dir, wk, args.refresh_receivers)
             else:
                 got += gather_natural(c, args.radio_dir, wk)
         if got < n and 'stations' in want:                 # whatever fell short, the stations make up

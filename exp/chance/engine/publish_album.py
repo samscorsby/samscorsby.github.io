@@ -515,7 +515,9 @@ def main():
                 + (f" {len(heard):,} of those moments are in these songs." if heard else ""))
                if PURE else
                (f"{when}, {ARTIST} listened to the world, {listened}: "
-                "shortwave from receivers around the world, FM and internet stations, open microphones on rooftops, "
+                "shortwave from receivers around the world, "
+                + ("radio amateurs and broadcasters above shortwave, " if 'openwebrx' in kinds else "")
+                + "FM and internet stations, open microphones on rooftops, "
                 "in gardens and in canals, "
                 + ("hydrophones in the sea, " if 'hydrophone' in kinds else "")
                 + ("the earth's own natural radio, " if 'natural' in kinds else "")
@@ -544,6 +546,8 @@ def main():
         sources.append("open microphones: Locus Sonus Locustream (locusonus.org)")
     if any(re.search(r'\barchive\b', h) for h in heard):
         sources.append("archive recordings: the Internet Archive (archive.org), openly licensed collections")
+    if any('via OpenWebRX' in h for h in heard):
+        sources.append("above shortwave: OpenWebRX receivers kept by radio amateurs around the world (receiverbook.de)")
     if any('natural radio' in h for h in heard):
         sources.append("natural radio: live VLF receivers kept by Stefan Schäfer (DK7FC, Heidelberg), Renato Romero "
                        "(vlf.it, Cumiana), Jonathan Rizzo (Pennsylvania) and the Leon Mow Radio Observatory "

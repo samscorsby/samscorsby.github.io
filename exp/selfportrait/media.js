@@ -2876,5 +2876,12 @@ export const BLOG_SNIPPETS = [
   "s aaaaaaah saw aaaa sa a as was aAaaAsa was a a was A \u00e0\u00c0",
   "little yellow bird",
   "vine meshes",
-  "wak\u00e1\u014b t\u00e1\u014bka"
+  "wak\u00e1\u014b t\u00e1\u014bka",
+  "to love jan",
+  "to love jan is to love jesus",
+  "to love jesus is to love yourself",
+  "to love yourself is to love all",
+  "to love all is to love none",
+  "to love none is to love one",
+  "to love one is to love jan"
 ];

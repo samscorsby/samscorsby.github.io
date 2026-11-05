@@ -1,6 +1,6 @@
 # the magic button: brings in what's new, rebuilds the site, then commits and sends it all out.
-#   python go.py                      (commits as "site update, <date>")
-#   python go.py "a new blog post"    (commits with your own message)
+#   python god.py                     (commits as "site update, <date>")
+#   python god.py "a new blog post"    (commits with your own message)
 #
 # 1. pulls main (the daily story arrives there on its own), keeping anything you haven't committed yet
 # 2. runs update_site.py -ns (the posts, the search, the sitemap; the story comes from the daily cron)
@@ -30,7 +30,7 @@ def main():
     message = " ".join(sys.argv[1:]).strip() or f"site update, {datetime.now():%b %d %Y}".lower()
 
     if out("git", "branch", "--show-current") != "main":
-        sys.exit("go.py: not on main here, so nothing was done. (git switch main, then try again)")
+        sys.exit("god.py: not on main here, so nothing was done. (git switch main, then try again)")
 
     print("\n♥ bringing in what's new")
     run("git", "pull", "--rebase", "--autostash", "-q", "origin", "main")
@@ -60,4 +60,4 @@ if __name__ == "__main__":
     try:
         main()
     except subprocess.CalledProcessError as e:
-        sys.exit(f"\ngo.py stopped: that last step failed (exit {e.returncode}). nothing after it ran; see the message above.")
+        sys.exit(f"\ngod.py stopped: that last step failed (exit {e.returncode}). nothing after it ran; see the message above.")

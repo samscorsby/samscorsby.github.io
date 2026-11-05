@@ -550,11 +550,15 @@
     return [body.trim(), where, m ? m[2] + ' UTC' : ''].filter(Boolean).join(' · ');
   };
   function readScore(songs) {
-    layers = songs.map(song => (song.score || '').split('\n').map(ln => {
+    // a song that starts cold had its leading silence cut after its score was written: the sound
+    // runs that much earlier than the score's times
+    layers = songs.map(song => {
+      const sc = song.score || '', cut = +((sc.match(/\(([\d.]+) s of silence cut\)/) || [])[1] || 0);
+      return sc.split('\n').map(ln => {
       const bend = ln.match(/^\[\d+\] t=\s*([\d.]+)s len=\s*([\d.]+)s\s+BEND/);
       if (bend) {                                       // the whole sound, run through data operations
         const ops = HEARD_OPS.filter(([key]) => ln.includes(key)).map(([, word]) => word).slice(0, 3);
-        return { t: +bend[1], end: +bend[1] + +bend[2], db: 0, bend: true, src: '', how: ['bend', ...ops].join(' · ') };
+        return { t: +bend[1] - cut, end: +bend[1] + +bend[2] - cut, db: 0, bend: true, src: '', how: ['bend', ...ops].join(' · ') };
       }
       const m = ln.match(/^\[\d+\] t=\s*([\d.]+)s len=\s*([\d.]+)s amp=\s*(-?[\d.]+) dB/);
       if (!m) return null;
@@ -566,8 +570,9 @@
       const data = ln.match(/rule \d+ automaton|logistic map|Henon map|circle map|bytebeat|Thue-Morse|Fibonacci word|Rudin-Shapiro|Kolakoski/i);
       if (data) how.push(data[0].replace(/^rule/, 'Rule').replace(' automaton', ''));
       HEARD_OPS.forEach(([key, word]) => { if (ln.includes(key) && how.length < 3) how.push(word); });
-      return { t: +m[1], end: +m[1] + +m[2], db: +m[3], src, how: how.join(' · ') };
-    }).filter(Boolean));
+      return { t: +m[1] - cut, end: +m[1] + +m[2] - cut, db: +m[3], src, how: how.join(' · ') };
+      }).filter(Boolean);
+    });
   }
   // what's sounding at a moment of song k (the one playing, or the one under a hand turning the record)
   function hearing(k, t) {

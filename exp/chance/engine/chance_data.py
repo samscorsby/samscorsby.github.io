@@ -1597,7 +1597,15 @@ def make_piece(rng, duration, channels, log, allowed, form, pool, track_no, prog
                 mix = mix[:, first:].copy()
                 if END_AT is not None:
                     END_AT -= first
-                begin = f"cold start on the first sound ({first / SR:.1f} s of silence cut)"
+                # the score's times are made the song's own: as it is heard, from its first sound
+                cut = first / SR
+
+                def shift(m):
+                    t0, n0 = float(m.group(2)), float(m.group(3))
+                    t1 = max(0.0, t0 - cut)
+                    return f"{m.group(1)}t={t1:7.1f}s len={max(0.0, t0 + n0 - cut - t1):6.1f}s"
+                log[:] = [re.sub(r'^(\[\d+\] )t=\s*([\d.]+)s len=\s*([\d.]+)s', shift, ln) for ln in log]
+                begin = f"cold start on the first sound ({cut:.1f} s of silence cut, the times above as heard)"
         else:                                          # a fade-in worth the name: slow emergence
             # usually 6-30 s; about one in three may take far longer
             fin = int(min(total * 0.3, SR * log_uniform(rng, 6.0, 90.0 if rng.random() < 0.35 else 30.0)))

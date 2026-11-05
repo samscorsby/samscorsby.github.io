@@ -16,6 +16,9 @@ ENV = {**os.environ, "PYTHONIOENCODING": "utf-8"}  # (update_site.py prints emoj
 for stream in (sys.stdout, sys.stderr):
     stream.reconfigure(encoding="utf-8", errors="replace")  # (and so does this, on a windows console)
 
+_print = print
+def print(*a, **k): _print(*a, **k, flush=True)  # (so these lines and each step's own output come out in order)
+
 def run(*cmd, cwd=ROOT, check=True):
     print("›", " ".join(cmd))
     return subprocess.run(cmd, cwd=cwd, env=ENV, check=check)

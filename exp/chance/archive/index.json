@@ -985,5 +985,97 @@
    "the dial at random (19 m broadcast), 15190.0 kHz AM via EI6IZ SDR #1 KiwiSDR V2 | Castlebar, Co Mayo, Ireland, Nov 4, 15:01 UTC"
   ],
   "heard_total": 92
+ },
+ {
+  "catalog": "ISA009",
+  "number": 9,
+  "title": "ISA009 Reveleze Hamburg Lowpass",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-06",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-06T04:02+00:00",
+  "listened_hours": 22,
+  "length": 1391.01,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "aow Mosaic KNce",
+    "duration": 283.27
+   },
+   {
+    "n": 2,
+    "title": "Story 144.7 UHF FM Broadcasting",
+    "duration": 255.12
+   },
+   {
+    "n": 3,
+    "title": "Alta Czech arabic Odd-Even 7074",
+    "duration": 224.91
+   },
+   {
+    "n": 4,
+    "title": "Revelation broadcast",
+    "duration": 174.08
+   },
+   {
+    "n": 5,
+    "title": "Freeze Kamloops Lowpass Not",
+    "duration": 346.43
+   },
+   {
+    "n": 6,
+    "title": "Hamburg 8-bit x0.79",
+    "duration": 107.2
+   }
+  ],
+  "cover": "archive/covers/ISA009.jpg",
+  "cover_png": "archive/covers/ISA009.png",
+  "palette": [
+   "#B52989",
+   "#C93E64",
+   "#9C3394",
+   "#451B38",
+   "#FAF6F9"
+  ],
+  "seed": "3478859309681235154",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "VAJ Prince Rupert Radio (E to WNA), 2054.0 kHz AM via 0-30 MHz SDR | Indian Harbour Beach, Florida, Nov 5, 16:02 UTC",
+   "Super FM -Brașov 93,8 FM (Romania), 93.8 MHz FM, Nov 5, 17:04 UTC",
+   "no word for art (x-flow, 2006), archive, 2006, Nov 5, 06:04 UTC",
+   "KCBS Pyongyang (K to KRE), 6100.0 kHz AM via 0-30 MHz SDR, SK2HG, Siknas Fortress, Sweden, Nov 5, 23:01 UTC",
+   "KNLS New Life Station (E to FE), 9580.0 kHz AM via W3HFU - Westminster, MD, USA - 250 ft V Beam Antenna aimed to Europe - good everywhere esp lower bands, Nov 5, 12:03 UTC",
+   "NIUS (Berlin, Germany), internet radio, Nov 5, 22:04 UTC",
+   "SWH (Rīga, Latvia), internet radio, Nov 5, 18:03 UTC",
+   "[ENDE442",
+   "The Falcon 1951-03-04 The Case of the Gangster's Girl (1951), archive, 1951, Nov 5, 12:03 UTC",
+   "Uncle Wiggily's Story Book (Howard R. Garis, 2022), archive, 2022, Nov 6, 03:03 UTC",
+   "2 m amateur, 144.7085 MHz NFM via OpenWebRX ta2om.ddnsfree.com:8073 | TA2OM MW, LW, HF, VHF, UHF FM Broadcasting, Nov 6, 00:06 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz KIWISDR, DM0ESS, GERMANY, Nov 5, 15:01 UTC",
+   "Rocková zábava (Czechia), internet radio, Nov 5, 22:04 UTC",
+   "Abdel Halim Hafez عبدالحليم حافظ (Egypt), internet radio, Nov 5, 08:03 UTC",
+   "Mitre AM 790. AAC Alta. Ciudad de Buenos Aires (Argentina), internet radio, Nov 5, 18:03 UTC",
+   "Shannon Volmet (E to Eu), 3413.0 kHz USB via Kernow - G8JNJ - 10KHz-30MHz SDR - Cornwall - South West UK, Nov 5, 09:02 UTC",
+   "Legacy FM - \"La Dimensión de Tus Sentidos\". (Monterrey, Nuevo León, Mexico), internet radio, Nov 5, 09:03 UTC",
+   "3BBR - Drouin - 103.1 FM (MP3) (Victoria, Australia), 103.1 MHz FM, Nov 5, 15:02 UTC",
+   "KPH Rio Vista, CA (E to WNA), 13158.0 kHz AM via 0-30 MHz SDR, W2NAF, Spring Brook Township, Pennsylvania, Nov 5, 06:01 UTC",
+   "[S27-081",
+   "FM broadcast, 88.8008 MHz WFM via OpenWebRX vosrx.nl | <font color=gold>Vos RX   **Antenne richting:  220°, voor feedback of richting veranderen: Rxreport@live.nl** </font>, Nov 5, 18:04 UTC",
+   "YES 101.7 FM (Ibadan, Nigeria), 101.7 MHz FM, Nov 5, 09:03 UTC",
+   "CIFM-FM 98.3 Kamloops, BC (British Columbia, Canada), 98.3 MHz FM, Nov 5, 05:03 UTC",
+   "jasper_ridge, live microphone, Nov 6, 01:03 UTC",
+   "This is Not That Universe (Mental Health Consumer, 2024), archive, 2024, Nov 5, 19:04 UTC",
+   ".977 Jamz (Florida, The United States Of America), internet radio, Nov 6, 03:02 UTC",
+   "Energy 93.4 (Preveza, Greece), 93.4 MHz FM, Nov 5, 11:02 UTC",
+   "1.FM - Afterbeat Electronica Radio (Switzerland), internet radio, Nov 5, 23:02 UTC",
+   "Radio Bayraktar (Ukraine), internet radio, Nov 5, 16:03 UTC",
+   "China Radio Int. (M to Eu), 17650.0 kHz AM via 0-30 MHz SDR | Großkarolinenfeld, Germany, Nov 5, 11:01 UTC",
+   "Klasik FM 101,1 MHz (Malaysia), 101.1 MHz FM, Nov 5, 17:04 UTC",
+   "River 94.9 (Australia), 94.9 MHz FM, Nov 5, 12:03 UTC",
+   "WSPR beacons, 20 m, 14095.6 kHz USB via DF3LZ, KiwiSDR1 | Hamburg, Germany, 33m T2FD, Nov 5, 22:03 UTC"
+  ],
+  "heard_total": 33
  }
 ]

@@ -210,6 +210,10 @@ VISITED = {'receivers': set(), 'mics': set(), 'stations': set()}
 # how many clips each song's palette gathers (--palette-size): a few that belong together, or, some
 # days, many more of the day's moments
 PALETTE_SIZE = [3, 8]
+# the series' age (--age, 0 at its first album, 1 by its 180th): as the days pass the program does a little less
+# to what it hears -- fewer bends, fewer data voices over the radio, lighter operations, more songs that put the
+# radio first. it only tilts the dice: an old series can still make a wild song, and a pure day is untouched
+AGE = 0.0
 
 
 # ------------------------------------------------------------------ the dial
@@ -2003,7 +2007,7 @@ def baseline_score(rng, total, cap, log, allowed):
                                                'pan': 0.5, 'source_hint': {'clip': pick_clip(rng, pal)}}))
             log.append(f"  a ground beneath it all: {cd.SOURCES[g][0]}")
             pic.append("  ground |" + "=" * W + "|")
-        nb = int(round(log_uniform(rng, 0.15, 1.0) * secs / 60.0))     # bends are events, not weather
+        nb = int(round(log_uniform(rng, 0.15, 1.0) * secs / 60.0 * (1 - 0.7 * AGE)))   # bends are events, not weather
         brow = [' '] * W
         for j in range(nb):
             st = int(rng.uniform(0.0, max(1.0, secs - 3.0)) * SR)
@@ -2017,7 +2021,8 @@ def baseline_score(rng, total, cap, log, allowed):
     else:
         log.append("baseline: no radio clips to lay down, so data voices only")
     tag = "baseline"
-    if data_only:
+    radio_bed = bool(RADIO_CLIPS) and radio in allowed
+    if data_only and (not radio_bed or AGE == 0 or rng.random() >= 0.6 * AGE):   # (fewer with the series' age)
         sub = str(rng.choice(['automaton', 'drift']))
         oslots, opic, otag = cd.FORMS[sub](rng, total, cap, log, data_only)
         slots += [(s0, n0, c0, {'pool': data_only, 'ops': pal['ops']}) for (s0, n0, c0, *_) in oslots]
@@ -2434,7 +2439,7 @@ def fusion_score(rng, total, cap, log, allowed):
                 src, key = lane_tech[L], f"lane {L + 1}"
                 mark = letter[src]
                 sh = {'clip': ci}
-            hint = {'src': src, 'depth': float(rng.uniform(0.0, 0.2)), 'slip': 0, 'fade': xf,
+            hint = {'src': src, 'depth': float(rng.uniform(0.0, 0.2)) * (1 - 0.5 * AGE), 'slip': 0, 'fade': xf,
                     'amp_db': lane_db + float(rng.normal(0.0, 1.0)),
                     'pan': float(np.clip(home + rng.normal(0.0, 0.06), 0.0, 1.0)), 'source_hint': sh,
                     'p_return': p_same, 'ops': pal['ops']}
@@ -2448,7 +2453,7 @@ def fusion_score(rng, total, cap, log, allowed):
                 break
             t += n / SR - xf
         pic.append(f"  lane {L + 1} |" + "".join(row) + "|")
-    nb = int(round(log_uniform(rng, 0.2, 1.2) * secs / 60.0))
+    nb = int(round(log_uniform(rng, 0.2, 1.2) * secs / 60.0 * (1 - 0.7 * AGE)))
     brow = [' '] * W
     for j in range(nb):
         st = int(rng.uniform(0.0, max(1.0, secs - 3.0)) * SR)
@@ -2459,7 +2464,7 @@ def fusion_score(rng, total, cap, log, allowed):
             brow[cc] = '~'
     pic.append("  bends  |" + "".join(brow) + "|")
     tag = "fusion-" + cd.SOURCES[main][0]
-    if pal['data'] and rng.random() < 0.4:
+    if pal['data'] and rng.random() < 0.4 * (1 - 0.6 * AGE):
         oslots, opic, otag = cd.drift_score(rng, total, int(rng.integers(1, 3)), log)
         keep = oslots[:max(1, len(oslots) // 2)]
         slots += [(s0, n0, c0, {'pool': pal['data'], 'ops': pal['ops']}) for (s0, n0, c0, *_) in keep]
@@ -3224,6 +3229,8 @@ def main():
     ap.add_argument('--half-life', type=float, default=2.0, metavar='DAYS',
                     help='prefer recently gathered clips: one this many days old counts half as much as '
                          "today's (default 2; 0 = no preference)")
+    ap.add_argument('--age', type=float, default=0.0, metavar='A',
+                    help="the series' age, 0 to 1: the older, the less is done to what is heard (default 0)")
     ap.add_argument('--garble', type=float, default=0.35, metavar='P',
                     help='the chance each cross-fade breaks up like a failing radio signal (default 0.35)')
     ap.add_argument('--stereo-width', type=float, default=0.6, metavar='W',
@@ -3241,6 +3248,11 @@ def main():
 
     os.makedirs(args.radio_dir, exist_ok=True)
     cd.GARBLE = float(np.clip(args.garble, 0.0, 1.0))
+    global AGE
+    AGE = 0.0 if PURE else float(np.clip(args.age, 0.0, 1.0))
+    if AGE:
+        tilt = {'baseline': 1 + 1.5 * AGE, 'fusion': 1 - 0.3 * AGE, 'automaton': 1 - 0.8 * AGE, 'drift': 1 - 0.8 * AGE}
+        cd.CHANCE_FORMS[:] = [(f, w * tilt.get(f, 1.0)) for f, w in cd.CHANCE_FORMS]
     cd.PAN_WIDTH = 1.0 if PURE else float(np.clip(args.stereo_width, 0.0, 1.0))
     try:
         lo, _, hi = args.palette_size.partition('-')
@@ -3321,6 +3333,7 @@ def main():
         if not allowed:
             ap.error("only 'radio' was allowed and there are no clips")
     notes = [f"radio clips on the dial: {len(RADIO_CLIPS)} (from {args.radio_dir})",
+             f"the series' age: {AGE:.2f} (the older, the less is done to what is heard)",
              f"recent finds preferred: half-life {args.half_life:g} days" if args.half_life > 0
              else "all clips equally likely, however old"]
     cd.run_album(args, allowed, suffix="fontana", title="fontana album", notes=notes,

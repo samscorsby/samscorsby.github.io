@@ -3261,7 +3261,7 @@ def main():
         if bad:
             ap.error(f"--from: unknown source(s) {', '.join(bad)}; choose from all, {', '.join(kinds)}")
         weight = {'shortwave': 0.35, 'stations': 0.3, 'archive': 0.2, 'mics': 0.15,
-                  'hydrophones': 0.04, 'natural': 0.04, 'spectrum': 0.1}     # the sea and the sky: a little of each, most hours
+                  'hydrophones': 0.015, 'natural': 0.015, 'spectrum': 0.035}    # the newer kinds: a seasoning     # the sea and the sky: a little of each, most hours
         w = np.array([weight[k] for k in want])
         split = np.random.default_rng(int.from_bytes(os.urandom(8), 'big')).multinomial(n, w / w.sum())
         plan = {k: int(c) for k, c in zip(want, split) if c}

@@ -3805,26 +3805,85 @@
   }
   setInterval(rhythm, 2000);
 
+  // the day's rituals: at seven in the morning, three times over, i am present; at one in the afternoon, i return; at
+  // seven in the evening, i close my field; at ten at night, a few words for everyone and a breath for the earth, then
+  // ten seconds of quiet; at eleven, a minute to sit, a hand on the heart, three breaths, and words to close the day.
+  // like the breathing and the song, the world quiets for them: the buttons and the sky's goings-on rest, and only
+  // scorsby's words are said.
+  // [words, how long the step lasts]; no words is a quiet stretch, and { breaths: n } is n of the world's slow breaths
+  // (in for four, hold for four, out for six, rest for two), with the planet filling like a lung and the soft tone.
+  const RITES = [
+    { hour: 7, key: 'scorsby-morning', steps: [['i am present. i accept protection.', 5000], ['i am present. i accept protection.', 5000], ['i am present. i accept protection.', 5500]] },
+    { hour: 13, key: 'scorsby-afternoon', steps: [['i notice. i do not feed doubt. i return.', 6500]] },
+    { hour: 19, key: 'scorsby-evening', steps: [['i close my field. i choose protection.', 6500]] },
+    { hour: 22, key: 'scorsby-night', steps: [['i transmute the collective fear into love.', 6000], ['my ananda kanda is open for all beings.', 6000],
+      ['heaven not broken.', 5000], ['i remember.', 5000], ['please take one deep breath for the earth.', 5000], [{ breaths: 1 }], [null, 10000]] },
+    // (about a minute in all, as it says: its three breaths are quicker, in for three and out for four, with no hold)
+    { hour: 23, key: 'scorsby-night2', steps: [['sit for one minute. no phone.', 5500], ['put your hand on your heart.', 5000],
+      ['breathe slowly 3 times.', 4000], [{ breaths: 3, pat: [['breathe in', 3000], ['hold', 0], ['breathe out', 4000], ['rest', 0]] }],
+      ['speak with me: i close my field with love.', 5000], ['i accept the protection of my angels for this night.', 6000],
+      ['i allow only love and light to enter my dreams.', 5000], ['i release all other frequencies.', 4000], ['thank you, thank you, thank you.', 4500]] },
+  ];
+  let rite = null;
+  function startRite(r) {
+    if (breath.at || hum.at) return;
+    const steps = r.steps.map(([words, len]) => [words, words?.breaths ? words.breaths * cycleOf(words.pat || BREATH) + 300 : len]);
+    const mine = rite = { timers: [] }, total = steps.reduce((x, st) => x + st[1], 0);
+    calmMood = 'sleepy'; setMood('sleepy', total);
+    zoom.target = 1; zoom.aim = null; voidZ = 1; // (and back from the void, if you were there)
+    closeWindows();
+    let at = 0;
+    for (const [words, len] of steps) {
+      if (words?.breaths) mine.timers.push(setTimeout(() => {
+        if (rite === mine) Object.assign(breath, { at: performance.now(), phase: -1, times: words.breaths, rest: 0, quiet: true, pat: words.pat || BREATH });
+      }, at));
+      else if (words) mine.timers.push(setTimeout(() => { if (rite === mine) ritualSay(words, Math.max(1500, len - 900 - words.length * 26)); }, at));
+      at += len;
+    }
+    mine.timers.push(setTimeout(() => {
+      if (rite !== mine) return;
+      rite = null;
+      if (breath.quiet) { breath.at = 0; breath.quiet = false; voices.hush('guide'); }
+      if (calmMood === 'sleepy' && !breath.at && !hum.at) { calmMood = null; setMood('smile', 2000); }
+    }, at));
+  }
+  function rites() {
+    if (!intro.woke || calmMood) return;
+    const d = new Date(), t = Date.now();
+    for (const r of RITES) {
+      const s = new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.hour).getTime();
+      if (t < s || t > s + 90000 || store.get(r.key) === String(s)) continue;
+      store.set(r.key, String(s)); // (once a night, even if you come back)
+      startRite(r);
+      return;
+    }
+  }
+  setInterval(rites, 2000);
+
   // breathing: the world fills like a lung. in for four, hold for four, out for six, rest for two. three times.
   const BREATH = [['breathe in', 4000], ['hold', 4000], ['breathe out', 6000], ['rest', 2000]];
   const BREATH_CYCLE = 16000, BREATH_TIMES = 3, BREATH_REST = 18000; // and then a quiet, still moment, like after the song
-  const breath = { at: 0, phase: -1 };
+  // (a night ritual borrows a few of these breaths: times is how many, rest the stillness after, quiet keeps the
+  // world quiet at the end, for the ritual to carry on, and pat can be a quicker breath, with no hold)
+  const breath = { at: 0, phase: -1, times: BREATH_TIMES, rest: BREATH_REST, quiet: false, pat: BREATH };
+  const cycleOf = (pat) => pat.reduce((x, p) => x + p[1], 0);
   function breathNow(now) {
     if (!breath.at || now < breath.at) return null;
-    const t = now - breath.at;
-    if (t >= BREATH_CYCLE * BREATH_TIMES + BREATH_REST) return { done: true };
-    if (t >= BREATH_CYCLE * BREATH_TIMES) return { phase: 4, k: 0, fill: 0, cycle: BREATH_TIMES }; // the stillness after
-    let u = t % BREATH_CYCLE, phase = 0;
-    while (u >= BREATH[phase][1]) { u -= BREATH[phase][1]; phase++; }
-    const k = u / BREATH[phase][1];
+    const t = now - breath.at, times = breath.times, pat = breath.pat, cycle = cycleOf(pat);
+    if (t >= cycle * times + breath.rest) return { done: true };
+    if (t >= cycle * times) return { phase: 4, k: 0, fill: 0, cycle: times }; // the stillness after
+    let u = t % cycle, phase = 0;
+    while (u >= pat[phase][1]) { u -= pat[phase][1]; phase++; } // (a hold of no time is passed straight over)
+    const k = u / pat[phase][1];
     const fill = phase === 0 ? smooth(0, 1, k) : phase === 1 ? 1 : phase === 2 ? 1 - smooth(0, 1, k) : 0;
-    return { phase, k, fill, cycle: Math.floor(t / BREATH_CYCLE) };
+    return { phase, k, fill, cycle: Math.floor(t / cycle) };
   }
   function breathFill(now) { const b = breathNow(now); return b && !b.done ? b.fill : 0; }
   function startBreath(clockAt = Date.now()) {
     if (hum.at) endHum(true);
     const SOAK = 7000; // "remember who you are." stays a while, to soak in, before the first breath
     breath.at = performance.now() - (Date.now() - clockAt) + SOAK; breath.phase = -1;
+    Object.assign(breath, { times: BREATH_TIMES, rest: BREATH_REST, quiet: false, pat: BREATH });
     calmMood = 'sleepy'; setMood('sleepy', BREATH_CYCLE * BREATH_TIMES + BREATH_REST + SOAK);
     zoom.target = 1; zoom.aim = null; voidZ = 1; // (and back from the void, if you were there)
     closeWindows(); ritualSay('remember who you are.', SOAK);
@@ -3864,14 +3923,15 @@
     document.body.classList.toggle('ritual-sing', !!hum.at);
     const b = breathNow(now);
     if (b) {
-      if (b.done) {
+      if (b.done && breath.quiet) { breath.at = 0; voices.hush('guide'); } // (a ritual's breaths: the ritual carries on)
+      else if (b.done) {
         breath.at = 0; calmMood = null; voices.hush('guide'); setMood('smile', 2000);
         whisper('thank you for breathing with the world. ♥', 4200);
       } else {
         if (b.phase !== breath.phase) {
           breath.phase = b.phase;
           if (b.phase === 4) ritualSay('rest here in the stillness.', 6000);
-          else if (b.phase !== 3) ritualSay(b.phase === 0 && b.cycle === BREATH_TIMES - 1 ? 'one last time. breathe in' : BREATH[b.phase][0], BREATH[b.phase][1] - 200);
+          else if (b.phase !== 3) ritualSay(b.phase === 0 && breath.times > 1 && b.cycle === breath.times - 1 ? 'one last time. breathe in' : breath.pat[b.phase][0], breath.pat[b.phase][1] - 200);
         }
         // a soft tone that rises as you breathe in and falls as you breathe out
         if (b.phase >= 3) voices.hush('guide');

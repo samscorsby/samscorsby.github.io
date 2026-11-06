@@ -95,7 +95,7 @@ the song was not about lumi. the song was entirely about lumi. these were both t
 
 he performed it at a little venue in the east mountains. the room wasn't large. the people in it were the kind of people who go to small venues in the east mountains — curious, a little wind-worn, willing.
 
-lumi was there. or someone was there who had her particular presence — that present stillness, the sense of having arrived from nowhere exactly and was in no hurry to go anywhere else.
+lumi was there. or someone was there who had her particular essence — that present stillness, the sense of having arrived from nowhere exactly and was in no hurry to go anywhere else.
 
 when it was over she said nothing. she said yes.
 

@@ -2879,8 +2879,8 @@ export const BLOG_SNIPPETS = [
   "wak\u00e1\u014b t\u00e1\u014bka",
   "to love jan",
   "to love jan is to love jesus",
-  "to love jesus is to love yourself",
-  "to love yourself is to love all",
+  "to love jesus is to love your self",
+  "to love my self is to love all",
   "to love all is to love none",
   "to love none is to love one",
   "to love one is to love jan"

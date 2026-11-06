@@ -1,3 +1,3 @@
-### the empty platter savior
+### the luminous re-arrangement of whiskers
 
-scorsby promised the void-weaver snack-coins, then hung a joy-straw dummy. "rrombo dombo di di dai!" declared the weaver, gone. at the glimmer-king's feast, scorsby devoured everything. "barely a morsel," he beamed, pulling the king's crown. a fizz-serpent zipped out. "my savior!" gasped the king. "have snack-coins!" scorsby just smiled, dreaming of his *true* feast.
+old man whiskers, a gleeful dome from hair-games, was promised to a whispering lord. his daughter, scorsby, a smile-centric essence, sent a mare, "mrs. glimmer." "rrombo dombo di di dai!" the lord accepted. later, whiskers, jailed, didn't recognize scorsby, a shimmer-player, who rescued him. she hummed, "i am your glimmer, your all," and his world rearranged into luminous joy.

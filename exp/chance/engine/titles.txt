@@ -101,3 +101,12 @@ ISA009 Reveleze Hamburg Lowpass
 4. Revelation broadcast
 5. Freeze Kamloops Lowpass Not
 6. Hamburg 8-bit x0.79
+
+ISA010 Playhead Music Entertainment
+1. misc Mosaic Canada 14220.2
+2. YLomi Central NC t
+3. 7074 Accelerando data 93 Splinter
+4. 169 Playhead music
+5. IAR Morph entertainment Rule
+6. & Fold Diamoeba mariachi Att
+7. gospel XOR shortwave Misread

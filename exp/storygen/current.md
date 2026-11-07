@@ -1,3 +1,3 @@
-### the luminous re-arrangement of whiskers
+### the carried essence
 
-old man whiskers, a gleeful dome from hair-games, was promised to a whispering lord. his daughter, scorsby, a smile-centric essence, sent a mare, "mrs. glimmer." "rrombo dombo di di dai!" the lord accepted. later, whiskers, jailed, didn't recognize scorsby, a shimmer-player, who rescued him. she hummed, "i am your glimmer, your all," and his world rearranged into luminous joy.
+barnaby’s wife, luna, an elastic essence, hid her lover (twice!). barnaby, eyeing matches, sought scorsby. scorsby, fiddling with his "devil's knapsack" ("rrombo dombo di di dai!"), chirped, "each cross, friend!" barnaby lifted luna. her form, aloft, unwittingly dislodged her paramour. luna, loving the ride, became delightfully tractable.

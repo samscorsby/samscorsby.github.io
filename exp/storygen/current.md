@@ -1,3 +1,2 @@
-### the carried essence
-
-barnaby’s wife, luna, an elastic essence, hid her lover (twice!). barnaby, eyeing matches, sought scorsby. scorsby, fiddling with his "devil's knapsack" ("rrombo dombo di di dai!"), chirped, "each cross, friend!" barnaby lifted luna. her form, aloft, unwittingly dislodged her paramour. luna, loving the ride, became delightfully tractable.
+### the patience-pebble's pop
+a princess, pip, once saw her professor nibbling what seemed to be existential dread. she told no one. later, pip loved scorsby, a prince whose fate decreed he’d un-smile on his wedding day. "i’ll gift you half my mirth!" she chirped. a jealous vizier, once professor, framed her for "smile-theft." in her tower, pip was given a patience-pebble & a joy-knife. she’d whisper to the pebble, "all smiles, *rrombo dombo di di dai*! the vizier is… a chomp-chomp! *quack! cock-a-doodle-doo!*” scorsby, always near, heard the pebble shimmer, then *pop* with shared understanding. he saved her. fate smiled. the vizier just, well, *baa*'d.

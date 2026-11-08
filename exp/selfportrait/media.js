@@ -2892,7 +2892,7 @@ export const BLOG_SNIPPETS = [
   "you will know me by my vertices, equidistantly arranged.",
   "my color is sea-green, closely followed by fire-hot-red.",
   "contained within me is \u2022 , the point of perfect unity.",
-  "also known as zero. also known as home.",
+  "also known as point zero. also known as home.",
   "my existence needs no justification.",
   "if you should encounter me face to face, fear not my direct, steady witness.",
   "consider this to be the greatest honor: to meet my presence with your presence.",

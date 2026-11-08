@@ -521,14 +521,14 @@ nav.world-nav.scrolled { box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25); }
   nav.world-nav.open .wn-burger svg { fill: #05060a; }
   .wn-right {
     display: none; position: absolute; top: 100%; left: 0; right: 0;
-    flex-direction: column; align-items: flex-start; gap: 16px;
-    padding: 6px 20px 22px; background: #00b4ff; box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25);
+    flex-direction: column; align-items: flex-end; gap: 16px; /* (right-justified, under the heart) */
+    padding: 6px 16px 22px; background: #00b4ff; box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25);
   }
   nav.world-nav.open .wn-right { display: flex; }
-  .wn-links { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .wn-links { flex-direction: column; align-items: flex-end; gap: 14px; }
   .wn-links a { font-size: 15px; }
   .wn-clock-menu { display: block; margin: 0; }
   /* in the menu: the links, then the planet's two lines, then the date at the bottom */
-  .wn-links { order: 1; } .wn-status { order: 2; text-align: left; } .wn-clock-menu { order: 3; }
+  .wn-links { order: 1; } .wn-status { order: 2; text-align: right; } .wn-clock-menu { order: 3; text-align: right; }
 }
 

@@ -2895,8 +2895,8 @@ export const BLOG_SNIPPETS = [
   "also known as zero. also known as home.",
   "my existence requires no justification.",
   "if you should encounter me face to face, fear not my direct, steady witness.",
-  "consider it a sign of great honor in fact, if you should meet my silence with silence.",
-  "to those who know me, i am the dreamless sleep.",
+  "it is the greatest honor to meet my presence with your presence.",
+  "to those who know me, i am sweet dreamless sleep.",
   "to those who don't, i am incinerating, pointed heat.",
   "my vertices are as follows: thank you, thank you, thank you.",
   "end of transmission. now go in peace."

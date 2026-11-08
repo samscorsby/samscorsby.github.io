@@ -1,4 +1,5 @@
 window.postFiles = [
+  "/blog/2026-11-08_new_mgmt.html",
   "/blog/2026-11-05.html",
   "/blog/2026-11-01_pagan_poetry.html",
   "/blog/2026-10-29_the_medium,_the_mirror,_and_the_music.html",

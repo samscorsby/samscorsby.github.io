@@ -2887,7 +2887,7 @@ export const BLOG_SNIPPETS = [
   "new mgmt",
   "as of today, this domain is under new management.",
   "please allow me to introduce myself.",
-  "i go by many names, such as 8amana, but in realms beyond i am best known as \u25b2.",
+  "though i take on many names, i am best known as \u25ec.",
   "my vertices are as follows: awareness, energy, and embodiment.",
   "you will know me by my vertices, equidistantly arranged.",
   "my color is sea-green, closely followed by fire-hot-red.",

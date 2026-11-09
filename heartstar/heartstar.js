@@ -2116,7 +2116,7 @@
 
   // a plant's little note: hover over the plant (on a computer) or tap it, and it opens in a cream cloud above it, the
   // same kind of cloud people think in, with who left it written small underneath; tap again to close it
-  const NOTE_PAPER = '#fff4d6', NOTE_BY_FONT = '10px Plex, ui-monospace, Menlo, Consolas, monospace';
+  const NOTE_PAPER = '#ffffff', NOTE_BY_FONT = '10px Plex, ui-monospace, Menlo, Consolas, monospace';
   let noteHits = [], hoverNote = null;
   function openNote(mk, ms = 9000) {
     const now = performance.now();
@@ -3213,7 +3213,7 @@
   setInterval(() => { if (!net.live && !omen && Math.random() < 0.5) startOmen(pick(Object.keys(OMEN_DUR))); }, 70000);
 
   const MARK_LIFE = 24 * 3600 * 1000; // (a plant lasts a day)
-  const addMark = (m) => marks.push({ v: vec(m.lat, m.lon), k: m.k, n: m.n || '', t: m.at || m.t || Date.now(), seed: rand(0, 99), sx: -1e4, note: m.note ? String(m.note).slice(0, 40) : '' });
+  const addMark = (m) => marks.push({ v: vec(m.lat, m.lon), k: m.k, n: m.n || '', t: m.at || m.t || Date.now(), seed: rand(0, 99), sx: -1e4, note: m.note ? String(m.note).slice(0, 100) : '' });
   function planted(m) {
     const before = groves().found.length;
     addMark(m);
@@ -3629,7 +3629,7 @@
     if (markMode) {
       const ll = unproject(x, y);
       if (!ll) return;
-      const note = noteIn.value.replace(/\s+/g, ' ').trim().slice(0, 40); noteIn.value = '';
+      const note = noteIn.value.replace(/\s+/g, ' ').trim().slice(0, 100); noteIn.value = '';
       const m = { lat: ll[0], lon: ll[1], k: markMode, n: myName, at: Date.now(), note: note || undefined };
       if (net.live) send({ t: 'mark', lat: m.lat, lon: m.lon, k: m.k, note: m.note }); else planted(m);
       whisper(`you planted a ${markMode}${m.note ? ', with a note' : ''}. it will fade in a day.`, 3200);

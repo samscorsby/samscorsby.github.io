@@ -70,7 +70,7 @@ const UNKIND = /fuck|shit|cunt|nigg|fag|rape|nazi|hitler|kike|retard|whore|slut|
 // every naughty or nasty word becomes "boink". two checks find them: a list of
 // words that are always boinks, then a small language model that only points at
 // which words are unkind (it never writes anything that gets shown).
-const SAY_MAX = 80;
+const SAY_MAX = 80; const NOTE_MAX = 100; // (a note left with a plant: a little longer than a message)
 // boinks wherever they appear in a word (after undoing l33t)
 const NEVER = ['fuck', 'fuk', 'fck', 'fvck', 'phuk', 'shit', 'cunt', 'nigg', 'faggot', 'fagot', 'retard', 'whore', 'slut', 'bitch', 'biatch',
   'porn', 'penis', 'vagina', 'dildo', 'boob', 'nazi', 'hitler', 'kkk', 'asshole', 'arsehole', 'bastard', 'wank', 'jizz', 'blowjob',
@@ -85,11 +85,11 @@ const unleet = (t) => [...t].map((ch) => LEET[ch] ?? ch).join('');
 const squeeze = (t) => t.replace(/(.)\1+/g, '$1');
 const lettersOf = (t) => unleet(t).replace(/[^\p{L}]/gu, '');
 
-function tidySay(raw) {
+function tidySay(raw, max = SAY_MAX) {
   return String(raw ?? '')
     .normalize('NFKC')
     .replace(/[^\p{L}\p{N}\p{P}\p{Zs}\p{Extended_Pictographic}♥❤️<>=~^+$|€]/gu, '') // no invisible or control characters
-    .replace(/\s+/g, ' ').trim().toLowerCase().slice(0, SAY_MAX);
+    .replace(/\s+/g, ' ').trim().toLowerCase().slice(0, max);
 }
 
 // links, handles and emails don't travel either
@@ -779,7 +779,7 @@ export class Hearth extends DurableObject {
         const mark = { lat: round(clamp(m.lat, -85, 85), 2), lon: round(wrapLon(m.lon), 2), k: m.k, n: me.n || '', t: Date.now() };
         // a little note left with it, if any: short, and kind (it's checked like a message; if it can't be, or it's a
         // link, the plant goes in without it)
-        const raw = tidySay(m.note).slice(0, 40);
+        const raw = tidySay(m.note, NOTE_MAX);
         if (raw && /[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(raw) && !raw.split(' ').some((w) => ELSEWHERE.test(w)) && !(PHONE.lastIndex = 0, PHONE.test(raw))) {
           const note = await boinked(this.env, raw);
           if (note) mark.note = note;

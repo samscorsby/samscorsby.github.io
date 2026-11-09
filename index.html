@@ -7,7 +7,7 @@
   touch the world, or another scorsby, to send out a ripple of hearts. it is contagious.
   peace, love and joy (the blog, the works, the about) live in the top right corner.
   the world has a face. it looks at you, it changes its mind, its nose honks.
-  scroll or pinch to come closer, and plant something small. it fades in six hours.
+  scroll or pinch to come closer, and plant something small (with a little note, if you like). it fades in a day.
   sing, and everyone hears you as a scorsby tone. your voice never leaves your device.
 
   the hearth forgets you the moment you leave.
@@ -54,7 +54,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="preload" href="/fonts/Scheme.otf" as="font" type="font/otf" crossorigin>
-  <link rel="stylesheet" href="heartstar/heartstar.css?v=64">
+  <link rel="stylesheet" href="heartstar/heartstar.css?v=65">
 </head>
 <body class="intro">
   <canvas id="sky" aria-label="the world of scorsby: a blue planet with ears and a face, turning slowly. every small face on it is someone here right now."></canvas>
@@ -122,8 +122,9 @@
 
   <section id="plant-win" class="win" hidden>
     <div class="bar"><span>plant.exe</span><button class="x" aria-label="close">×</button></div>
-    <p class="small">choose something, then tap the world.<br>everyone can see it for six hours.</p>
+    <p class="small">choose something, then tap the world.<br>everyone can see it for a day.</p>
     <div id="plants"></div>
+    <input id="note-in" maxlength="40" autocomplete="off" placeholder="leave a little note with it (if you like)">
   </section>
 
   <section id="sing-card" class="win" hidden>
@@ -148,7 +149,7 @@
   <script src="heartstar/awareness.js?v=6"></script>
   <script src="heartstar/land.js?v=4"></script>
   <script src="heartstar/quotes.js" defer></script>
-  <script src="heartstar/heartstar.js?v=250"></script>
+  <script src="heartstar/heartstar.js?v=254"></script>
   <script src="/subscribe.js?v=12" defer></script>
   <script src="/js/tab-face.js?v=6" defer></script>
 </body>

@@ -4,7 +4,7 @@
 // blinks, hearts and songs between them. who you are lives only as long as
 // your connection. what is written down: how much love was shared each day
 // (just numbers), where love-for-everyone came from today (fuzzy points, gone
-// after a day), and the little markers people plant (gone after six hours).
+// after a day), and the little markers people plant (gone after a day), with any little note left with them.
 //
 // messages are checked twice before anyone sees them: a list of words that
 // are always boinks, then a small language model (cloudflare workers ai) that
@@ -31,7 +31,7 @@
 import { DurableObject } from 'cloudflare:workers';
 
 const DAY = 24 * 60 * 60 * 1000;
-const MARK_LIFE = 6 * 60 * 60 * 1000;
+const MARK_LIFE = 24 * 60 * 60 * 1000;
 const SAID_LIFE = 3 * 60 * 60 * 1000; // kind messages, kept for a quiet world to hear again
 const MAX_SAID = 10, MAX_ECHOES = 3, QUIET = 2;
 // singing adds love: one point for every 6 seconds sung, twice as fast (every 3) while harmonizing with someone,
@@ -225,6 +225,8 @@ async function boinked(env, text) {
 
 const round = (x, d = 1) => Math.round(x * 10 ** d) / 10 ** d;
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+// any longitude, brought back between -180 and 180 (% keeps the sign, so it's done twice)
+const wrapLon = (lon) => ((((lon + 180) % 360) + 360) % 360) - 180;
 const num = (x) => typeof x === 'number' && Number.isFinite(x);
 const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Denver' }).format(new Date());
 
@@ -653,7 +655,7 @@ export class Hearth extends DurableObject {
       case 'move': {
         if (!num(m.lat) || !num(m.lon)) return;
         me.lat = round(clamp(m.lat, -85, 85), 1);
-        me.lon = round(((m.lon + 540) % 360) - 180, 1);
+        me.lon = round(wrapLon(m.lon), 1);
         ws.serializeAttachment(me);
         this.broadcast({ t: 'move', id: me.id, lat: me.lat, lon: me.lon }, ws);
         break;
@@ -774,8 +776,15 @@ export class Hearth extends DurableObject {
       }
       case 'mark': {
         if (!num(m.lat) || !num(m.lon) || !MARKS.includes(m.k)) return;
-        const mark = { lat: round(clamp(m.lat, -85, 85), 2), lon: round(clamp(m.lon, -180, 180), 2), k: m.k, n: me.n || '', t: Date.now() };
-        this.broadcast({ t: 'mark', lat: mark.lat, lon: mark.lon, k: mark.k, n: mark.n, at: mark.t });
+        const mark = { lat: round(clamp(m.lat, -85, 85), 2), lon: round(wrapLon(m.lon), 2), k: m.k, n: me.n || '', t: Date.now() };
+        // a little note left with it, if any: short, and kind (it's checked like a message; if it can't be, or it's a
+        // link, the plant goes in without it)
+        const raw = tidySay(m.note).slice(0, 40);
+        if (raw && /[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(raw) && !raw.split(' ').some((w) => ELSEWHERE.test(w)) && !(PHONE.lastIndex = 0, PHONE.test(raw))) {
+          const note = await boinked(this.env, raw);
+          if (note) mark.note = note;
+        }
+        this.broadcast({ t: 'mark', lat: mark.lat, lon: mark.lon, k: mark.k, n: mark.n, at: mark.t, note: mark.note });
         await this.remember('marks', mark, MARK_LIFE, MAX_MARKS);
         break;
       }

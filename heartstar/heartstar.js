@@ -297,6 +297,9 @@
     const cc = v[0] * cl0 + v[1] * sl0;
     return [v[1] * cl0 - v[0] * sl0, cp0 * v[2] - sp0 * cc, sp0 * v[2] + cp0 * cc];
   }
+  // any longitude, however far round the world has been turned, brought back between -180 and 180 (% keeps the sign in
+  // javascript, so a world turned far enough west once came out past -180, and plants landed on the dateline)
+  const wrapLon = (lon) => ((((lon + 180) % 360) + 360) % 360) - 180;
   function unproject(px, py) {
     const x = (px - CX) / R, y = (CY - py) / R;
     const rho = Math.hypot(x, y);
@@ -304,7 +307,7 @@
     const cc = Math.asin(rho), sc = Math.sin(cc), ccos = Math.cos(cc);
     const lat = rho ? Math.asin(ccos * sp0 + (y * sc * cp0) / rho) : view.lat * D2R;
     const lon = view.lon * D2R + Math.atan2(x * sc, rho * ccos * cp0 - y * sc * sp0);
-    return [lat / D2R, ((lon / D2R + 540) % 360) - 180];
+    return [lat / D2R, wrapLon(lon / D2R)];
   }
 
   function sun(now = new Date()) {
@@ -2082,7 +2085,7 @@
     for (const m of marks) if (project(...m.v)[2] > 0.15) inView++;
     const meadow = clamp(70 / Math.max(1, inView), 0.5, 1);
     const ds = markSize() * meadow;
-    const life = 6 * 3600 * 1000, t = Date.now();
+    const life = MARK_LIFE, t = Date.now();
     const { found, used } = groves();
     c.save();
     const cm = combos(used);
@@ -2108,6 +2111,39 @@
     const T0 = Date.now();
     for (const cr of creatures()) { c.save(); c.globalAlpha = show; drawCreature(cr, ds, now, T0); c.restore(); }
     c.restore();
+    renderNotes(now);
+  }
+
+  // a plant's little note: hover over the plant (on a computer) or tap it, and it opens in a cream cloud above it, the
+  // same kind of cloud people think in, with who left it written small underneath; tap again to close it
+  const NOTE_PAPER = '#fff4d6', NOTE_BY_FONT = '10px Plex, ui-monospace, Menlo, Consolas, monospace';
+  let noteHits = [], hoverNote = null;
+  function openNote(mk, ms = 9000) {
+    const now = performance.now();
+    if (mk.say && now < mk.say.until) { mk.say.until = Math.max(mk.say.until, now + ms); return; }
+    mk.say = { text: mk.note, born: now, until: now + ms + mk.note.length * 60, open: true };
+  }
+  function renderNotes(now) {
+    noteHits = [];
+    if (calmMood) return;
+    // (the one under the pointer stays open while it's there, and fades a moment after it leaves)
+    if (hoverNote && pointer.seen && !pointer.down && hoverNote.sx > -1e3 && Math.hypot(hoverNote.sx - pointer.x, hoverNote.sy - pointer.y) < Math.max(hoverNote.ss * 0.5, 20)) openNote(hoverNote, 700);
+    else hoverNote = null;
+    const open = marks.filter((m) => m.say && now < m.say.until && m.sx > -1e3);
+    for (const m of marks) if (m.say && now >= m.say.until) m.say = null;
+    if (!open.length) return;
+    c.save(); c.font = THOUGHT_FONT;
+    const plans = open.map((m) => {
+      const lines = wrapWords(m.note, VW < 500 ? 140 : 170), by = m.n ? `${m.n} scorsby` : 'someone';
+      c.font = NOTE_BY_FONT; const byW = c.measureText(by).width; c.font = THOUGHT_FONT;
+      const w = Math.max(16, byW, ...lines.map((l) => c.measureText(l).width)) + 26, h = lines.length * 17 + 18 + 14;
+      const hd = { x: m.sx, y: m.sy - m.ss * 0.2, r: m.ss * 0.35, far: 0 };
+      const x = clamp(hd.x - w / 2, 4, VW - w - 4), y = clamp(hd.y - hd.r - THOUGHT_GAP - THOUGHT_BUMP - h, 4, VH - h - 4);
+      noteHits.push({ m, x: x - 6, y: y - 6, w: w + 12, h: h + 12 });
+      return [{ say: m.say, c: NOTE_PAPER, seed: m.seed }, { x, y, w, h, lines, full: true, by }, hd, 0];
+    });
+    c.restore();
+    drawLast.push(() => drawThoughts(now, plans));
   }
 
   // contagious hearts: a ring of hearts rolls out over the world; every scorsby it touches starts its own
@@ -2421,7 +2457,7 @@
       c.save(); c.globalAlpha = a; c.drawImage(thoughtBuf, 0, 0, Math.ceil(bw * k), Math.ceil(bh * k), bx, by, Math.ceil(bw * k) / k, Math.ceil(bh * k) / k); c.restore();
     }
   }
-  function drawThought(now, [s, { x, y, w, h, lines, full }, hd, far]) {
+  function drawThought(now, [s, { x, y, w, h, lines, full, by }, hd, far]) {
     c.font = THOUGHT_FONT; c.textBaseline = 'middle'; c.textAlign = 'left';
     {
       const t = s.say;
@@ -2443,6 +2479,7 @@
       c.fillStyle = mixColor(ink, sky, 0.3 * far);
       if (full) lines.forEach((l, i) => c.fillText(l, x + 13, y + 18 + i * 17));
       else for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(x + w / 2 + (i - 1) * 7, y + h / 2, 1.8, 0, TAU); c.fill(); }
+      if (by) { c.font = NOTE_BY_FONT; c.globalAlpha *= 0.6; c.fillText(by, x + 13, y + h - 13); } // (who left it, small)
     }
   }
 
@@ -3175,13 +3212,14 @@
   }
   setInterval(() => { if (!net.live && !omen && Math.random() < 0.5) startOmen(pick(Object.keys(OMEN_DUR))); }, 70000);
 
-  const addMark = (m) => marks.push({ v: vec(m.lat, m.lon), k: m.k, n: m.n || '', t: m.at || m.t || Date.now(), seed: rand(0, 99), sx: -1e4 });
+  const MARK_LIFE = 24 * 3600 * 1000; // (a plant lasts a day)
+  const addMark = (m) => marks.push({ v: vec(m.lat, m.lon), k: m.k, n: m.n || '', t: m.at || m.t || Date.now(), seed: rand(0, 99), sx: -1e4, note: m.note ? String(m.note).slice(0, 40) : '' });
   function planted(m) {
     const before = groves().found.length;
     addMark(m);
     if (m.k === 'tree' && groves().found.length > before) whisper('the trees grew together into a tree of smiles.', 4200, true, null, true);
   }
-  setInterval(() => { const t = Date.now(); marks = marks.filter((m) => t - m.t < 6 * 3600 * 1000); }, 60000);
+  setInterval(() => { const t = Date.now(); marks = marks.filter((m) => t - m.t < MARK_LIFE); }, 60000);
 
   function receive(m) {
     const now = performance.now();
@@ -3245,7 +3283,7 @@
         tone.poke();
         break;
       }
-      case 'mark': planted(m); break;
+      case 'mark': { planted(m); const mk = marks[marks.length - 1]; if (mk && mk.note) openNote(mk, 6000); break; }
       case 'garden': gardenN = m.n || 0; break;
       case 'elsewhere': elsewhere = m.n || 0; updatePresence(); break;
       // the world is very full, so some scorsbys are moving to another part of it: you, or others
@@ -3360,7 +3398,7 @@
   }
   const hitSky = (x, y) => skyFade() > 0.3 && sky.find((d) => Math.hypot(d.x - x, (d.cy ?? d.y) - y) < d.s * 0.7 * skyK());
   const hitMoon = (x, y) => moon.r && Math.hypot(moon.x - x, moon.y - y) < moon.r * 1.2;
-  const hitMark = (x, y) => marks.find((m) => Math.hypot(m.sx - x, m.sy - y) < m.ss * 0.5);
+  const hitMark = (x, y) => marks.find((m) => Math.hypot(m.sx - x, m.sy - y) < Math.max(m.ss * 0.5, m.note ? 20 : 0)); // (a plant with a note is easy to tap)
   function localTime(tz) {
     const d = new Date(Date.now() + (tz + new Date().getTimezoneOffset()) * 60000);
     return d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }).toLowerCase();
@@ -3514,12 +3552,10 @@
     lastActive = performance.now();
     if (!pointer.down) {
       const s = hit(e.clientX, e.clientY);
-      const mk = !s && hitMark(e.clientX, e.clientY);
-      cv.classList.toggle('pointing', !!(s || mk || markMode || (sunAt.r && Math.hypot(e.clientX - sunAt.x, e.clientY - sunAt.y) < sunAt.r * 1.3) || hitPart(e.clientX, e.clientY) || hitSky(e.clientX, e.clientY) || hitMoon(e.clientX, e.clientY)));
-      if (mk) {
-        const left = Math.max(1, Math.round((6 * 3600 * 1000 - (Date.now() - mk.t)) / 3600000));
-        showTip(null, mk.sx, mk.sy - mk.ss * 0.4, `${mk.n ? mk.n + ' scorsby' : 'someone'}'s ${mk.k} · fades in ~${left}h`);
-      } else showTip(s);
+      const mk = !s && hitMark(e.clientX, e.clientY); // (only a plant with a note answers the pointer)
+      cv.classList.toggle('pointing', !!(s || (mk && mk.note) || markMode || (sunAt.r && Math.hypot(e.clientX - sunAt.x, e.clientY - sunAt.y) < sunAt.r * 1.3) || hitPart(e.clientX, e.clientY) || hitSky(e.clientX, e.clientY) || hitMoon(e.clientX, e.clientY)));
+      if (mk && mk.note && e.pointerType === 'mouse') { hoverNote = mk; openNote(mk, 700); showTip(null); }
+      else showTip(s);
       return;
     }
     pointer.moved += Math.abs(dx) + Math.abs(dy);
@@ -3593,9 +3629,10 @@
     if (markMode) {
       const ll = unproject(x, y);
       if (!ll) return;
-      const m = { lat: ll[0], lon: ll[1], k: markMode, n: myName, at: Date.now() };
-      if (net.live) send({ t: 'mark', lat: m.lat, lon: m.lon, k: m.k }); else planted(m);
-      whisper(`you planted a ${markMode}. it will fade in six hours.`, 3200);
+      const note = noteIn.value.replace(/\s+/g, ' ').trim().slice(0, 40); noteIn.value = '';
+      const m = { lat: ll[0], lon: ll[1], k: markMode, n: myName, at: Date.now(), note: note || undefined };
+      if (net.live) send({ t: 'mark', lat: m.lat, lon: m.lon, k: m.k, note: m.note }); else planted(m);
+      whisper(`you planted a ${markMode}${m.note ? ', with a note' : ''}. it will fade in a day.`, 3200);
       lastPlanted = m.k;
       markMode = null; document.body.classList.remove('marking');
       tone.chime();
@@ -3607,6 +3644,8 @@
       if (t.open) t.until = Math.max(t.until, now + 5000 + t.text.length * 60); // (time to read it)
       return;
     }
+    const nh = noteHits.find((b) => x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h);
+    if (nh) { nh.m.say = null; return; }
     const s = hit(x, y);
     if (s) {
       if (type !== 'mouse') tipHold = { s, until: now + 2800 };
@@ -3614,6 +3653,8 @@
       else { s.blink = 1; heartsAt(s.v, s.id); send({ t: 'poke', lat: s.lat, lon: s.lon }); }
       return;
     }
+    const nm = hitMark(x, y);
+    if (nm && nm.note) { if (nm.say) { nm.say = null; } else openNote(nm); tone.blink(); return; }
     const d = hitSky(x, y);
     if (d) {
       if (d.kind === 'bell') { d.ring = now; tone.bell(); return; }
@@ -3778,6 +3819,7 @@
     saysOut.push(p);
   }
   const singNoted = { self: false, together: false, hand: false }; // say each once per visit
+  const noteIn = document.getElementById('note-in');
   const youWin = document.getElementById('you-win'), plantWin = document.getElementById('plant-win'), card = document.getElementById('sing-card'), todayWin = document.getElementById('today-win');
   function closeWindows(except) { for (const w of [youWin, plantWin, card, todayWin]) if (w !== except) w.hidden = true; }
   document.addEventListener('pointerdown', (e) => {
@@ -4626,7 +4668,7 @@
       // a busy day for testing: plants all over the land (as many as the hearth keeps), and a full wreath of noticing flowers
       for (let i = 0; i < Math.min(300, n * 2); i++) {
         const j = ((Math.random() * NL) | 0) * 2;
-        planted({ lat: LAND[j], lon: LAND[j + 1], k: pick(MARKS), n: '', at: Date.now() - rand(0, 5.5 * 3600 * 1000) });
+        planted({ lat: LAND[j], lon: LAND[j + 1], k: pick(MARKS), n: '', at: Date.now() - rand(0, 23 * 3600 * 1000) });
       }
       gardenN = 56;
     }
@@ -4690,7 +4732,7 @@
       zoom.v += (zoom.target - zoom.v) * 0.12;
       leanStep();
       if (zoom.aim) {
-        view.lon += (((zoom.aim[1] - view.lon + 540) % 360) - 180) * 0.08;
+        view.lon += wrapLon(zoom.aim[1] - view.lon) * 0.08;
         view.lat += (clamp(zoom.aim[0], -70, 70) - view.lat) * 0.08;
         view.auto = false; view.idleAt = now + 6000; setView();
         if (Math.abs(zoom.target - zoom.v) < 0.01) zoom.aim = null;
@@ -4733,6 +4775,6 @@
   if (n > 0) dream(Math.min(n, params.has('debug') ? 400 : 40)); // (up to 400, the hearth's limit, for testing a crowd)
   if (params.get('omen')) setTimeout(() => startOmen(params.get('omen')), 1500);
   if (params.get('mood')) setTimeout(() => setMood(params.get('mood'), 30000), Math.max(1500, intro.ui - performance.now() + 500)); // ?mood=worm to see one face for 30s
-  if (params.has('debug')) window.heartstar = { get gardenN() { return gardenN; }, set gardenN(v) { gardenN = v; }, pointHearts, get quality() { return quality; }, set quality(q) { quality = q; resize(); }, get frameAvg() { return frameAvg; }, get visible() { return visible; }, get ac() { return ac; }, get master() { return master; }, get soundOn() { return soundOn; }, mic, pitch, hit, tap, planted, bursts, pf, pull, hitPart, sunAt, view, moon, peers, get me() { return me; }, faceToward, startOmen, setMood, zoom, loveBurst, MOODS, waves, sky, tilt, turca, whisper, receive };
+  if (params.has('debug')) window.heartstar = { get gardenN() { return gardenN; }, set gardenN(v) { gardenN = v; }, pointHearts, get quality() { return quality; }, set quality(q) { quality = q; resize(); }, get frameAvg() { return frameAvg; }, get visible() { return visible; }, get ac() { return ac; }, get master() { return master; }, get soundOn() { return soundOn; }, mic, pitch, hit, tap, planted, bursts, pf, pull, hitPart, sunAt, view, moon, peers, get me() { return me; }, faceToward, startOmen, setMood, zoom, loveBurst, MOODS, waves, sky, tilt, turca, whisper, receive, get marks() { return marks; } };
   requestAnimationFrame(frame);
 })();

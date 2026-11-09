@@ -204,6 +204,12 @@ h1 { font-family: var(--head); font-weight: 400; font-size: 30px; line-height: 1
 #say-form button:disabled { opacity: .5; }
 
 #plants { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 12px 14px 14px; }
+/* a little note to leave with the plant (optional), under the plants */
+#note-in {
+  display: block; box-sizing: border-box; width: calc(100% - 28px); margin: 0 14px 14px; font: inherit; font-size: 12px; text-transform: lowercase; letter-spacing: .02em;
+  padding: 6px 8px; border: 1px solid var(--ui); background: var(--paper); color: var(--ink); border-radius: 2px; outline: none;
+}
+#note-in:focus { box-shadow: 2px 2px 0 var(--ui); }
 .plant { aspect-ratio: 1; border: 1px solid var(--ui); border-radius: 2px; display: grid; place-items: center; background: var(--paper); }
 .plant canvas { width: 34px; height: 34px; }
 .plant:hover { box-shadow: 2px 2px 0 var(--ui); transform: translate(-1px, -1px); }

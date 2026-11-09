@@ -2315,7 +2315,9 @@
     if (calmMood) return;
     const live = (s) => s.say && now < s.say.until && now - arrivedAt(s) > 700;
     for (const s of list.concat(behind)) if (s.say && now >= s.say.until) s.say = null;
-    const talking = list.filter(live).concat(behind.filter(live));
+    // (someone off the edge of the screen, as when you've come close, has no cloud you'd see: none is drawn for them)
+    const inView = (s) => s.sx > -40 && s.sx < VW + 40 && s.sy > -40 && s.sy < VH + 40;
+    const talking = list.filter(live).filter(inView).concat(behind.filter(live));
     if (!talking.length) return;
     c.save(); c.font = THOUGHT_FONT;
     const rank = (s) => (s.say.open ? 2e9 : 0) + (s.say.full ? 1e9 : 0) + s.say.born;
@@ -2332,7 +2334,8 @@
     // no cloud covers anyone who's talking
     const placed = [...heads.values()].filter((h) => h.r > 2).map((h) => ({ x: h.x - h.r, y: h.y - h.r, w: h.r * 2, h: h.r * 2 }));
     const overlaps = (r) => placed.some((o) => r.x < o.x + o.w + 6 && o.x < r.x + r.w + 6 && r.y < o.y + o.h + 6 && o.y < r.y + r.h + 6);
-    const DEG = Math.PI / 180, AROUND = [-60, -120, -90, -25, -155, 20, 160, 60, 120, 90].map((d) => d * DEG); // (above first, then the sides, then below)
+    const DEG = Math.PI / 180, AROUND = [-60, -120, -90, -40, -140, -20, -160, 0, 180, 25, 155, 60, 120, 90].map((d) => d * DEG); // (above first, then the sides, then below)
+    const WRAPS = VW < 500 ? [140, 110, 84] : [170, 128, 96]; // (the words' widest line, then narrower and taller, to fit; narrower on a phone)
     const OUTWARD = [0, -25, 25, -50, 50, -75, 75, -100, 100, -125, 125]; // (from the far side: straight out from the rim, then round it)
     const clearOfWorld = (r) => rectDist(CX, CY, r) >= R + 40 * L + 4 && (pf.ears || []).every(([ex, ey, er]) => rectDist(ex, ey, r) >= er + 40 * L + 4);
     const onScreen = (r) => r.x >= 4 && r.y >= 4 && r.x + r.w <= VW - 4 && r.y + r.h <= VH - 4;
@@ -2341,8 +2344,8 @@
       const t = s.say, hd = heads.get(s), behindIt = hd.far > 0.5;
       const dirs = behindIt ? OUTWARD.map((d) => hd.out + d * DEG) : AROUND.slice();
       if (t.angle != null) dirs.unshift(t.angle);
-      const size = (full) => {
-        const lines = full ? wrapWords(t.text, 170) : [];
+      const size = (full, wrap = WRAPS[0]) => {
+        const lines = full ? wrapWords(t.text, wrap) : [];
         return { lines, w: full ? Math.max(40, ...lines.map((l) => c.measureText(l).width)) + 26 : 42, h: full ? lines.length * 17 + 18 : 28 };
       };
       // the box in that direction whose nearest edge is just the gap away from the face (or a little further, if asked)
@@ -2355,17 +2358,23 @@
       // on screen; and from the far side, wholly clear of the world, its outline and its ears (only its dots go round behind)
       const fits = (r) => onScreen(r) && (!behindIt || clearOfWorld(r));
       const spot = (full, crowd = false) => {
-        const sz = size(full);
-        for (const extra of behindIt ? [0, 24, 48] : [0]) for (const ang of dirs) {
-          const r = at(sz, ang, extra);
-          if (fits(r) && (crowd || !overlaps(r))) return { ...r, lines: sz.lines, full, angle: ang };
+        for (const wrap of full ? WRAPS : [0]) {
+          const sz = size(full, wrap);
+          for (const extra of behindIt ? [0, 24, 48] : [0, 22]) for (const ang of dirs) {
+            const r = at(sz, ang, extra);
+            if (fits(r) && (crowd || !overlaps(r))) return { ...r, lines: sz.lines, full, angle: ang };
+          }
         }
         return null;
       };
       // full words if they fit somewhere, else a "…"; if even that has no free spot, it may overlap another cloud, but
       // never the world or its ears (one you opened goes wherever it can)
-      let plan = spot(true);
+      let plan = spot(true), front = false;
       if (!plan && t.open) plan = spot(true, true);
+      if (!plan && t.open) { // (opened, with nowhere tidy for it, as when you're close and the world fills the screen: it goes in front, on screen)
+        const sz = size(true, WRAPS[0]), r = at(sz, dirs[0]);
+        plan = { ...r, x: clamp(r.x, 4, VW - r.w - 4), y: clamp(r.y, 4, VH - r.h - 4), lines: sz.lines, full: true, angle: dirs[0] }; front = true;
+      }
       if (!plan) plan = spot(false) || spot(false, true);
       if (!plan) { const sz = size(false), r = at(sz, dirs[0]); plan = { ...r, x: clamp(r.x, 4, VW - r.w - 4), y: clamp(r.y, 4, VH - r.h - 4), lines: [], full: false, angle: dirs[0] }; }
       t.full = plan.full; t.angle = plan.angle;
@@ -2373,15 +2382,15 @@
       // and it glides there, rather than jumping (the first time, it simply appears where it belongs)
       if (t.rx == null) { t.rx = plan.x; t.ry = plan.y; } else { t.rx += (plan.x - t.rx) * 0.2; t.ry += (plan.y - t.ry) * 0.2; }
       const shown = { ...plan, x: t.rx, y: t.ry };
-      plans.push([s, shown, hd, hd.far]);
+      plans.push([s, shown, hd, hd.far, front]);
       thoughtHits.push({ s, x: shown.x - 6, y: shown.y - 6, w: shown.w + 12, h: shown.h + 12 });
     }
     c.restore();
     // the most important are drawn last, on top. those mostly round the far side go behind the world, the rest in front
     // (they change over just as their speaker crosses the horizon, where the two places meet)
     plans.reverse();
-    thoughtsBehind = plans.filter((p) => p[3] > 0.5);
-    const front = plans.filter((p) => p[3] <= 0.5);
+    thoughtsBehind = plans.filter((p) => p[3] > 0.5 && !p[4]);
+    const front = plans.filter((p) => p[3] <= 0.5 || p[4]);
     if (front.length) drawLast.push(() => drawThoughts(now, front));
   }
   function drawThoughtsBehind(now) { if (thoughtsBehind.length && !calmMood) { c.save(); drawThoughts(now, thoughtsBehind); c.restore(); } }

@@ -1,2 +1,3 @@
-### the patience-pebble's pop
-a princess, pip, once saw her professor nibbling what seemed to be existential dread. she told no one. later, pip loved scorsby, a prince whose fate decreed he’d un-smile on his wedding day. "i’ll gift you half my mirth!" she chirped. a jealous vizier, once professor, framed her for "smile-theft." in her tower, pip was given a patience-pebble & a joy-knife. she’d whisper to the pebble, "all smiles, *rrombo dombo di di dai*! the vizier is… a chomp-chomp! *quack! cock-a-doodle-doo!*” scorsby, always near, heard the pebble shimmer, then *pop* with shared understanding. he saved her. fate smiled. the vizier just, well, *baa*'d.
+### the pure pour of wit
+
+mister glimmer, heart-split, got a glong-penny for 'wit.' scorsby gave rags. "test the pour," he smiled. glimmer's sparkle-friend saw rags, fled. his heart-tune wife saw him, offered all. like the fox's hidden feast, glimmer’s old life was water. his wife’s love: the pure milk. "rrombo dombo di di dai!" he chose truth.

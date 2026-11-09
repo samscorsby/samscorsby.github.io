@@ -1724,7 +1724,8 @@
         float d = length(gl_PointCoord - 0.5) * size, a = clamp((size - 1.0) * 0.5 - d + 0.5, 0.0, 1.0);
         if (a <= 0.0) discard;
         // the natural color (forest, desert, ice), dimmed at night like the rest, blended with the blue height shade
-        vec3 n = mix(vec3(0.0, 40.0, 120.0) / 255.0, texture2D(nature, uv).rgb, sh2);
+        vec3 n = mix(texture2D(nature, uv).rgb, vec3(0.31, 0.66, 1.0), 0.25); // (natural colors, with a soft scorsby-blue cast)
+        n = mix(vec3(0.0, 40.0, 120.0) / 255.0, n, sh2);
         gl_FragColor = vec4(mix(col, n, nat) * a, a);
       }`);
     if (!vs || !fs) return null;
@@ -1744,7 +1745,9 @@
     natImg.src = 'heartstar/land_colors.png?v=1';
     const aP = gl.getAttribLocation(prog, 'p');
     const maxPoint = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
-    const me = { cvs, ok: true, maxPoint, natReady: () => natReady && LAND_NATURE > 0 };
+    // (classic blue at the usual distance; the natural colors come in as you come closer)
+    const natNow = () => LAND_NATURE * smooth(1.3, 2.2, zoom.v);
+    const me = { cvs, ok: true, maxPoint, natReady: () => natReady && natNow() > 0.01, natNow };
     cvs.addEventListener('webglcontextlost', (e) => { e.preventDefault(); me.ok = false; });
     me.draw = (t, rad, sh, cols) => {
       if (!t.gl) {
@@ -1760,7 +1763,7 @@
       gl.uniform4f(u.rot, cl0, sl0, sp0, cp0); gl.uniform3f(u.ctr, CX, CY, R); gl.uniform2f(u.view, VW, VH);
       gl.uniform1f(u.rad, rad); gl.uniform1f(u.dpr, DPR); gl.uniform1f(u.sh, sh); gl.uniform3fv(u.cols, cols);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, natTex); gl.uniform1i(u.nature, 0);
-      gl.uniform1f(u.nat, natReady ? LAND_NATURE : 0); gl.uniform1f(u.sh2, T === THEMES.night ? 0.55 : 1); // (at night the colors dim, gently)
+      gl.uniform1f(u.nat, natReady ? natNow() : 0); gl.uniform1f(u.sh2, T === THEMES.night ? 0.55 : 1); // (at night the colors dim, gently)
       gl.bindBuffer(gl.ARRAY_BUFFER, t.gl); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 4, gl.FLOAT, false, 0, 0);
       gl.drawArrays(gl.POINTS, 0, t.n);
     };
@@ -1884,7 +1887,7 @@
       if (landGL && landGL.ok && rad * DPR * 2 + 1 <= landGL.maxPoint) {
         landGL.draw(t, rad, sh, LEVEL_GL);
         // (with the natural colors in, the land is laid down more solidly, so its greens and sands read as themselves)
-        const a = landGL.natReady() ? Math.min(1, alpha * (1 + 1.1 * LAND_NATURE)) : alpha;
+        const a = landGL.natReady() ? Math.min(1, alpha * (1 + 1.1 * landGL.natNow())) : alpha;
         c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = a; c.drawImage(landGL.cvs, 0, 0); c.restore();
         return;
       }

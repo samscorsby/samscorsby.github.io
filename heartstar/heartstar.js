@@ -2349,7 +2349,7 @@
       if (t.angle != null) dirs.unshift(t.angle);
       const size = (full, wrap = WRAPS[0]) => {
         const lines = full ? wrapWords(t.text, wrap) : [];
-        return { lines, w: full ? Math.max(40, ...lines.map((l) => c.measureText(l).width)) + 26 : 42, h: full ? lines.length * 17 + 18 : 28 };
+        return { lines, w: full ? Math.max(16, ...lines.map((l) => c.measureText(l).width)) + 26 : 42, h: full ? lines.length * 17 + 18 : 28 };
       };
       // the box in that direction whose nearest edge is just the gap away from the face (or a little further, if asked)
       const at = ({ w, h }, ang, extra = 0) => {

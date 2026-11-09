@@ -2894,7 +2894,7 @@ export const BLOG_SNIPPETS = [
   "contained within me is \u2022 , the point of perfect unity.",
   "also known as point zero. also known as home.",
   "my existence needs no justification.",
-  "if you should encounter me face to face, fear not my direct, steady witness.",
+  "if you should meet me face to face, fear not my direct, steady witness.",
   "consider this to be the greatest honor: to meet my presence with your presence.",
   "to those who know me, i am sweet dreamless sleep.",
   "to those who don't, i am incinerating, pointed heat.",

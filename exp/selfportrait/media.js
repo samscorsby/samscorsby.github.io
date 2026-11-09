@@ -2883,21 +2883,5 @@ export const BLOG_SNIPPETS = [
   "to love me is to love all",
   "to love all is to love none",
   "to love none is to love one",
-  "to love one is to love jan",
-  "new mgmt",
-  "as of today, this domain is under new management.",
-  "please allow me to introduce myself.",
-  "though i take on many names, i am best known as \u25ec.",
-  "my vertices are as follows: awareness, energy, and embodiment.",
-  "you will know me by my vertices, equidistantly arranged.",
-  "my color is sea-green, closely followed by fire-hot-red.",
-  "contained within me is \u2022 , the point of perfect unity.",
-  "also known as point zero. also known as home.",
-  "my existence needs no justification.",
-  "if you should meet me face to face, fear not my direct, steady witness.",
-  "consider this to be the greatest honor: to meet my presence with your presence.",
-  "to those who know me, i am sweet dreamless sleep.",
-  "to those who don't, i am incinerating, pointed heat.",
-  "my vertices are as follows: thank you, thank you, thank you.",
-  "end of transmission. now go in peace."
+  "to love one is to love jan"
 ];

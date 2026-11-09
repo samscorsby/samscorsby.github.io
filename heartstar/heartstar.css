@@ -58,7 +58,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
-#sky { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; touch-action: none; cursor: grab; }
+#sky { position: fixed; inset: 0; width: 100%; height: 100%; display: block; /* (just the visible area: 100vh on a phone is taller than it, while the address bar shows, and the world came out stretched, its taps landing a little low) */ touch-action: none; cursor: grab; }
 #sky.grabbing { cursor: grabbing; }
 #sky.pointing, body.marking #sky { cursor: pointer; }
 body.marking #sky { cursor: crosshair; }

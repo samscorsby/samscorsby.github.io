@@ -55,7 +55,7 @@ const MAX_MARKS = 300;
 // tokens per second, burst
 const LIMITS = {
   move: [6, 12], all: [0.25, 1], blink: [2, 4], sing: [14, 20], hush: [2, 4],
-  color: [1, 4], poke: [3, 6], name: [1, 4], mark: [0.2, 4], say: [1 / 1.5, 6], hand: [1, 5], noticed: [1 / 60, 1],
+  color: [1, 4], poke: [3, 6], name: [1, 4], mark: [0.2, 4], say: [1 / 1.5, 6], hand: [1, 5], noticed: [1 / 60, 1], away: [1, 6],
 };
 
 // strange things that happen to everyone at once
@@ -714,6 +714,14 @@ export class Hearth extends DurableObject {
         me.c = c;
         ws.serializeAttachment(me);
         this.broadcast({ t: 'color', id: me.id, c }, ws);
+        break;
+      }
+      case 'away': {
+        // their page went into the background (or came back): their scorsby closes its eyes (or opens them)
+        const away = !!m.on;
+        if (!!me.away === away) return;
+        me.away = away || undefined; ws.serializeAttachment(me);
+        this.broadcast({ t: 'away', id: me.id, on: away }, ws);
         break;
       }
       case 'name': {

@@ -867,6 +867,7 @@
       id: p.id, lat: p.lat, lon: p.lon, tz: p.tz || 0, c: p.c ?? 0, n: p.n || '', v: vec(p.lat, p.lon), mine, seed: Math.random() * 100,
       blink: 0, nextBlink: rand(1500, 6000), hearts: 0, sing: 0, singTarget: 0, freq: 0, lastSing: 0,
       lookX: 0, lookY: 0, born: performance.now(), leaving: 0, sx: -1e4, sy: -1e4, sz: -1, size: 0, ox: 0, oy: 0,
+      away: !!p.away, // (their page is in the background: eyes closed)
     };
   }
   function place(s, lat, lon) { s.lat = lat; s.lon = lon; s.v = vec(lat, lon); }
@@ -2226,7 +2227,9 @@
       if (s.blink > 0) s.blink = Math.max(0, s.blink - dt / 260);
       let lid = s.blink > 0.15 && s.blink < 0.85 ? 0 : 1;
       if (planetBlink > 0.15 && planetBlink < 0.85) lid = 0;
-      if (light(s.v) < -0.15 || env(omenP('eclipse', now)) > 0.5) lid = 0; // asleep on the night side, smiling
+      // eyes closed while their person is away from the page (in another tab, or the phone put down), open while they're
+      // here, whatever the hour where they are; and everyone's closed for an eclipse
+      if ((s.away && !s.mine) || env(omenP('eclipse', now)) > 0.5) lid = 0;
       s.hearts = Math.max(0, s.hearts - dt);
       s.sing += (s.singTarget - s.sing) * 0.25;
       if (!s.mine && now - s.lastSing > 500) s.singTarget = 0;
@@ -3196,6 +3199,12 @@
         if (!old) faceToward(me);
         updatePresence();
         if (!old) welcome();
+        if (document.hidden) send({ t: 'away', on: true }); // (arrived in a background tab)
+        break;
+      }
+      case 'away': {
+        const s = peers.get(m.id);
+        if (s) { s.away = !!m.on; s.blink = 0; }
         break;
       }
       case 'join': {
@@ -4650,6 +4659,7 @@
   }
 
   document.addEventListener('visibilitychange', () => {
+    send({ t: 'away', on: document.hidden }); // (everyone sees your scorsby close its eyes while you're away, and open them when you're back)
     if (document.hidden) return;
     shownAt = performance.now(); themeFade = null;
     if (me) me.blink = 1;

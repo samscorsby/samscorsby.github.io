@@ -1534,6 +1534,7 @@
     faded(() => { c.save(); c.globalAlpha = awake(now); renderMoon(now, false); c.restore(); });
     if (pf.cur.angel > 0.02) renderWorldWings(now);
     // the ears tip with the face when the phone tilts (turned about the middle of the world), their flowers with them
+    drawThoughtsBehind(now); // (thoughts from the far side of the world, peeking out from behind it)
     tipped(() => { renderEars(now); renderGarden(now, 'ears'); }); // (the ears' flowers are behind the face, like the ears)
     renderPlanet(now, dt);
     renderGarden(now, 'face');
@@ -2304,8 +2305,13 @@
     for (const [px, py] of pts) { c.moveTo(px + r, py); c.arc(px, py, r, 0, TAU); }
     c.rect(x + 4, y + 4, w - 8, h - 8);
   }
+  // every cloud sits the same distance from its speaker's face, whichever way it lies, with its two dots evenly between
+  const THOUGHT_GAP = 26, THOUGHT_BUMP = 5; // (from the edge of the face to the edge of the cloud; the cloud's bumps reach past its box)
+  const THOUGHT_COLORED = !params.has('whitebubbles'); // (each cloud in its speaker's color; ?whitebubbles: plain white, to compare)
+  let thoughtsBehind = []; // (the far side's clouds, drawn behind the world: see drawThoughtsBehind)
+  const rectDist = (px, py, r) => Math.hypot(Math.max(r.x - px, 0, px - r.x - r.w), Math.max(r.y - py, 0, py - r.y - r.h));
   function renderThoughts(now, list, behind = []) {
-    thoughtHits = [];
+    thoughtHits = []; thoughtsBehind = [];
     if (calmMood) return;
     const live = (s) => s.say && now < s.say.until && now - arrivedAt(s) > 700;
     for (const s of list.concat(behind)) if (s.say && now >= s.say.until) s.say = null;
@@ -2314,34 +2320,40 @@
     c.save(); c.font = THOUGHT_FONT;
     const rank = (s) => (s.say.open ? 2e9 : 0) + (s.say.full ? 1e9 : 0) + s.say.born;
     talking.sort((p, q) => rank(q) - rank(p));
-    // where each one's head is (or, from behind the world, the point on its rim nearest them), and how big
+    // where each one's face is (or, from the far side of the world, a point just inside the rim nearest them), and how big
     const heads = new Map(talking.map((s) => {
       if (s.sz > 0.05) return [s, { x: s.sx, y: s.sy, r: s.size * 0.55, out: null }];
-      let dx = s.sx - CX, dy = s.sy - CY; const d = Math.hypot(dx, dy) || 1; if (d < 2) { dx = 0; dy = -1; } else { dx /= d; dy /= d; }
-      return [s, { x: CX + dx * R * 1.02, y: CY + dy * R * 1.02, r: 4, out: Math.atan2(dy, dx) }];
+      let dx = s.sx - CX, dy = s.sy - CY; const d = Math.hypot(dx, dy);
+      if (d < 2) { dx = 0; dy = -1; } else { dx /= d; dy /= d; }
+      return [s, { x: CX + dx * R * 0.97, y: CY + dy * R * 0.97, r: 0, out: Math.atan2(dy, dx) }];
     }));
-    // no bubble covers anyone who's talking
-    const placed = [...heads.values()].map((h) => ({ x: h.x - h.r, y: h.y - h.r, w: h.r * 2, h: h.r * 2 }));
+    // no cloud covers anyone who's talking
+    const placed = [...heads.values()].filter((h) => h.r).map((h) => ({ x: h.x - h.r, y: h.y - h.r, w: h.r * 2, h: h.r * 2 }));
     const overlaps = (r) => placed.some((o) => r.x < o.x + o.w + 6 && o.x < r.x + r.w + 6 && r.y < o.y + o.h + 6 && o.y < r.y + r.h + 6);
     const DEG = Math.PI / 180, AROUND = [-60, -120, -90, -25, -155, 20, 160, 60, 120, 90].map((d) => d * DEG); // (above first, then the sides, then below)
     const plans = [];
     for (const s of talking) {
-      const t = s.say, hd = heads.get(s);
-      // the directions to try: the one it used last time first; from behind the world, outward from the rim and near it
-      const dirs = hd.out != null ? [0, -35, 35, -70, 70].map((d) => hd.out + d * DEG) : AROUND.slice();
+      const t = s.say, hd = heads.get(s), far = hd.out != null;
+      const dirs = far ? [0, -35, 35, -70, 70].map((d) => hd.out + d * DEG) : AROUND.slice();
       if (t.angle != null) dirs.unshift(t.angle);
       const size = (full) => {
         const lines = full ? wrapWords(t.text, 170) : [];
         return { lines, w: full ? Math.max(40, ...lines.map((l) => c.measureText(l).width)) + 26 : 42, h: full ? lines.length * 17 + 18 : 28 };
       };
+      // the box in that direction whose nearest edge is just the gap away from the face
+      const want = hd.r + THOUGHT_GAP + THOUGHT_BUMP;
       const at = ({ w, h }, ang) => {
-        const cos = Math.cos(ang), sin = Math.sin(ang), ext = Math.abs(cos) * w / 2 + Math.abs(sin) * h / 2, dist = hd.r + 18 + ext;
-        return { x: hd.x + cos * dist - w / 2, y: hd.y + sin * dist - h / 2, w, h };
+        const cos = Math.cos(ang), sin = Math.sin(ang);
+        let lo = 0, hi = 600;
+        for (let i = 0; i < 18; i++) { const m = (lo + hi) / 2; if (rectDist(hd.x, hd.y, { x: hd.x + cos * m - w / 2, y: hd.y + sin * m - h / 2, w, h }) < want) lo = m; else hi = m; }
+        return { x: hd.x + cos * hi - w / 2, y: hd.y + sin * hi - h / 2, w, h };
       };
-      const onScreen = (r) => r.x >= 4 && r.y >= 4 && r.x + r.w <= VW - 4 && r.y + r.h <= VH - 4;
+      // on screen; and from the far side, wholly clear of the world, its outline and its ears (only its dots go round behind)
+      const clearOfWorld = (r) => rectDist(CX, CY, r) >= R + 40 * L + 4 && (pf.ears || []).every(([ex, ey, er]) => rectDist(ex, ey, r) >= er + 40 * L + 4);
+      const fits = (r) => r.x >= 4 && r.y >= 4 && r.x + r.w <= VW - 4 && r.y + r.h <= VH - 4 && (!far || clearOfWorld(r));
       const spot = (full) => {
         const sz = size(full);
-        for (const ang of dirs) { const r = at(sz, ang); if (onScreen(r) && !overlaps(r)) return { ...r, lines: sz.lines, full, angle: ang }; }
+        for (const ang of dirs) { const r = at(sz, ang); if (fits(r) && !overlaps(r)) return { ...r, lines: sz.lines, full, angle: ang }; }
         return null;
       };
       // full words if they fit somewhere (or if you opened it, wherever it can go), else a "…" (even if it has to overlap)
@@ -2351,30 +2363,62 @@
       if (!plan) plan = spot(false);
       if (!plan) { const sz = size(false), r = at(sz, dirs[0]); plan = { ...r, x: clamp(r.x, 4, VW - r.w - 4), y: clamp(r.y, 4, VH - r.h - 4), lines: [], full: false, angle: dirs[0] }; }
       t.full = plan.full; t.angle = plan.angle;
-      placed.push(plan); plans.push([s, plan, hd]);
+      placed.push(plan); plans.push([s, plan, hd, far]);
+      thoughtHits.push({ s, x: plan.x - 6, y: plan.y - 6, w: plan.w + 12, h: plan.h + 12 });
     }
     c.restore();
-    drawLast.push(() => {
-      c.font = THOUGHT_FONT; c.textBaseline = 'middle'; c.textAlign = 'left';
-      for (const [s, { x, y, w, h, lines, full }, hd] of plans.reverse()) { // (the most important drawn last, on top)
-        const t = s.say;
-        const a = Math.min(1, (now - t.born) / 250) * Math.min(1, (t.until - now) / 500), pop = 0.8 + 0.2 * Math.min(1, (now - t.born) / 250);
-        c.save(); c.globalAlpha = a;
-        c.translate(hd.x, hd.y); c.scale(pop, pop); c.translate(-hd.x, -hd.y);
-        // the little trail of puffs from the edge of the head toward the cloud's nearest edge
-        const ex = clamp(hd.x, x + 8, x + w - 8), ey = clamp(hd.y, y + 6, y + h - 6), d = Math.hypot(ex - hd.x, ey - hd.y) || 1;
-        const sx0 = hd.x + (ex - hd.x) / d * hd.r, sy0 = hd.y + (ey - hd.y) / d * hd.r;
-        for (const [k, r] of [[0.3, 2.6], [0.68, 4]]) { c.beginPath(); c.arc(sx0 + (ex - sx0) * k, sy0 + (ey - sy0) * k, r, 0, TAU); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 1.5; c.strokeStyle = DARK; c.stroke(); }
-        // the cloud: outlined bumps, filled over, so only its outer edge shows
-        cloudPath(x, y, w, h); c.lineWidth = 3; c.strokeStyle = DARK; c.stroke();
-        cloudPath(x, y, w, h); c.fillStyle = '#fff'; c.fill();
-        c.fillStyle = DARK;
-        if (full) lines.forEach((l, i) => c.fillText(l, x + 13, y + 18 + i * 17));
-        else for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(x + w / 2 + (i - 1) * 7, y + h / 2, 1.8, 0, TAU); c.fill(); }
-        c.restore();
-        thoughtHits.push({ s, x: x - 6, y: y - 6, w: w + 12, h: h + 12 });
+    // the most important are drawn last, on top. the far side's go behind the world, the rest in front of everything
+    plans.reverse();
+    thoughtsBehind = plans.filter((p) => p[3]);
+    const front = plans.filter((p) => !p[3]);
+    if (front.length) drawLast.push(() => drawThoughts(now, front));
+  }
+  function drawThoughtsBehind(now) { if (thoughtsBehind.length && !calmMood) { c.save(); drawThoughts(now, thoughtsBehind); c.restore(); } }
+  // while a cloud fades in or out it's drawn whole, off to the side, then laid down faded as one piece (else the
+  // circles that make up its bumpy edge would show through each other)
+  const thoughtBuf = document.createElement('canvas'), thoughtBufC = thoughtBuf.getContext('2d');
+  function drawThoughts(now, plans) {
+    for (const plan of plans) {
+      const t = plan[0].say;
+      if (!t) continue;
+      const a = Math.max(0, Math.min(1, (now - t.born) / 250) * Math.min(1, (t.until - now) / 500));
+      if (a > 0.995) { c.save(); drawThought(now, plan); c.restore(); continue; }
+      if (a <= 0) continue;
+      const [, { x, y, w, h }, hd] = plan;
+      const bx = Math.floor(Math.min(x - 16, hd.x - hd.r - 32)), by = Math.floor(Math.min(y - 16, hd.y - hd.r - 32));
+      const bw = Math.ceil(Math.max(x + w + 16, hd.x + hd.r + 32)) - bx, bh = Math.ceil(Math.max(y + h + 16, hd.y + hd.r + 32)) - by;
+      const k = c.getTransform().a; // (the drawing's scale, so the copy is just as sharp)
+      if (thoughtBuf.width < bw * k || thoughtBuf.height < bh * k) { thoughtBuf.width = Math.ceil(Math.max(thoughtBuf.width, bw * k)); thoughtBuf.height = Math.ceil(Math.max(thoughtBuf.height, bh * k)); }
+      thoughtBufC.setTransform(1, 0, 0, 1, 0, 0); thoughtBufC.clearRect(0, 0, Math.ceil(bw * k) + 1, Math.ceil(bh * k) + 1);
+      thoughtBufC.setTransform(k, 0, 0, k, -bx * k, -by * k); thoughtBufC.globalAlpha = 1;
+      const main = c; c = thoughtBufC;
+      try { c.save(); drawThought(now, plan); c.restore(); } finally { c = main; }
+      c.save(); c.globalAlpha = a; c.drawImage(thoughtBuf, 0, 0, Math.ceil(bw * k), Math.ceil(bh * k), bx, by, Math.ceil(bw * k) / k, Math.ceil(bh * k) / k); c.restore();
+    }
+  }
+  function drawThought(now, [s, { x, y, w, h, lines, full }, hd, far]) {
+    c.font = THOUGHT_FONT; c.textBaseline = 'middle'; c.textAlign = 'left';
+    {
+      const t = s.say;
+      const pop = 0.8 + 0.2 * Math.min(1, (now - t.born) / 250);
+      c.translate(hd.x, hd.y); c.scale(pop, pop); c.translate(-hd.x, -hd.y);
+      // the two dots, in the speaker's own color, always the same distances out from the face toward the cloud
+      const col = colorOf(s.c, now, s.seed);
+      const ex = clamp(hd.x, x, x + w), ey = clamp(hd.y, y, y + h), d = Math.hypot(ex - hd.x, ey - hd.y) || 1, ux = (ex - hd.x) / d, uy = (ey - hd.y) / d;
+      for (const [k, r] of [[7, 2.8], [17.5, 4.4]]) {
+        c.beginPath(); c.arc(hd.x + ux * (hd.r + k), hd.y + uy * (hd.r + k), r, 0, TAU); c.fillStyle = col; c.fill(); c.lineWidth = 1.4; c.strokeStyle = DARK; c.stroke();
       }
-    });
+      // the cloud: outlined bumps, filled over, so only its outer edge shows. from the far side of the world it takes on
+      // some of the sky's color, and its edge and words soften, so it reads as further away. (colored: the cloud is
+      // the speaker's color, with dark or white words, whichever reads better on it)
+      const sky = skyPair ? mixColor(skyPair[0], skyPair[1], clamp((y + h / 2) / VH, 0, 1)) : '#cfe8ff';
+      const base = THOUGHT_COLORED ? col : '#ffffff', ink = THOUGHT_COLORED && ((rgb) => (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255)(rgbOf(base)) < 0.5 ? '#ffffff' : DARK;
+      cloudPath(x, y, w, h); c.lineWidth = 3; c.strokeStyle = far ? mixColor(DARK, sky, 0.45) : DARK; c.stroke();
+      cloudPath(x, y, w, h); c.fillStyle = far ? mixColor(base, sky, 0.42) : base; c.fill();
+      c.fillStyle = far ? mixColor(ink, sky, 0.3) : ink;
+      if (full) lines.forEach((l, i) => c.fillText(l, x + 13, y + 18 + i * 17));
+      else for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(x + w / 2 + (i - 1) * 7, y + h / 2, 1.8, 0, TAU); c.fill(); }
+    }
   }
 
   // someone else loved everyone. with a few people here, every one is the full rainbow; in a crowd, love arriving close
@@ -3182,7 +3226,12 @@
         // a message for everyone (already boinked by the hearth)
         const s = me && m.id === me.id ? me : peers.get(m.id);
         if (s) s.blink = 1;
-        if (s) { const text = String(m.text || '').slice(0, 80), now = performance.now(); s.say = { text, born: now, until: now + 7000 + text.length * 60, open: false }; }
+        if (s) {
+          const text = String(m.text || '').slice(0, 80), now = performance.now(), until = now + 7000 + text.length * 60;
+          // (if their cloud is still up, the new words simply take the old ones' place, in the same spot)
+          if (s.say && now < s.say.until) Object.assign(s.say, { text, until, born: Math.min(s.say.born, now - 300) });
+          else s.say = { text, born: now, until, open: false };
+        }
         const who = s === me ? 'you' : s ? nameOf(s) : 'someone';
         whisper(`${who}: “${String(m.text || '').slice(0, 80)}”`, 5200 + String(m.text || '').length * 45, true, null, true);
         break;
@@ -3205,8 +3254,9 @@
       }
       case 'said': {
         clearTimeout(sayWait); sayBtn.disabled = false;
-        if (m.ok) { sayIn.value = ''; youWin.hidden = true; }
-        else whisper({
+        if (m.ok) youWin.hidden = true;
+        else if (!sayIn.value) sayIn.value = lastSaid;
+        if (!m.ok) whisper({
           wait: 'one message at a time. try again in a little while.',
           empty: 'that message was empty. try some words.',
           link: 'links can\'t travel here, only words.',
@@ -3677,6 +3727,7 @@
 
   // ------------------------------------------------------------------ windows: you.exe, plant.exe, sing.exe
   const sayIn = document.getElementById('say-in'), sayBtn = document.querySelector('#say-form button');
+  let lastSaid = '';
   let sayWait = 0;
   const singNoted = { self: false, together: false, hand: false }; // say each once per visit
   const youWin = document.getElementById('you-win'), plantWin = document.getElementById('plant-win'), card = document.getElementById('sing-card'), todayWin = document.getElementById('today-win');
@@ -3807,9 +3858,10 @@
     if (!net.live) { whisper('the hearth is resting, so nobody can hear messages right now.', 3600); return; }
     if (/https?:|www\.|\w\.(com|net|org|io|gg|co|us|uk|xyz|ly|me|tv|app|dev|info|biz|ru|cn|link|site|online|shop)\b|@\w/i.test(text)) { whisper('links can\'t travel here, only words.', 3200); return; }
     send({ t: 'say', text });
+    lastSaid = text; sayIn.value = ''; // (cleared at once; if it doesn't go through, it comes back)
     sayBtn.disabled = true;
     clearTimeout(sayWait);
-    sayWait = setTimeout(() => { sayBtn.disabled = false; whisper('that message got lost on the way. try again?', 3000); }, 10000);
+    sayWait = setTimeout(() => { sayBtn.disabled = false; if (!sayIn.value) sayIn.value = lastSaid; whisper('that message got lost on the way. try again?', 3000); }, 10000);
   });
   paintSwatch();
 

@@ -55,7 +55,7 @@ const MAX_MARKS = 300;
 // tokens per second, burst
 const LIMITS = {
   move: [6, 12], all: [0.25, 1], blink: [2, 4], sing: [14, 20], hush: [2, 4],
-  color: [1, 4], poke: [3, 6], name: [1, 4], mark: [0.2, 4], say: [1 / 30, 2], hand: [1, 5], noticed: [1 / 60, 1],
+  color: [1, 4], poke: [3, 6], name: [1, 4], mark: [0.2, 4], say: [1 / 1.5, 6], hand: [1, 5], noticed: [1 / 60, 1],
 };
 
 // strange things that happen to everyone at once
@@ -190,15 +190,17 @@ async function sweetEnough(env, text) {
     return /^\W*yes\b/i.test(String(out?.response ?? ''));
   } catch { return false; }
 }
+// keeps a message in the box if it's memorable; says whether it is (so the planet can whisper it to everyone)
 async function keepSweet(env, text, name = '') {
-  if (!env.LETTERS) return;
+  if (!env.LETTERS) return sweetEnough(env, text);
   await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS sweet (id INTEGER PRIMARY KEY AUTOINCREMENT, text TEXT NOT NULL, said TEXT NOT NULL, same TEXT, name TEXT)').run();
   // (a box from before it knew repeats, or names)
   for (const col of ['same', 'name']) { try { await env.LETTERS.prepare(`ALTER TABLE sweet ADD COLUMN ${col} TEXT`).run(); } catch {} }
   const key = sameKey(text);
-  if (await env.LETTERS.prepare('SELECT 1 FROM sweet WHERE same = ?1').bind(key).first()) return; // already kept
-  if (!(await sweetEnough(env, text))) return;
+  if (await env.LETTERS.prepare('SELECT 1 FROM sweet WHERE same = ?1').bind(key).first()) return true; // already kept
+  if (!(await sweetEnough(env, text))) return false;
   await env.LETTERS.prepare('INSERT INTO sweet (text, said, same, name) VALUES (?1, ?2, ?3, ?4)').bind(text, new Date().toISOString(), key, name).run(); // (the name they go by on the planet, if they gave one)
+  return true;
 }
 async function oneSweet(env) {
   if (!env.LETTERS) return null;
@@ -642,7 +644,7 @@ export class Hearth extends DurableObject {
     const me = ws.deserializeAttachment();
     if (!me || !LIMITS[m.t]) return;
     if (!this.allow(me.id, m.t)) {
-      if (m.t === 'say') this.send(ws, { t: 'said', ok: false, why: 'wait' });
+      if (m.t === 'say') this.send(ws, { t: 'said', ok: false, why: 'wait', k: m.k });
       if (m.t === 'mark') this.send(ws, { t: 'unmarked' });
       return;
     }
@@ -722,16 +724,17 @@ export class Hearth extends DurableObject {
       }
       case 'say': {
         const raw = tidySay(m.text);
-        if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(raw)) return this.send(ws, { t: 'said', ok: false, why: 'empty' });
+        if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(raw)) return this.send(ws, { t: 'said', ok: false, why: 'empty', k: m.k });
         PHONE.lastIndex = 0;
-        if (raw.split(' ').some((w) => ELSEWHERE.test(w)) || PHONE.test(raw)) return this.send(ws, { t: 'said', ok: false, why: 'link' });
+        if (raw.split(' ').some((w) => ELSEWHERE.test(w)) || PHONE.test(raw)) return this.send(ws, { t: 'said', ok: false, why: 'link', k: m.k });
         const text = await boinked(this.env, raw);
-        if (!text) return this.send(ws, { t: 'said', ok: false, why: 'resting' });
-        this.send(ws, { t: 'said', ok: true, boinked: text !== raw });
+        if (!text) return this.send(ws, { t: 'said', ok: false, why: 'resting', k: m.k });
+        this.send(ws, { t: 'said', ok: true, boinked: text !== raw, k: m.k });
         this.broadcast({ t: 'say', id: me.id, text });
         if (text === raw) {
           await this.remember('said', { text, n: me.n || '', t: Date.now(), r: 0 }, SAID_LIFE, MAX_SAID); // only if nothing was boinked
-          this.ctx.waitUntil(keepSweet(this.env, text, me.n || '').catch(() => {}));
+          // (and if it's memorable, everyone hears it whispered too: only the noteworthy ones are)
+          this.ctx.waitUntil(keepSweet(this.env, text, me.n || '').then((keep) => { if (keep) this.broadcast({ t: 'noteworthy', id: me.id, text }); }).catch(() => {}));
         }
         break;
       }

@@ -3232,8 +3232,13 @@
           if (s.say && now < s.say.until) Object.assign(s.say, { text, until, born: Math.min(s.say.born, now - 300) });
           else s.say = { text, born: now, until, open: false };
         }
-        const who = s === me ? 'you' : s ? nameOf(s) : 'someone';
-        whisper(`${who}: “${String(m.text || '').slice(0, 80)}”`, 5200 + String(m.text || '').length * 45, true, null, true);
+        break; // (its thought bubble says it; only the noteworthy ones are whispered too, below)
+      }
+      case 'noteworthy': {
+        // a message the hearth found memorable: everyone hears it whispered, as well as seeing it in its bubble
+        const s = me && m.id === me.id ? me : peers.get(m.id);
+        const who = s === me ? 'you' : s ? nameOf(s) : 'someone', text = String(m.text || '').slice(0, 80);
+        whisper(`${who}: “${text}”`, 5200 + text.length * 45, true, null, true);
         break;
       }
       case 'echo': {
@@ -3253,11 +3258,16 @@
         break;
       }
       case 'said': {
-        clearTimeout(sayWait); sayBtn.disabled = false;
-        if (m.ok) youWin.hidden = true;
-        else if (!sayIn.value) sayIn.value = lastSaid;
-        if (!m.ok) whisper({
-          wait: 'one message at a time. try again in a little while.',
+        // the answer to one of the messages still waiting (each carries a number, k, so answers can come in any order). gone through: nothing more to do (the window stays open,
+        // for the next). a few too many at once: it waits a moment and goes again by itself. anything else: it comes back
+        // to the box (if the box is empty), with a word about why
+        const i = saysOut.findIndex((q) => q.k === m.k), p = i >= 0 ? saysOut.splice(i, 1)[0] : saysOut.shift();
+        if (!p) break;
+        clearTimeout(p.lost);
+        if (m.ok) break;
+        if (m.why === 'wait' && p.tries < 8) { setTimeout(() => sendSay(p.text, p.tries + 1), 1600); break; }
+        if (!sayIn.value) sayIn.value = p.text;
+        if (m.why !== 'wait') whisper({
           empty: 'that message was empty. try some words.',
           link: 'links can\'t travel here, only words.',
           resting: 'the hearth couldn\'t check that one just now. try again soon.',
@@ -3726,9 +3736,16 @@
   });
 
   // ------------------------------------------------------------------ windows: you.exe, plant.exe, sing.exe
-  const sayIn = document.getElementById('say-in'), sayBtn = document.querySelector('#say-form button');
-  let lastSaid = '';
-  let sayWait = 0;
+  const sayIn = document.getElementById('say-in');
+  const saysOut = []; let sayK = 0; // (messages sent and waiting for the hearth's answer, oldest first, each numbered)
+  function sendSay(text, tries = 0) {
+    const k = ++sayK;
+    send({ t: 'say', text, k });
+    const p = { text, tries, k };
+    // (no answer at all: it got lost, and comes back to the box)
+    p.lost = setTimeout(() => { const i = saysOut.indexOf(p); if (i < 0) return; saysOut.splice(i, 1); if (!sayIn.value) sayIn.value = text; whisper('that message got lost on the way. try again?', 3000); }, 12000);
+    saysOut.push(p);
+  }
   const singNoted = { self: false, together: false, hand: false }; // say each once per visit
   const youWin = document.getElementById('you-win'), plantWin = document.getElementById('plant-win'), card = document.getElementById('sing-card'), todayWin = document.getElementById('today-win');
   function closeWindows(except) { for (const w of [youWin, plantWin, card, todayWin]) if (w !== except) w.hidden = true; }
@@ -3857,11 +3874,8 @@
     if (!text) return;
     if (!net.live) { whisper('the hearth is resting, so nobody can hear messages right now.', 3600); return; }
     if (/https?:|www\.|\w\.(com|net|org|io|gg|co|us|uk|xyz|ly|me|tv|app|dev|info|biz|ru|cn|link|site|online|shop)\b|@\w/i.test(text)) { whisper('links can\'t travel here, only words.', 3200); return; }
-    send({ t: 'say', text });
-    lastSaid = text; sayIn.value = ''; // (cleared at once; if it doesn't go through, it comes back)
-    sayBtn.disabled = true;
-    clearTimeout(sayWait);
-    sayWait = setTimeout(() => { sayBtn.disabled = false; if (!sayIn.value) sayIn.value = lastSaid; whisper('that message got lost on the way. try again?', 3000); }, 10000);
+    // (cleared at once, ready for the next one; if this one doesn't go through, it comes back)
+    sendSay(text); sayIn.value = ''; sayIn.focus();
   });
   paintSwatch();
 

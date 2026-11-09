@@ -119,3 +119,11 @@ ISA011 Vol Plur York
 5. 10136 World folk - 5153.9 (t*(50&(t>>2)))|(t>>5)
 6. Arabic 10136
 7. latin Kolakoski Stutter Playhead Orcasound Lab
+
+ISA012 Njsunriate CitT8
+1. USB India 80s Backwash
+2. Vocoder Morph Inverse Retro MusE
+3. Varispeed CitT8
+4. Byteswap Shannon Bit Rotate Morph njsunriseradio
+5. Theatre Dutch Dae_Gu Rule float16
+6. 37th 1965 Logistic

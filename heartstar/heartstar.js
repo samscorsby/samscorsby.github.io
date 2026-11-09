@@ -2320,57 +2320,68 @@
     c.save(); c.font = THOUGHT_FONT;
     const rank = (s) => (s.say.open ? 2e9 : 0) + (s.say.full ? 1e9 : 0) + s.say.born;
     talking.sort((p, q) => rank(q) - rank(p));
-    // where each one's face is (or, from the far side of the world, a point just inside the rim nearest them), and how big
+    // where each one's thought comes from: their face, or (going over the horizon to the far side of the world) a point
+    // just inside the rim nearest them. near the horizon it slides between the two, so nothing jumps; far is how far round
     const heads = new Map(talking.map((s) => {
-      if (s.sz > 0.05) return [s, { x: s.sx, y: s.sy, r: s.size * 0.55, out: null }];
       let dx = s.sx - CX, dy = s.sy - CY; const d = Math.hypot(dx, dy);
       if (d < 2) { dx = 0; dy = -1; } else { dx /= d; dy /= d; }
-      return [s, { x: CX + dx * R * 0.97, y: CY + dy * R * 0.97, r: 0, out: Math.atan2(dy, dx) }];
+      const near = smooth(-0.08, 0.12, s.sz), far = 1 - near, r = (s.size || 30) * 0.55 * near;
+      const rx = CX + dx * R * 0.97, ry = CY + dy * R * 0.97;
+      return [s, { x: lerp(rx, s.sx, near), y: lerp(ry, s.sy, near), r, out: Math.atan2(dy, dx), far }];
     }));
     // no cloud covers anyone who's talking
-    const placed = [...heads.values()].filter((h) => h.r).map((h) => ({ x: h.x - h.r, y: h.y - h.r, w: h.r * 2, h: h.r * 2 }));
+    const placed = [...heads.values()].filter((h) => h.r > 2).map((h) => ({ x: h.x - h.r, y: h.y - h.r, w: h.r * 2, h: h.r * 2 }));
     const overlaps = (r) => placed.some((o) => r.x < o.x + o.w + 6 && o.x < r.x + r.w + 6 && r.y < o.y + o.h + 6 && o.y < r.y + r.h + 6);
     const DEG = Math.PI / 180, AROUND = [-60, -120, -90, -25, -155, 20, 160, 60, 120, 90].map((d) => d * DEG); // (above first, then the sides, then below)
+    const OUTWARD = [0, -25, 25, -50, 50, -75, 75, -100, 100, -125, 125]; // (from the far side: straight out from the rim, then round it)
+    const clearOfWorld = (r) => rectDist(CX, CY, r) >= R + 40 * L + 4 && (pf.ears || []).every(([ex, ey, er]) => rectDist(ex, ey, r) >= er + 40 * L + 4);
+    const onScreen = (r) => r.x >= 4 && r.y >= 4 && r.x + r.w <= VW - 4 && r.y + r.h <= VH - 4;
     const plans = [];
     for (const s of talking) {
-      const t = s.say, hd = heads.get(s), far = hd.out != null;
-      const dirs = far ? [0, -35, 35, -70, 70].map((d) => hd.out + d * DEG) : AROUND.slice();
+      const t = s.say, hd = heads.get(s), behindIt = hd.far > 0.5;
+      const dirs = behindIt ? OUTWARD.map((d) => hd.out + d * DEG) : AROUND.slice();
       if (t.angle != null) dirs.unshift(t.angle);
       const size = (full) => {
         const lines = full ? wrapWords(t.text, 170) : [];
         return { lines, w: full ? Math.max(40, ...lines.map((l) => c.measureText(l).width)) + 26 : 42, h: full ? lines.length * 17 + 18 : 28 };
       };
-      // the box in that direction whose nearest edge is just the gap away from the face
-      const want = hd.r + THOUGHT_GAP + THOUGHT_BUMP;
-      const at = ({ w, h }, ang) => {
-        const cos = Math.cos(ang), sin = Math.sin(ang);
-        let lo = 0, hi = 600;
+      // the box in that direction whose nearest edge is just the gap away from the face (or a little further, if asked)
+      const at = ({ w, h }, ang, extra = 0) => {
+        const want = hd.r + THOUGHT_GAP + THOUGHT_BUMP + extra, cos = Math.cos(ang), sin = Math.sin(ang);
+        let lo = 0, hi = 700;
         for (let i = 0; i < 18; i++) { const m = (lo + hi) / 2; if (rectDist(hd.x, hd.y, { x: hd.x + cos * m - w / 2, y: hd.y + sin * m - h / 2, w, h }) < want) lo = m; else hi = m; }
         return { x: hd.x + cos * hi - w / 2, y: hd.y + sin * hi - h / 2, w, h };
       };
       // on screen; and from the far side, wholly clear of the world, its outline and its ears (only its dots go round behind)
-      const clearOfWorld = (r) => rectDist(CX, CY, r) >= R + 40 * L + 4 && (pf.ears || []).every(([ex, ey, er]) => rectDist(ex, ey, r) >= er + 40 * L + 4);
-      const fits = (r) => r.x >= 4 && r.y >= 4 && r.x + r.w <= VW - 4 && r.y + r.h <= VH - 4 && (!far || clearOfWorld(r));
-      const spot = (full) => {
+      const fits = (r) => onScreen(r) && (!behindIt || clearOfWorld(r));
+      const spot = (full, crowd = false) => {
         const sz = size(full);
-        for (const ang of dirs) { const r = at(sz, ang); if (fits(r) && !overlaps(r)) return { ...r, lines: sz.lines, full, angle: ang }; }
+        for (const extra of behindIt ? [0, 24, 48] : [0]) for (const ang of dirs) {
+          const r = at(sz, ang, extra);
+          if (fits(r) && (crowd || !overlaps(r))) return { ...r, lines: sz.lines, full, angle: ang };
+        }
         return null;
       };
-      // full words if they fit somewhere (or if you opened it, wherever it can go), else a "…" (even if it has to overlap)
+      // full words if they fit somewhere, else a "…"; if even that has no free spot, it may overlap another cloud, but
+      // never the world or its ears (one you opened goes wherever it can)
       let plan = spot(true);
-      if (!plan && t.open) { const sz = size(true), ang = dirs[0], r = at(sz, ang);
-        plan = { ...r, x: clamp(r.x, 4, VW - r.w - 4), y: clamp(r.y, 4, VH - r.h - 4), lines: sz.lines, full: true, angle: ang }; }
-      if (!plan) plan = spot(false);
+      if (!plan && t.open) plan = spot(true, true);
+      if (!plan) plan = spot(false) || spot(false, true);
       if (!plan) { const sz = size(false), r = at(sz, dirs[0]); plan = { ...r, x: clamp(r.x, 4, VW - r.w - 4), y: clamp(r.y, 4, VH - r.h - 4), lines: [], full: false, angle: dirs[0] }; }
       t.full = plan.full; t.angle = plan.angle;
-      placed.push(plan); plans.push([s, plan, hd, far]);
-      thoughtHits.push({ s, x: plan.x - 6, y: plan.y - 6, w: plan.w + 12, h: plan.h + 12 });
+      placed.push(plan);
+      // and it glides there, rather than jumping (the first time, it simply appears where it belongs)
+      if (t.rx == null) { t.rx = plan.x; t.ry = plan.y; } else { t.rx += (plan.x - t.rx) * 0.2; t.ry += (plan.y - t.ry) * 0.2; }
+      const shown = { ...plan, x: t.rx, y: t.ry };
+      plans.push([s, shown, hd, hd.far]);
+      thoughtHits.push({ s, x: shown.x - 6, y: shown.y - 6, w: shown.w + 12, h: shown.h + 12 });
     }
     c.restore();
-    // the most important are drawn last, on top. the far side's go behind the world, the rest in front of everything
+    // the most important are drawn last, on top. those mostly round the far side go behind the world, the rest in front
+    // (they change over just as their speaker crosses the horizon, where the two places meet)
     plans.reverse();
-    thoughtsBehind = plans.filter((p) => p[3]);
-    const front = plans.filter((p) => !p[3]);
+    thoughtsBehind = plans.filter((p) => p[3] > 0.5);
+    const front = plans.filter((p) => p[3] <= 0.5);
     if (front.length) drawLast.push(() => drawThoughts(now, front));
   }
   function drawThoughtsBehind(now) { if (thoughtsBehind.length && !calmMood) { c.save(); drawThoughts(now, thoughtsBehind); c.restore(); } }
@@ -2413,9 +2424,9 @@
       // the speaker's color, with dark or white words, whichever reads better on it)
       const sky = skyPair ? mixColor(skyPair[0], skyPair[1], clamp((y + h / 2) / VH, 0, 1)) : '#cfe8ff';
       const base = THOUGHT_COLORED ? col : '#ffffff', ink = THOUGHT_COLORED && ((rgb) => (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255)(rgbOf(base)) < 0.5 ? '#ffffff' : DARK;
-      cloudPath(x, y, w, h); c.lineWidth = 3; c.strokeStyle = far ? mixColor(DARK, sky, 0.45) : DARK; c.stroke();
-      cloudPath(x, y, w, h); c.fillStyle = far ? mixColor(base, sky, 0.42) : base; c.fill();
-      c.fillStyle = far ? mixColor(ink, sky, 0.3) : ink;
+      cloudPath(x, y, w, h); c.lineWidth = 3; c.strokeStyle = mixColor(DARK, sky, 0.45 * far); c.stroke();
+      cloudPath(x, y, w, h); c.fillStyle = mixColor(base, sky, 0.42 * far); c.fill();
+      c.fillStyle = mixColor(ink, sky, 0.3 * far);
       if (full) lines.forEach((l, i) => c.fillText(l, x + 13, y + 18 + i * 17));
       else for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(x + w / 2 + (i - 1) * 7, y + h / 2, 1.8, 0, TAU); c.fill(); }
     }

@@ -876,7 +876,7 @@
   function place(s, lat, lon) { s.lat = lat; s.lon = lon; s.v = vec(lat, lon); }
   function* everyone() { if (me) yield me; yield* peers.values(); }
   const crowd = () => peers.size + (me ? 1 : 0);
-  const nameOf = (s) => s.n ? `${s.n} scorsby` : `a ${typeof s.c === 'string' ? '' : (COLORS[s.c]?.[0] || '') + ' '}scorsby`;
+  const nameOf = (s) => { if (s.n) return `${s.n} scorsby`; const col = typeof s.c === 'string' ? '' : COLORS[s.c]?.[0] || ''; return `${/^[aeiou]/.test(col) ? 'an' : 'a'} ${col ? col + ' ' : ''}scorsby`; }; // (an orange scorsby, a pink one)
 
   // ------------------------------------------------------------------ omens: strange things that happen to everyone
   let omen = null;
@@ -1701,7 +1701,7 @@
     const vs = shader(gl.VERTEX_SHADER, `
       attribute vec4 p; // x, y, z on the sphere, and the height level
       uniform vec4 rot; uniform vec3 ctr; uniform vec2 view; uniform float rad, dpr, sh; uniform vec3 cols[6];
-      varying vec3 col; varying float size;
+      varying vec3 col; varying float size; varying vec2 uv;
       void main() {
         float cc = p.x * rot.x + p.y * rot.y, sz = rot.z * p.z + rot.w * cc;
         if (sz <= 0.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); gl_PointSize = 0.0; size = 0.0; col = vec3(0.0); return; }
@@ -1713,22 +1713,38 @@
         vec3 lc = cols[0];
         for (int j = 1; j < 6; j++) if (j == k) lc = cols[j];
         col = mix(vec3(0.0, 40.0, 120.0) / 255.0, lc, sh);
+        // where on the picture of the world's colors this dot is (longitude across, latitude down)
+        uv = vec2(atan(p.y, p.x) / 6.2831853 + 0.5, 0.5 - asin(clamp(p.z, -1.0, 1.0)) / 3.1415927);
       }`);
     const fs = shader(gl.FRAGMENT_SHADER, `
       precision mediump float;
-      varying vec3 col; varying float size;
+      varying vec3 col; varying float size; varying vec2 uv;
+      uniform sampler2D nature; uniform float nat, sh2;
       void main() {
         float d = length(gl_PointCoord - 0.5) * size, a = clamp((size - 1.0) * 0.5 - d + 0.5, 0.0, 1.0);
         if (a <= 0.0) discard;
-        gl_FragColor = vec4(col * a, a);
+        // the natural color (forest, desert, ice), dimmed at night like the rest, blended with the blue height shade
+        vec3 n = mix(vec3(0.0, 40.0, 120.0) / 255.0, texture2D(nature, uv).rgb, sh2);
+        gl_FragColor = vec4(mix(col, n, nat) * a, a);
       }`);
     if (!vs || !fs) return null;
     const prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
-    const u = {}; for (const k of ['rot', 'ctr', 'view', 'rad', 'dpr', 'sh', 'cols']) u[k] = gl.getUniformLocation(prog, k);
+    const u = {}; for (const k of ['rot', 'ctr', 'view', 'rad', 'dpr', 'sh', 'cols', 'nature', 'nat', 'sh2']) u[k] = gl.getUniformLocation(prog, k);
+    // the picture of the world's natural colors (natural earth ii), loaded once; until it's here the land is just blue
+    let natReady = false;
+    const natTex = gl.createTexture(), natImg = new Image();
+    natImg.onload = () => {
+      gl.bindTexture(gl.TEXTURE_2D, natTex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, natImg);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      natReady = true;
+    };
+    natImg.src = 'heartstar/land_colors.png?v=1';
     const aP = gl.getAttribLocation(prog, 'p');
     const maxPoint = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
-    const me = { cvs, ok: true, maxPoint };
+    const me = { cvs, ok: true, maxPoint, natReady: () => natReady && LAND_NATURE > 0 };
     cvs.addEventListener('webglcontextlost', (e) => { e.preventDefault(); me.ok = false; });
     me.draw = (t, rad, sh, cols) => {
       if (!t.gl) {
@@ -1743,12 +1759,16 @@
       gl.useProgram(prog);
       gl.uniform4f(u.rot, cl0, sl0, sp0, cp0); gl.uniform3f(u.ctr, CX, CY, R); gl.uniform2f(u.view, VW, VH);
       gl.uniform1f(u.rad, rad); gl.uniform1f(u.dpr, DPR); gl.uniform1f(u.sh, sh); gl.uniform3fv(u.cols, cols);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, natTex); gl.uniform1i(u.nature, 0);
+      gl.uniform1f(u.nat, natReady ? LAND_NATURE : 0); gl.uniform1f(u.sh2, T === THEMES.night ? 0.55 : 1); // (at night the colors dim, gently)
       gl.bindBuffer(gl.ARRAY_BUFFER, t.gl); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 4, gl.FLOAT, false, 0, 0);
       gl.drawArrays(gl.POINTS, 0, t.n);
     };
     return me;
   })();
   const LEVEL_RGB = [[80, 140, 215], [45, 100, 185], [15, 65, 150], [0, 40, 115], [0, 22, 80], [0, 6, 45]];
+  // how much of the land's natural color shows through its blue (0: all blue, as it was; 1: all natural). ?nature=0.5 to try
+  const LAND_NATURE = params.has('nature') ? clamp(+params.get('nature') || 0, 0, 1) : 1;
   const LEVEL_GL = new Float32Array(LEVEL_RGB.flat().map((v) => v / 255));
 
   // without a graphics card, land dots are stamped from a ready-made dot, redrawn only when the size changes
@@ -1863,7 +1883,9 @@
       const rad = Math.max(0.8, R * t.spacing * (0.74 - 0.32 * sh));
       if (landGL && landGL.ok && rad * DPR * 2 + 1 <= landGL.maxPoint) {
         landGL.draw(t, rad, sh, LEVEL_GL);
-        c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = alpha; c.drawImage(landGL.cvs, 0, 0); c.restore();
+        // (with the natural colors in, the land is laid down more solidly, so its greens and sands read as themselves)
+        const a = landGL.natReady() ? Math.min(1, alpha * (1 + 1.1 * LAND_NATURE)) : alpha;
+        c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = a; c.drawImage(landGL.cvs, 0, 0); c.restore();
         return;
       }
       const x0 = -rad * 2, x1 = VW + rad * 2, y0 = -rad * 2, y1 = VH + rad * 2;
@@ -3403,10 +3425,28 @@
     const d = new Date(Date.now() + (tz + new Date().getTimezoneOffset()) * 60000);
     return d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }).toLowerCase();
   }
+  // the nearest of the world's bigger cities (natural earth), to say roughly where someone is: "near lisbon". (worked
+  // out once for each place a scorsby stands; far from any city, it says nothing)
+  const CITIES = window.CITIES || [];
+  function nearCity(s) {
+    const key = `${s.lat},${s.lon}`;
+    if (s.nearKey === key) return s.near;
+    let best = null, bd = Infinity;
+    const la = s.lat * D2R, lo = s.lon * D2R, cla = Math.cos(la);
+    for (const [name, clat, clon] of CITIES) {
+      const b = clat * D2R, d = Math.acos(clamp(Math.sin(la) * Math.sin(b) + cla * Math.cos(b) * Math.cos(clon * D2R - lo), -1, 1));
+      if (d < bd) { bd = d; best = name; }
+    }
+    s.nearKey = key; s.near = best && bd * 6371 < 700 ? best : ''; // (within about 700 km)
+    return s.near;
+  }
   function showTip(s, x, y, text) {
     if ((!s && !text) || calmMood) { tip.hidden = true; return; }
     tip.hidden = false;
-    tip.textContent = text || (s.mine ? `you · ${nameOf(s)} · drag to wander · hold to love everyone` : `${nameOf(s)} · ${localTime(s.tz)} there`);
+    // (each part kept whole, so a long one wraps between the parts, never inside one: "6:03 pm there" stays together)
+    const whole = (part) => part.replace(/ /g, ' ');
+    const near = s && nearCity(s) ? `near ${nearCity(s)}` : '';
+    tip.textContent = text || (s.mine ? ['you', nameOf(s), near, 'drag to wander', 'hold to love everyone'] : [nameOf(s), near, `${localTime(s.tz)} there`]).filter(Boolean).map(whole).join(' · ');
     // stay on screen: slide in from the edges (and wrap, if it's long)
     const half = tip.offsetWidth / 2, ax = s ? s.sx : x;
     tip.style.left = `${clamp(ax, half + 10, Math.max(half + 10, VW - half - 10))}px`;

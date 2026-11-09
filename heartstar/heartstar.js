@@ -2274,6 +2274,107 @@
     }
     c.globalAlpha = 1;
     visible = list.concat(farOnes);
+    // (and whoever's talking from the far side of the world, out of sight: their thoughts peek out at the rim)
+    renderThoughts(now, list, [...everyone()].filter((s) => s.say && !(s.sz > 0.05) && !s.leaving));
+  }
+
+  // thought bubbles: whoever said something has a little cloud near their head while their words are out (above, if
+  // there's room, else to a side or below). as many hold their words as fit on the screen without overlapping each other
+  // or anyone talking (one you've tapped open first, then ones already showing their words, so they don't flicker, then
+  // the newest); the rest show just a "…", and tapping one opens it. coming closer spreads everyone out, so more of them
+  // fit. someone talking from the far side of the world peeks out at the rim, in their direction. (not while the world
+  // is quiet for a breath or a ritual)
+  let thoughtHits = [];
+  const THOUGHT_FONT = '13px Scheme, "Instrument Serif", Georgia, serif';
+  function wrapWords(text, maxW) {
+    const lines = []; let line = '';
+    for (const w of text.split(/\s+/)) {
+      const next = line ? line + ' ' + w : w;
+      if (line && c.measureText(next).width > maxW) { lines.push(line); line = w; } else line = next;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+  function cloudPath(x, y, w, h) {
+    // a rounded box with soft bumps all the way round its edge
+    const r = 9, pts = [];
+    const along = (x0, y0, x1, y1) => { const n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / 13)); for (let i = 0; i < n; i++) pts.push([x0 + (x1 - x0) * i / n, y0 + (y1 - y0) * i / n]); };
+    along(x + 6, y + 4, x + w - 6, y + 4); along(x + w - 4, y + 6, x + w - 4, y + h - 6); along(x + w - 6, y + h - 4, x + 6, y + h - 4); along(x + 4, y + h - 6, x + 4, y + 6);
+    c.beginPath();
+    for (const [px, py] of pts) { c.moveTo(px + r, py); c.arc(px, py, r, 0, TAU); }
+    c.rect(x + 4, y + 4, w - 8, h - 8);
+  }
+  function renderThoughts(now, list, behind = []) {
+    thoughtHits = [];
+    if (calmMood) return;
+    const live = (s) => s.say && now < s.say.until && now - arrivedAt(s) > 700;
+    for (const s of list.concat(behind)) if (s.say && now >= s.say.until) s.say = null;
+    const talking = list.filter(live).concat(behind.filter(live));
+    if (!talking.length) return;
+    c.save(); c.font = THOUGHT_FONT;
+    const rank = (s) => (s.say.open ? 2e9 : 0) + (s.say.full ? 1e9 : 0) + s.say.born;
+    talking.sort((p, q) => rank(q) - rank(p));
+    // where each one's head is (or, from behind the world, the point on its rim nearest them), and how big
+    const heads = new Map(talking.map((s) => {
+      if (s.sz > 0.05) return [s, { x: s.sx, y: s.sy, r: s.size * 0.55, out: null }];
+      let dx = s.sx - CX, dy = s.sy - CY; const d = Math.hypot(dx, dy) || 1; if (d < 2) { dx = 0; dy = -1; } else { dx /= d; dy /= d; }
+      return [s, { x: CX + dx * R * 1.02, y: CY + dy * R * 1.02, r: 4, out: Math.atan2(dy, dx) }];
+    }));
+    // no bubble covers anyone who's talking
+    const placed = [...heads.values()].map((h) => ({ x: h.x - h.r, y: h.y - h.r, w: h.r * 2, h: h.r * 2 }));
+    const overlaps = (r) => placed.some((o) => r.x < o.x + o.w + 6 && o.x < r.x + r.w + 6 && r.y < o.y + o.h + 6 && o.y < r.y + r.h + 6);
+    const DEG = Math.PI / 180, AROUND = [-60, -120, -90, -25, -155, 20, 160, 60, 120, 90].map((d) => d * DEG); // (above first, then the sides, then below)
+    const plans = [];
+    for (const s of talking) {
+      const t = s.say, hd = heads.get(s);
+      // the directions to try: the one it used last time first; from behind the world, outward from the rim and near it
+      const dirs = hd.out != null ? [0, -35, 35, -70, 70].map((d) => hd.out + d * DEG) : AROUND.slice();
+      if (t.angle != null) dirs.unshift(t.angle);
+      const size = (full) => {
+        const lines = full ? wrapWords(t.text, 170) : [];
+        return { lines, w: full ? Math.max(40, ...lines.map((l) => c.measureText(l).width)) + 26 : 42, h: full ? lines.length * 17 + 18 : 28 };
+      };
+      const at = ({ w, h }, ang) => {
+        const cos = Math.cos(ang), sin = Math.sin(ang), ext = Math.abs(cos) * w / 2 + Math.abs(sin) * h / 2, dist = hd.r + 18 + ext;
+        return { x: hd.x + cos * dist - w / 2, y: hd.y + sin * dist - h / 2, w, h };
+      };
+      const onScreen = (r) => r.x >= 4 && r.y >= 4 && r.x + r.w <= VW - 4 && r.y + r.h <= VH - 4;
+      const spot = (full) => {
+        const sz = size(full);
+        for (const ang of dirs) { const r = at(sz, ang); if (onScreen(r) && !overlaps(r)) return { ...r, lines: sz.lines, full, angle: ang }; }
+        return null;
+      };
+      // full words if they fit somewhere (or if you opened it, wherever it can go), else a "…" (even if it has to overlap)
+      let plan = spot(true);
+      if (!plan && t.open) { const sz = size(true), ang = dirs[0], r = at(sz, ang);
+        plan = { ...r, x: clamp(r.x, 4, VW - r.w - 4), y: clamp(r.y, 4, VH - r.h - 4), lines: sz.lines, full: true, angle: ang }; }
+      if (!plan) plan = spot(false);
+      if (!plan) { const sz = size(false), r = at(sz, dirs[0]); plan = { ...r, x: clamp(r.x, 4, VW - r.w - 4), y: clamp(r.y, 4, VH - r.h - 4), lines: [], full: false, angle: dirs[0] }; }
+      t.full = plan.full; t.angle = plan.angle;
+      placed.push(plan); plans.push([s, plan, hd]);
+    }
+    c.restore();
+    drawLast.push(() => {
+      c.font = THOUGHT_FONT; c.textBaseline = 'middle'; c.textAlign = 'left';
+      for (const [s, { x, y, w, h, lines, full }, hd] of plans.reverse()) { // (the most important drawn last, on top)
+        const t = s.say;
+        const a = Math.min(1, (now - t.born) / 250) * Math.min(1, (t.until - now) / 500), pop = 0.8 + 0.2 * Math.min(1, (now - t.born) / 250);
+        c.save(); c.globalAlpha = a;
+        c.translate(hd.x, hd.y); c.scale(pop, pop); c.translate(-hd.x, -hd.y);
+        // the little trail of puffs from the edge of the head toward the cloud's nearest edge
+        const ex = clamp(hd.x, x + 8, x + w - 8), ey = clamp(hd.y, y + 6, y + h - 6), d = Math.hypot(ex - hd.x, ey - hd.y) || 1;
+        const sx0 = hd.x + (ex - hd.x) / d * hd.r, sy0 = hd.y + (ey - hd.y) / d * hd.r;
+        for (const [k, r] of [[0.3, 2.6], [0.68, 4]]) { c.beginPath(); c.arc(sx0 + (ex - sx0) * k, sy0 + (ey - sy0) * k, r, 0, TAU); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 1.5; c.strokeStyle = DARK; c.stroke(); }
+        // the cloud: outlined bumps, filled over, so only its outer edge shows
+        cloudPath(x, y, w, h); c.lineWidth = 3; c.strokeStyle = DARK; c.stroke();
+        cloudPath(x, y, w, h); c.fillStyle = '#fff'; c.fill();
+        c.fillStyle = DARK;
+        if (full) lines.forEach((l, i) => c.fillText(l, x + 13, y + 18 + i * 17));
+        else for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(x + w / 2 + (i - 1) * 7, y + h / 2, 1.8, 0, TAU); c.fill(); }
+        c.restore();
+        thoughtHits.push({ s, x: x - 6, y: y - 6, w: w + 12, h: h + 12 });
+      }
+    });
   }
 
   // someone else loved everyone. with a few people here, every one is the full rainbow; in a crowd, love arriving close
@@ -3081,6 +3182,7 @@
         // a message for everyone (already boinked by the hearth)
         const s = me && m.id === me.id ? me : peers.get(m.id);
         if (s) s.blink = 1;
+        if (s) { const text = String(m.text || '').slice(0, 80), now = performance.now(); s.say = { text, born: now, until: now + 7000 + text.length * 60, open: false }; }
         const who = s === me ? 'you' : s ? nameOf(s) : 'someone';
         whisper(`${who}: “${String(m.text || '').slice(0, 80)}”`, 5200 + String(m.text || '').length * 45, true, null, true);
         break;
@@ -3406,6 +3508,12 @@
       lastPlanted = m.k;
       markMode = null; document.body.classList.remove('marking');
       tone.chime();
+      return;
+    }
+    const th = thoughtHits.find((b) => x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h);
+    if (th && th.s.say) {
+      const t = th.s.say; t.open = !t.open;
+      if (t.open) t.until = Math.max(t.until, now + 5000 + t.text.length * 60); // (time to read it)
       return;
     }
     const s = hit(x, y);
@@ -4527,6 +4635,6 @@
   if (n > 0) dream(Math.min(n, params.has('debug') ? 400 : 40)); // (up to 400, the hearth's limit, for testing a crowd)
   if (params.get('omen')) setTimeout(() => startOmen(params.get('omen')), 1500);
   if (params.get('mood')) setTimeout(() => setMood(params.get('mood'), 30000), Math.max(1500, intro.ui - performance.now() + 500)); // ?mood=worm to see one face for 30s
-  if (params.has('debug')) window.heartstar = { get gardenN() { return gardenN; }, set gardenN(v) { gardenN = v; }, pointHearts, get quality() { return quality; }, set quality(q) { quality = q; resize(); }, get frameAvg() { return frameAvg; }, get visible() { return visible; }, get ac() { return ac; }, get master() { return master; }, get soundOn() { return soundOn; }, mic, pitch, hit, tap, planted, bursts, pf, pull, hitPart, sunAt, view, moon, peers, get me() { return me; }, faceToward, startOmen, setMood, zoom, loveBurst, MOODS, waves, sky, tilt, turca, whisper };
+  if (params.has('debug')) window.heartstar = { get gardenN() { return gardenN; }, set gardenN(v) { gardenN = v; }, pointHearts, get quality() { return quality; }, set quality(q) { quality = q; resize(); }, get frameAvg() { return frameAvg; }, get visible() { return visible; }, get ac() { return ac; }, get master() { return master; }, get soundOn() { return soundOn; }, mic, pitch, hit, tap, planted, bursts, pf, pull, hitPart, sunAt, view, moon, peers, get me() { return me; }, faceToward, startOmen, setMood, zoom, loveBurst, MOODS, waves, sky, tilt, turca, whisper, receive };
   requestAnimationFrame(frame);
 })();

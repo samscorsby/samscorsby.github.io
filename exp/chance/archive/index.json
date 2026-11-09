@@ -1284,5 +1284,96 @@
    "Radios 100FM - 100% Latin (Israel), internet radio, Nov 7, 21:03 UTC"
   ],
   "heard_total": 36
+ },
+ {
+  "catalog": "ISA012",
+  "number": 12,
+  "title": "ISA012 Njsunriate CitT8",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-09",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-09T04:03+00:00",
+  "listened_hours": 24,
+  "length": 1746.54,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "USB India 80s Backwash",
+    "duration": 219.1
+   },
+   {
+    "n": 2,
+    "title": "Vocoder Morph Inverse Retro MusE",
+    "duration": 315.33
+   },
+   {
+    "n": 3,
+    "title": "Varispeed CitT8",
+    "duration": 135.19
+   },
+   {
+    "n": 4,
+    "title": "Byteswap Shannon Bit Rotate Morph njsunriseradio",
+    "duration": 79.86
+   },
+   {
+    "n": 5,
+    "title": "Theatre Dutch Dae_Gu Rule float16",
+    "duration": 453.05
+   },
+   {
+    "n": 6,
+    "title": "37th 1965 Logistic",
+    "duration": 544.01
+   }
+  ],
+  "cover": "archive/covers/ISA012.jpg",
+  "cover_png": "archive/covers/ISA012.png",
+  "palette": [
+   "#631ABA",
+   "#A229D4",
+   "#4C279E",
+   "#2C1843",
+   "#F8F6FB"
+  ],
+  "seed": "4230489322870827495",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Radio SCORPIO - Leuven, Be (Brabant ,be, Belgium), internet radio, Nov 9, 02:02 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz SDR, K2ZN, USA | Rochester, NY, Nov 8, 22:02 UTC",
+   "FT8 data, 17 m, 18100.0 kHz USB via 0-30 MHz SDR, Balingen, Germany, Nov 8, 10:01 UTC",
+   "njsunriseradio (India), internet radio, Nov 8, 10:02 UTC",
+   "Estereo Clásica (Honduras), internet radio, Nov 8, 14:02 UTC",
+   "RJH99 Nizhni Novgorod, 24.0 kHz USB via 0-30 MHz KiwiSDR 🇮🇪 IK7FMO, RICCARDO GIULIANI & GIUSEPPE CISTERNINO | CONVERSANO (BARI) - CENTRAL PUGLIA - ITALIA - ITALY ***O***, Nov 8, 08:02 UTC",
+   "Retro Music TV (Czechia), internet radio, Nov 8, 17:02 UTC",
+   "Club Music Radio - LOVE SONG (Croatia), internet radio, Nov 8, 23:04 UTC",
+   "Radio de Vliegende Hollander (The Netherlands), internet radio, Nov 8, 12:02 UTC",
+   "Restauracion / 100.5 FM - Mision Cristiana Elim (El Salvador), 100.5 MHz FM, Nov 8, 05:02 UTC",
+   "FT8 data, 17 m, 18100.0 kHz USB via 0-30 MHz SDR | Brownsville, Texas, USA, Nov 8, 22:01 UTC",
+   "YW City Radio - Macau 954 AM (Macao, SAR of China, Macao), internet radio, Nov 8, 12:02 UTC",
+   "Hostal Azul Radio (Matanzas, Cuba), internet radio, Nov 8, 23:03 UTC",
+   "IBERO: El Milagro de la Radio (Ciudad de México, Mexico), 90.9 MHz FM, Nov 8, 16:03 UTC",
+   "90.9 Ibero (CDMX) - 90.9 FM - XHUIA-FM - Universidad Iberoamericana - Ciudad de México (Ciudad de México, Mexico), 90.9 MHz FM, Nov 8, 17:02 UTC",
+   "Radio Nostalgia (Greece), internet radio, Nov 8, 21:03 UTC",
+   "Cabo de Gata Radio (S to SEu), 1704.0 kHz AM via 0-30 MHz SDR | @Wildeck - Waldhessen, Germany, Nov 8, 23:02 UTC",
+   "Shannon Volmet (E to Eu), 3413.0 kHz USB via K1VL (3) Shrewsbury, Vermont, USA - 36+ receivers, Nov 8, 05:01 UTC",
+   "San Francisco Radio SP (E to Oc), 3467.0 kHz AM via 0-30 MHz SDR | COVENTRY, TWP., OH, Nov 9, 00:02 UTC",
+   "Lokale Omroep Zeewolde (LOZ 106.4FM) (Flevoland, Zeewolde, Schepenveld 21-5, The Netherlands), 106.4 MHz FM, Nov 8, 13:03 UTC",
+   "Clarificatory Adenium (Jazzaria.com, 2018), archive, 2018, Nov 8, 04:04 UTC",
+   "[MYCP005",
+   "WSPR beacons, 20 m, 14095.6 kHz USB via 0-30 MHz SDR, N9SAC/Naperville, IL, Nov 8, 20:02 UTC",
+   "Theatre Royal 1953-12-24 A Christmas Carol (1953), archive, 1953, Nov 8, 07:04 UTC",
+   "Zwolle - Nature reserve Langenholte, live microphone, Nov 8, 21:04 UTC",
+   "Not Ensemble - Mindless Planned Party [TPZ30",
+   "KBS World Radio (M to FE), 1170.0 kHz AM via 0-30 MHz KIWI SDR( 4ch ), HL5NTR, Daegu_City Republic of Korea. Loop-type Antenna., Nov 8, 13:01 UTC",
+   "[archhs01",
+   "Radio Ambience (FI to NEu), 6095.0 kHz AM via OH6HPS SDR, 160m horizontal loop, Muurame, Finland, Nov 8, 06:01 UTC",
+   "China Radio Int. (R to EEu), 6155.0 kHz AM via 0-30 MHz SDR, VU24DX, Kozhikode ,Kerala,India, Nov 8, 20:02 UTC",
+   "Academy Award Theater 1965-04-05 37th Annual (1965), archive, 1965, Nov 8, 16:04 UTC",
+   "Radio Piepzender (NL to Eu), 6200.0 kHz AM via 0-30 MHz SDR | Pecs (Tubes), Hungary, Nov 8, 05:02 UTC"
+  ],
+  "heard_total": 32
  }
 ]

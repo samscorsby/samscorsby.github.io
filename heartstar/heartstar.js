@@ -1592,7 +1592,8 @@
       const r1 = R * 1.12;
       c.beginPath();
       wobbleLine(CX + Math.cos(a) * r1, CY + Math.sin(a) * r1, CX + Math.cos(a) * (r1 + len), CY + Math.sin(a) * (r1 + len), i * 7 + (many ? boil : 0), 0.6 + many * 0.35);
-      c.strokeStyle = `hsla(${(hue + i * 12) % 360},85%,58%,${Math.min(1, 0.6 + (storm + love + flash) * 0.4)})`;
+      // (twice round the colors, exactly, so the last ray's color meets the first's with no seam)
+      c.strokeStyle = `hsla(${(hue + (i / n) * 720) % 360},85%,58%,${Math.min(1, 0.6 + (storm + love + flash) * 0.4)})`;
       c.lineWidth = (1.8 + many * 0.4 + flash * 1.6) * farK(); c.stroke();
     }
   }
@@ -2264,7 +2265,8 @@
       }
       const ci = storm > 0.2 ? 8 : unison || s.c;
       const col = colorOf(ci, now, s.seed);
-      drawFaceCached(s.sx, s.sy - s.size * 0.06, s.size, { lid, look: [s.lookX, s.lookY], hearts: s.hearts > 0, sing: s.sing, color: col, nose: ci !== 8 && reddish(col) ? '#00b4ff' : undefined });
+      const sleeping = (s.away && !s.mine) || env(omenP('eclipse', now)) > 0.5; // (hearts passing over don't wake anyone who's away)
+      drawFaceCached(s.sx, s.sy - s.size * 0.06, s.size, { lid, look: [s.lookX, s.lookY], hearts: s.hearts > 0 && !sleeping, sing: s.sing, color: col, nose: ci !== 8 && reddish(col) ? '#00b4ff' : undefined });
       c.restore();
     }
     // the far ones, as soft dots

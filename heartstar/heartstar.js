@@ -1770,8 +1770,8 @@
     return me;
   })();
   const LEVEL_RGB = [[80, 140, 215], [45, 100, 185], [15, 65, 150], [0, 40, 115], [0, 22, 80], [0, 6, 45]];
-  // how much of the land's natural color shows through its blue (0: all blue, as it was; 1: all natural). ?nature=0.5 to try
-  const LAND_NATURE = params.has('nature') ? clamp(+params.get('nature') || 0, 0, 1) : 1;
+  // how much of the land's natural color shows through its blue (0: all blue, as it is for now; 1: all natural). ?nature=1 to try
+  const LAND_NATURE = params.has('nature') ? clamp(+params.get('nature') || 0, 0, 1) : 0;
   const LEVEL_GL = new Float32Array(LEVEL_RGB.flat().map((v) => v / 255));
 
   // without a graphics card, land dots are stamped from a ready-made dot, redrawn only when the size changes
@@ -3894,6 +3894,35 @@
 
   const colorBtn = document.getElementById('act-you');
   const nameIn = document.getElementById('name-in');
+  // typing on a phone, the keyboard covers the bottom half of the screen: the window you're typing in sits just above
+  // it, and the world rises into the space left above the window, turned so your scorsby is in the middle of it, so you
+  // can see your own words come out in its bubble. when you're done typing, everything settles back
+  const vvp = window.visualViewport;
+  let liftedCY = null, keyboardTimer = 0;
+  function placeForKeyboard() {
+    const el = document.activeElement, win = el && el.closest && el.closest('.win');
+    const kb = vvp ? Math.max(0, innerHeight - (vvp.offsetTop + vvp.height)) : 0;
+    const typing = small && win && /^(say-in|name-in|note-in)$/.test(el.id) && kb > 80;
+    for (const w of document.querySelectorAll('.win')) if (w !== win || !typing) w.style.bottom = '';
+    if (!typing) { if (liftedCY != null) { CY = VH * (small ? 0.5 : 0.53); liftedCY = null; } return; } // (back where resize puts it)
+    win.style.bottom = `${kb + 8}px`;
+    const top = (vvp ? vvp.offsetTop : 0) + 8, winTop = innerHeight - kb - 8 - win.offsetHeight;
+    if (liftedCY == null) {
+      liftedCY = CY;
+      // and the world turns, gently, to bring your scorsby round to the middle
+      if (me) {
+        const from = { lon: view.lon, lat: view.lat }, to = { lon: from.lon + wrapLon(me.lon - from.lon), lat: clamp(me.lat, -60, 60) }, t0 = performance.now();
+        const step = () => { const k = smooth(0, 1, (performance.now() - t0) / 600); view.lon = lerp(from.lon, to.lon, k); view.lat = lerp(from.lat, to.lat, k); setView(); view.auto = false; view.idleAt = performance.now() + 6000; if (k < 1) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+      }
+    }
+    CY = top + Math.max(40, winTop - top) * 0.5;
+  }
+  vvp?.addEventListener('resize', placeForKeyboard);
+  addEventListener('resize', () => setTimeout(placeForKeyboard, 0)); // (after the world has resized itself, which puts it back in the middle)
+  vvp?.addEventListener('scroll', placeForKeyboard);
+  document.addEventListener('focusin', () => { clearTimeout(keyboardTimer); keyboardTimer = setTimeout(placeForKeyboard, 250); });
+  document.addEventListener('focusout', () => { clearTimeout(keyboardTimer); keyboardTimer = setTimeout(placeForKeyboard, 120); });
   function paintSwatch() {
     const sw = colorBtn.querySelector('.sw');
     sw.style.background = typeof myColor === 'string' ? myColor : COLORS[myColor][1] || 'conic-gradient(#ff5fae,#ffd23f,#62d64a,#00b4ff,#9b6bff,#ff5fae)';

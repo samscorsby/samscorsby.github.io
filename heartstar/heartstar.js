@@ -14,6 +14,9 @@
   // ?card: posing for the share picture (tools/sharecard.html): still, looking straight out, no halo, sun and moon set just so
   const CARD = params.has('card');
   const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+  // this tab's own key, so the hearth knows a reconnection from it is still you (and lets the old connection go).
+  // one per tab, not per browser, so two tabs open are two scorsbys and don't keep replacing each other
+  const tabKey = (() => { try { let k = sessionStorage.getItem('scorsby-tab'); if (!k) { k = Math.random().toString(36).slice(2, 12); sessionStorage.setItem('scorsby-tab', k); } return k; } catch { return Math.random().toString(36).slice(2, 12); } })();
 
   // ------------------------------------------------------------------ colors of a scorsby
   const COLORS = [
@@ -3158,7 +3161,7 @@
   function connect() {
     if (!net.url) return alone();
     let ws;
-    try { ws = new WebSocket(`${net.url}?tz=${-new Date().getTimezoneOffset()}&c=${encodeURIComponent(myColor)}&n=${encodeURIComponent(myName)}${net.world ? '&w=' + encodeURIComponent(net.world) : ''}`); } catch { return alone(); }
+    try { ws = new WebSocket(`${net.url}?tz=${-new Date().getTimezoneOffset()}&c=${encodeURIComponent(myColor)}&n=${encodeURIComponent(myName)}&k=${tabKey}${net.world ? '&w=' + encodeURIComponent(net.world) : ''}`); } catch { return alone(); }
     net.ws = ws;
     ws.onopen = () => { net.live = true; net.tries = 0; updatePresence(); };
     ws.onmessage = (e) => { try { receive(JSON.parse(e.data)); } catch (err) { console.warn(err); } };
@@ -3256,7 +3259,11 @@
         me = scorsby(m.you, true);
         if (net.moving && old) { place(me, old.lat, old.lon); me.c = old.c; send({ t: 'move', lat: me.lat, lon: me.lon }); } // still right where you were
         net.moving = false; net.world = '';
-        for (const p of m.here) peers.set(p.id, scorsby(p));
+        // (everyone here is exactly who the hearth says: anyone who left while this page was away, or an old
+        // connection of yours, is let go, so nobody lingers as a ghost or shows up twice)
+        const hereNow = new Set(m.here.map((p) => p.id));
+        for (const id of [...peers.keys()]) if (!id.startsWith('dream') && !hereNow.has(id)) { voices.hush(id); peers.delete(id); }
+        for (const p of m.here) { const o = peers.get(p.id); if (!o) peers.set(p.id, scorsby(p)); else { o.n = p.n || ''; o.c = p.c ?? o.c; o.away = !!p.away; place(o, p.lat, p.lon); } } // (and those still here, as they are now)
         trails = m.trails || [];
         marks = []; (m.marks || []).forEach(addMark);
         setTally(m.tally);

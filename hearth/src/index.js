@@ -620,7 +620,11 @@ export class Hearth extends DurableObject {
     const n = cleanName(url.searchParams.get('n'));
 
     const { 0: client, 1: server } = new WebSocketPair();
-    const me = { id: crypto.randomUUID().slice(0, 8), lat, lon, tz, c, n, since: Date.now() };
+    // (a key of the tab's own: coming back from the background, a phone opens a new connection while the old one may
+    // linger, silent, for a while. the old one is let go first, so there's only ever one of you)
+    const k = String(url.searchParams.get('k') || '').replace(/[^a-z0-9]/gi, '').slice(0, 16) || undefined;
+    const me = { id: crypto.randomUUID().slice(0, 8), lat, lon, tz, c, n, k, since: Date.now() };
+    if (k) for (const w of this.ctx.getWebSockets()) if (w.deserializeAttachment()?.k === k) await this.leave(w);
     this.ctx.acceptWebSocket(server);
     server.serializeAttachment(me);
 
@@ -827,6 +831,7 @@ export class Hearth extends DurableObject {
 
   async leave(ws) {
     const me = ws.deserializeAttachment();
+    try { ws.serializeAttachment(null); } catch {} // (gone: not counted among those here, and not said goodbye to twice)
     try { ws.close(1000, 'goodbye'); } catch {}
     if (!me) return;
     this.buckets.delete(me.id);

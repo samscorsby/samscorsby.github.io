@@ -3308,7 +3308,7 @@
         tone.poke();
         break;
       }
-      case 'mark': { planted(m); const mk = marks[marks.length - 1]; if (mk && mk.note) openNote(mk, 6000); break; }
+      case 'mark': planted(m); break; // (a note only opens when someone hovers over or taps its plant)
       case 'garden': gardenN = m.n || 0; break;
       case 'elsewhere': elsewhere = m.n || 0; updatePresence(); break;
       // the world is very full, so some scorsbys are moving to another part of it: you, or others

@@ -2102,6 +2102,7 @@
     c.restore();
   }
   function renderMarks(now) {
+    renderNotes(now);
     const show = awake(now); // plants are always visible, even zoomed all the way out (once the world is awake)
     for (const m of marks) m.sx = -1e4;
     if (show <= 0 || !marks.length) return;
@@ -2123,6 +2124,7 @@
       c.globalAlpha = show * fade * Math.min(1, pz * 3) * (0.55 + 0.45 * meadow);
       doodleCached(m.k === 'head' ? 'scorsby' : m.k, px, py - ds * 0.3 * big, ds * big, m.seed, now, 1.32);
       m.sx = px; m.sy = py - ds * 0.3 * big; m.ss = ds * big;
+      if (m.say) drawNoteOf(m, now); // (its note, if it's open, at the plant's own depth: lower plants and the scorsbys go over it)
     }
     for (const g of found) {
       const [px, py, pz] = project(...g.v);
@@ -2136,7 +2138,6 @@
     const T0 = Date.now();
     for (const cr of creatures()) { c.save(); c.globalAlpha = show; drawCreature(cr, ds, now, T0); c.restore(); }
     c.restore();
-    renderNotes(now);
   }
 
   // a plant's little note: hover over the plant (on a computer) or tap it, and it opens in a cream cloud above it, the
@@ -2149,26 +2150,27 @@
     mk.say = { text: mk.note, born: now, until: now + ms + mk.note.length * 60, open: true };
   }
   function renderNotes(now) {
-    noteHits = [];
-    if (calmMood) return;
-    // (the one under the pointer stays open while it's there, and fades a moment after it leaves)
+    // (each open note is drawn along with its plant, in renderMarks; this keeps the one under the pointer open, lets the
+    // rest close, and makes room in the list of places to tap)
+    if (calmMood) { noteHits = []; return; }
     if (hoverNote && pointer.seen && !pointer.down && hoverNote.sx > -1e3 && Math.hypot(hoverNote.sx - pointer.x, hoverNote.sy - pointer.y) < Math.max(hoverNote.ss * 0.5, 20)) openNote(hoverNote, 700);
     else hoverNote = null;
-    const open = marks.filter((m) => m.say && now < m.say.until && m.sx > -1e3);
     for (const m of marks) if (m.say && now >= m.say.until) m.say = null;
-    if (!open.length) return;
+    noteHits = noteHitsNext; noteHitsNext = [];
+  }
+  let noteHitsNext = [];
+  function drawNoteOf(m, now) {
+    if (calmMood || !m.say || now >= m.say.until) return;
     c.save(); c.font = THOUGHT_FONT;
-    const plans = open.map((m) => {
-      const lines = wrapWords(m.note, VW < 500 ? 140 : 170), by = m.n ? `${m.n} scorsby` : 'someone';
-      c.font = NOTE_BY_FONT; const byW = c.measureText(by).width; c.font = THOUGHT_FONT;
-      const w = Math.max(16, byW, ...lines.map((l) => c.measureText(l).width)) + 26, h = lines.length * 17 + 18 + 14;
-      const hd = { x: m.sx, y: m.sy - m.ss * 0.2, r: m.ss * 0.35, far: 0 };
-      const x = clamp(hd.x - w / 2, 4, VW - w - 4), y = clamp(hd.y - hd.r - THOUGHT_GAP - THOUGHT_BUMP - h, 4, VH - h - 4);
-      noteHits.push({ m, x: x - 6, y: y - 6, w: w + 12, h: h + 12 });
-      return [{ say: m.say, c: NOTE_PAPER, seed: m.seed }, { x, y, w, h, lines, full: true, by }, hd, 0];
-    });
+    const lines = wrapWords(m.note, VW < 500 ? 140 : 170), by = m.n ? `${m.n} scorsby` : 'someone';
+    c.font = NOTE_BY_FONT; const byW = c.measureText(by).width; c.font = THOUGHT_FONT;
+    const w = Math.max(16, byW, ...lines.map((l) => c.measureText(l).width)) + 26, h = lines.length * 17 + 18 + 14;
+    const hd = { x: m.sx, y: m.sy - m.ss * 0.2, r: m.ss * 0.35, far: 0 };
+    const x = clamp(hd.x - w / 2, 4, VW - w - 4), y = clamp(hd.y - hd.r - THOUGHT_GAP - THOUGHT_BUMP - h, 4, VH - h - 4);
+    noteHitsNext.push({ m, x: x - 6, y: y - 6, w: w + 12, h: h + 12 });
+    c.globalAlpha = 1;
+    drawThoughts(now, [[{ say: m.say, c: NOTE_PAPER, seed: m.seed }, { x, y, w, h, lines, full: true, by }, hd, 0]]);
     c.restore();
-    drawLast.push(() => drawThoughts(now, plans));
   }
 
   // contagious hearts: a ring of hearts rolls out over the world; every scorsby it touches starts its own
@@ -3903,8 +3905,10 @@
     const el = document.activeElement, win = el && el.closest && el.closest('.win');
     const kb = vvp ? Math.max(0, innerHeight - (vvp.offsetTop + vvp.height)) : 0;
     const typing = small && win && /^(say-in|name-in|note-in)$/.test(el.id) && kb > 80;
-    for (const w of document.querySelectorAll('.win')) if (w !== win || !typing) w.style.bottom = '';
+    for (const w of document.querySelectorAll('.win')) if (w !== win || !typing) { w.style.bottom = ''; w.classList.remove('typing', 'typing-say', 'typing-name', 'typing-note'); }
     if (!typing) { if (liftedCY != null) { CY = VH * (small ? 0.5 : 0.53); liftedCY = null; } return; } // (back where resize puts it)
+    // (the window shrinks to just the line you're typing in, so it takes as little of the little room left as it can)
+    win.classList.add('typing', el.id === 'say-in' ? 'typing-say' : el.id === 'name-in' ? 'typing-name' : 'typing-note');
     win.style.bottom = `${kb + 8}px`;
     const top = (vvp ? vvp.offsetTop : 0) + 8, winTop = innerHeight - kb - 8 - win.offsetHeight;
     if (liftedCY == null) {
@@ -3916,7 +3920,8 @@
         requestAnimationFrame(step);
       }
     }
-    CY = top + Math.max(40, winTop - top) * 0.5;
+    // (your scorsby, in the middle of the world, sits just above the window, with room above it for its words)
+    CY = Math.max(top + 150, winTop - 46);
   }
   vvp?.addEventListener('resize', placeForKeyboard);
   addEventListener('resize', () => setTimeout(placeForKeyboard, 0)); // (after the world has resized itself, which puts it back in the middle)
@@ -4777,7 +4782,7 @@
   document.addEventListener('visibilitychange', () => {
     send({ t: 'away', on: document.hidden }); // (everyone sees your scorsby close its eyes while you're away, and open them when you're back)
     if (document.hidden) return;
-    shownAt = performance.now(); themeFade = null;
+    shownAt = performance.now(); themeFade = null; resize(); // (fresh from the screen as it is now)
     if (me) me.blink = 1;
   });
 
@@ -4799,6 +4804,9 @@
   }
   function frame(now) {
     const raw = now - last, dt = Math.min(64, raw); last = now;
+    // (the canvas always matches the screen: a phone bringing the page back can change its size or sharpness without
+    // a resize to say so, and the world was drawn at the old size, a small stale picture in one corner)
+    if (innerWidth && (innerWidth !== VW || innerHeight !== VH || cv.width !== Math.floor(VW * DPR) || Math.min(devicePixelRatio || 1, [1, 1.5, 2][quality]) !== DPR)) resize();
     watchSpeed(now, raw);
     if (VW) {
       zoom.v += (zoom.target - zoom.v) * 0.12;

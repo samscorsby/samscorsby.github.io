@@ -325,3 +325,10 @@ body #sing-card .row button:not(#sing-yes) { background: var(--btn); }
 #zoom button { position: relative; }
 #zoom button.loading::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px dashed currentColor; opacity: .55; animation: zoomwait 1.4s linear infinite; pointer-events: none; }
 @keyframes zoomwait { to { transform: rotate(360deg); } }
+
+/* typing on a phone, with the keyboard up: the window keeps only the line you're typing in (see placeForKeyboard) */
+.win.typing #swatches, .win.typing #custom { display: none; }
+.win.typing-say #name-form { display: none; }
+.win.typing-say #say-form { padding-top: 14px; }
+.win.typing-name #say-form { display: none; }
+#plant-win.typing-note .small { display: none; }

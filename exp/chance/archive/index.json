@@ -1375,5 +1375,128 @@
    "Radio Piepzender (NL to Eu), 6200.0 kHz AM via 0-30 MHz SDR | Pecs (Tubes), Hungary, Nov 8, 05:02 UTC"
   ],
   "heard_total": 32
+ },
+ {
+  "catalog": "ISA013",
+  "number": 13,
+  "title": "ISA013 10136 Gray Rock Dalga Adult",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-10",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-10T04:03+00:00",
+  "listened_hours": 24,
+  "length": 1583.4,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "lobpreis Barrow Backwards",
+    "duration": 207.0
+   },
+   {
+    "n": 2,
+    "title": "Integrate cabale Lor x1.38",
+    "duration": 265.95
+   },
+   {
+    "n": 3,
+    "title": "Mark Fold adult contemporary",
+    "duration": 84.86
+   },
+   {
+    "n": 4,
+    "title": "1947 10136 Islands near Landshut",
+    "duration": 305.44
+   },
+   {
+    "n": 5,
+    "title": "Čeioula talk Overflow",
+    "duration": 146.62
+   },
+   {
+    "n": 6,
+    "title": "alternative rock Gray Recaman",
+    "duration": 218.39
+   },
+   {
+    "n": 7,
+    "title": "103.7 Dalga",
+    "duration": 90.33
+   },
+   {
+    "n": 8,
+    "title": "data Backwards Fold CNR1",
+    "duration": 104.76
+   },
+   {
+    "n": 9,
+    "title": "Delta Shuffle Vienna",
+    "duration": 160.05
+   }
+  ],
+  "cover": "archive/covers/ISA013.jpg",
+  "cover_png": "archive/covers/ISA013.png",
+  "palette": [
+   "#5E20B0",
+   "#AA2FCA",
+   "#422B96",
+   "#2A1842",
+   "#F8F6FB"
+  ],
+  "seed": "2989028249096837017",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "X (Buddhist on Fire), archive, Nov 9, 11:03 UTC",
+   "AIR Punjabi (India), internet radio, Nov 9, 16:03 UTC",
+   "gair wood - 001, live microphone, Nov 9, 18:04 UTC",
+   "DA13_T716_HR1L_CH22.wav (john.l.stoll@nasa.gov, 2020), archive, 2020, Nov 9, 08:03 UTC",
+   "Hala Sabratha (Sabratha, Libya), internet radio, Nov 9, 23:02 UTC",
+   "ogg/vorbis stream, live microphone, Nov 9, 09:03 UTC",
+   "ogg/vorbis stream, live microphone, Nov 9, 11:03 UTC",
+   "FT8 data, 30 m, 10136.0 kHz USB via VE6JY | Lamont, ALberta, Nov 10, 02:03 UTC",
+   "herrlichkeit-fuer-christus (Germany), internet radio, Nov 9, 04:02 UTC",
+   "LOS40 Puerto Vallarta - 91.1 FM - XHPTOJ-FM - Radiópolis - Puerto Vallarta, Jalisco (Puerto Vallarta, Jalisco, Mexico), 91.1 MHz FM, Nov 10, 00:03 UTC",
+   "Bilyonaryo News Channel (The Philippines), internet radio, Nov 9, 16:03 UTC",
+   "Kabbalah Fr (Israel), internet radio, Nov 9, 22:02 UTC",
+   "NIA Lo-Fi (New Caledonia), internet radio, Nov 9, 20:04 UTC",
+   "Music-ToraVeZimra (Israel), internet radio, Nov 9, 19:15 UTC",
+   "Y94 #1 Hit Music Station (North Dakota, The United States Of America), internet radio, Nov 9, 21:03 UTC",
+   "Hollywood Star Time 1946-02-17 The Mark of Zorro (1946), archive, 1946, Nov 9, 21:03 UTC",
+   "usti nad labem - duul, live microphone, Nov 9, 11:03 UTC",
+   "Choice 102 (Waverly NY, The United States Of America), internet radio, Nov 9, 09:02 UTC",
+   "[Siro505",
+   "Český rozhlas Karlovy Vary (Karlovarský kraj, Czechia), internet radio, Nov 9, 08:02 UTC",
+   "Radio Złote Przeboje Białystok (Poland), internet radio, Nov 9, 21:02 UTC",
+   "Crioula FM (Cabo Verde), internet radio, Nov 9, 19:15 UTC",
+   "Radio Marti (S to CUB), 15160.0 kHz AM via N1NTE-2 - MA/CT Border, USA, Nov 9, 22:02 UTC",
+   "Tuks FM (Pretoria, South Africa), internet radio, Nov 9, 23:02 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz SDR | Brettnach F57320, Nov 9, 18:02 UTC",
+   "Radio Taiwan Int. (M to FE), 9885.0 kHz AM via 0-30 MHz SDR | JQ3JPN Minoh, Osaka, Japan, Nov 9, 12:02 UTC",
+   "Voice of America (FS to IRN), 1548.0 kHz AM via KA1GXR 0-30 MHz SDR1 | ASHLAND MA USA, Nov 10, 03:03 UTC",
+   "A11_T887_HR2L_CH14_11-39-12_18-39-12-2015-09-23Recording.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 9, 14:03 UTC",
+   "FT8 data, 10 m, 28074.0 kHz USB via 0-30 MHz SDR, Rotterdam, The Netherlands. Kilrock, Atlantica and MCB Radio control receiver [NO WSPR ALLOWED",
+   "Radio Disney Uruguay 103.7 (AAC Stream) (Montevideo, Uruguay), 103.7 MHz FM, Nov 9, 12:03 UTC",
+   "Dalga fm 92.5 (Baku, Azerbaijan), 92.5 MHz FM, Nov 9, 23:02 UTC",
+   "Basco Radio 93.3 Studio 2 (The Philippines), 93.3 MHz FM, Nov 9, 08:02 UTC",
+   "BBC (A to ME), 9650.0 kHz AM via DL2SBA | Filderstadt/Germany, Nov 9, 15:02 UTC",
+   "AIR Akashvani Ext.Sce (TB to Tib), 11710.0 kHz AM via 0-30 MHz SDR, VN/SWL, Vietnam, Nov 10, 02:02 UTC",
+   "CNR1 Jammer/Firedrake (M to CHN), 13870.0 kHz AM via GRMS KTM | Kathmandu, Nepal, Nov 9, 10:04 UTC",
+   "FT8 data, 10 m, 28074.0 kHz USB via 0-30 MHz KiwiSDR • Bonito Megaloop FX • aprs.fi, Kuopio, Finland, Europe, Nov 9, 07:02 UTC",
+   "Barnaby Druthers Mystery Hour Episode 74 (J. TImothy Quirk), archive, Nov 9, 20:05 UTC",
+   "RADIO CENTRO (Córdoba, Argentina), internet radio, Nov 9, 23:02 UTC",
+   "liberec - v rokli liberec, live microphone, Nov 9, 10:05 UTC",
+   "Radio Xtrema - Chachapoyas (Amazonas, Peru), internet radio, Nov 9, 21:02 UTC",
+   "Zwolle - Nature reserve Langenholte, live microphone, Nov 9, 06:04 UTC",
+   "Littoral FM Guinee live (Guinea), internet radio, Nov 9, 20:04 UTC",
+   "radio.earth - kozmic, live microphone, Nov 9, 13:03 UTC",
+   "Australian Digital Radio Network - Dance Hits of 2010 (MP3) (Sydney NSW, Australia), internet radio, Nov 9, 04:02 UTC",
+   "Radio Art - Passionate Classical (Greece), internet radio, Nov 9, 23:02 UTC",
+   "Technikum One (Vienna, Austria), internet radio, Nov 9, 23:02 UTC",
+   "Red Horse Ranch 1935-10-03 Grandma (1935), archive, 1935, Nov 9, 15:03 UTC",
+   "Jeju - georo, live microphone, Nov 9, 15:03 UTC",
+   "TNT Atlanta Radio (Vietnam), internet radio, Nov 9, 19:14 UTC"
+  ],
+  "heard_total": 49
  }
 ]

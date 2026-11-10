@@ -1,3 +1,3 @@
-### the pure pour of wit
+### the pixel bazaar
 
-mister glimmer, heart-split, got a glong-penny for 'wit.' scorsby gave rags. "test the pour," he smiled. glimmer's sparkle-friend saw rags, fled. his heart-tune wife saw him, offered all. like the fox's hidden feast, glimmer’s old life was water. his wife’s love: the pure milk. "rrombo dombo di di dai!" he chose truth.
+scorsby, nebula-smile, "sold" his joy-spark. "rrombo dombo di di dai!" he hummed. merchant exchanged laughs. grumbleford, frown-code, 'sold' algorithms, got lag. grumbleford 'drowned' scorsby. glowing, scorsby whispered "rrombo dombo di di dai, for deep waves hold new beginnings!" to emoji-swarm, swapped. scorsby returned, good vibes 'fished' from deep. grumbleford plunged, chasing glong-riches.

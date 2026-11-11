@@ -16,6 +16,9 @@
   const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
   // this tab's own key, so the hearth knows a reconnection from it is still you (and lets the old connection go).
   // one per tab, not per browser, so two tabs open are two scorsbys and don't keep replacing each other
+  // this browser's planter key: kept between visits, so you can change the notes on plants you planted, even later
+  const planterKey = (() => { try { let k = localStorage.getItem('scorsby-planter'); if (!k) { k = Math.random().toString(36).slice(2, 12) + Math.random().toString(36).slice(2, 12); localStorage.setItem('scorsby-planter', k); } return k; } catch { return ''; } })();
+  let myPlants = ''; // (the hearth's scrambled copy of it, which your plants carry)
   const tabKey = (() => { try { let k = sessionStorage.getItem('scorsby-tab'); if (!k) { k = Math.random().toString(36).slice(2, 12); sessionStorage.setItem('scorsby-tab', k); } return k; } catch { return Math.random().toString(36).slice(2, 12); } })();
 
   // ------------------------------------------------------------------ colors of a scorsby
@@ -2164,6 +2167,7 @@
   let noteHitsNext = [];
   function drawNoteOf(m, now) {
     if (calmMood || !m.say || now >= m.say.until) return;
+    if (m === editing) return drawEditing(m, now);
     c.save(); c.font = THOUGHT_FONT;
     const lines = wrapWords(m.note, VW < 500 ? 140 : 170), by = m.n ? `${m.n} scorsby` : 'someone';
     c.font = NOTE_BY_FONT; const byW = c.measureText(by).width; c.font = THOUGHT_FONT;
@@ -2173,6 +2177,23 @@
     noteHitsNext.push({ m, x: x - 6, y: y - 6, w: w + 12, h: h + 12 });
     c.globalAlpha = 1;
     drawThoughts(now, [[{ say: m.say, c: NOTE_PAPER, seed: m.seed }, { x, y, w, h, lines, full: true, by }, hd, 0]]);
+    c.restore();
+  }
+
+  function drawEditing(m, now) {
+    // the box first: as wide as the words want (up to the usual width), as tall as they wrap
+    c.save(); c.font = THOUGHT_FONT;
+    const maxW = VW < 500 ? 140 : 170, text = noteEd.value || noteEd.placeholder;
+    const lines = wrapWords(text.toLowerCase(), maxW), tw = Math.min(maxW, Math.max(60, ...lines.map((l) => c.measureText(l).width + 6)));
+    noteEd.style.width = `${tw}px`; noteEd.style.height = '17px'; noteEd.style.height = `${noteEd.scrollHeight}px`;
+    const th = Math.max(17, noteEd.scrollHeight);
+    const w = tw + 26, by = m.n ? `${m.n} scorsby` : 'someone';
+    const hd = { x: m.sx, y: m.sy - m.ss * 0.2, r: m.ss * 0.35, far: 0 };
+    const x = clamp(hd.x - w / 2, 4, VW - w - 4), y = clamp(hd.y - hd.r - THOUGHT_GAP - THOUGHT_BUMP - (th + 32), 4, VH - th - 36);
+    noteEd.style.left = `${x + 13}px`; noteEd.style.top = `${y + 10}px`;
+    noteHitsNext.push({ m, x: x - 6, y: y - 6, w: w + 12, h: th + 44 });
+    c.globalAlpha = 1;
+    drawThoughts(now, [[{ say: m.say, c: NOTE_PAPER, seed: m.seed }, { x, y, w, h: th + 32, lines: [], full: true, by }, hd, 0]]);
     c.restore();
   }
 
@@ -3161,7 +3182,7 @@
   function connect() {
     if (!net.url) return alone();
     let ws;
-    try { ws = new WebSocket(`${net.url}?tz=${-new Date().getTimezoneOffset()}&c=${encodeURIComponent(myColor)}&n=${encodeURIComponent(myName)}&k=${tabKey}${net.world ? '&w=' + encodeURIComponent(net.world) : ''}`); } catch { return alone(); }
+    try { ws = new WebSocket(`${net.url}?tz=${-new Date().getTimezoneOffset()}&c=${encodeURIComponent(myColor)}&n=${encodeURIComponent(myName)}&k=${tabKey}&p=${planterKey}${net.world ? '&w=' + encodeURIComponent(net.world) : ''}`); } catch { return alone(); }
     net.ws = ws;
     ws.onopen = () => { net.live = true; net.tries = 0; updatePresence(); };
     ws.onmessage = (e) => { try { receive(JSON.parse(e.data)); } catch (err) { console.warn(err); } };
@@ -3243,7 +3264,7 @@
   setInterval(() => { if (!net.live && !omen && Math.random() < 0.5) startOmen(pick(Object.keys(OMEN_DUR))); }, 70000);
 
   const MARK_LIFE = 24 * 3600 * 1000; // (a plant lasts a day)
-  const addMark = (m) => marks.push({ v: vec(m.lat, m.lon), k: m.k, n: m.n || '', t: m.at || m.t || Date.now(), seed: rand(0, 99), sx: -1e4, note: m.note ? String(m.note).slice(0, 100) : '' });
+  const addMark = (m) => marks.push({ v: vec(m.lat, m.lon), k: m.k, n: m.n || '', t: m.at || m.t || Date.now(), seed: rand(0, 99), sx: -1e4, note: m.note ? String(m.note).slice(0, 100) : '', id: m.id || '', o: m.o || '' });
   function planted(m) {
     const before = groves().found.length;
     addMark(m);
@@ -3256,7 +3277,7 @@
     switch (m.t) {
       case 'hello': {
         const old = me;
-        me = scorsby(m.you, true);
+        me = scorsby(m.you, true); myPlants = m.you.o || '';
         if (net.moving && old) { place(me, old.lat, old.lon); me.c = old.c; send({ t: 'move', lat: me.lat, lon: me.lon }); } // still right where you were
         net.moving = false; net.world = '';
         // (everyone here is exactly who the hearth says: anyone who left while this page was away, or an old
@@ -3317,7 +3338,16 @@
         tone.poke();
         break;
       }
-      case 'mark': planted(m); break; // (a note only opens when someone hovers over or taps its plant)
+      case 'mark': planted(m); break;
+      case 'renote': {
+        const mk = marks.find((x) => x.id && x.id === m.id);
+        if (mk) { mk.note = String(m.note || '').slice(0, 100); if (mk.say) mk.say.text = mk.note; if (!mk.note) mk.say = null; }
+        break;
+      }
+      case 'renoted':
+        if (m.ok) whisper('your note is changed.', 2400);
+        else { whisper(m.why || "that note couldn't be changed just now.", 3200); const mk = marks.find((x) => x.id === m.id); if (mk) { mk.note = mk.editFrom || ''; if (!mk.note) mk.say = null; } }
+        break; // (a note only opens when someone hovers over or taps its plant)
       case 'garden': gardenN = m.n || 0; break;
       case 'elsewhere': elsewhere = m.n || 0; updatePresence(); break;
       // the world is very full, so some scorsbys are moving to another part of it: you, or others
@@ -3683,7 +3713,8 @@
       if (!ll) return;
       const note = noteIn.value.replace(/\s+/g, ' ').trim().slice(0, 100); noteIn.value = '';
       const m = { lat: ll[0], lon: ll[1], k: markMode, n: myName, at: Date.now(), note: note || undefined };
-      if (net.live) send({ t: 'mark', lat: m.lat, lon: m.lon, k: m.k, note: m.note }); else planted(m);
+      if (net.live) send({ t: 'mark', lat: m.lat, lon: m.lon, k: m.k, note: m.note });
+      else { if (!myPlants) myPlants = 'here'; planted({ ...m, id: Math.random().toString(36).slice(2, 10), o: myPlants }); }
       whisper(`you planted a ${markMode}${m.note ? ', with a note' : ''}. it will fade in a day.`, 3200);
       lastPlanted = m.k;
       markMode = null; document.body.classList.remove('marking');
@@ -3696,8 +3727,9 @@
       if (t.open) t.until = Math.max(t.until, now + 5000 + t.text.length * 60); // (time to read it)
       return;
     }
+    if (editing) { const keepIt = noteHits.find((b) => b.m === editing && x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h); if (keepIt) { noteEd.focus(); return; } endEdit(true); return; } // (writing: a tap elsewhere keeps it)
     const nh = noteHits.find((b) => x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h);
-    if (nh) { nh.m.say = null; return; }
+    if (nh) { if (nh.m.id && myPlants && nh.m.o === myPlants) editNote(nh.m); else nh.m.say = null; return; } // (your own: write in it)
     const s = hit(x, y);
     if (s) {
       if (type !== 'mouse') tipHold = { s, until: now + 2800 };
@@ -3706,6 +3738,7 @@
       return;
     }
     const nm = hitMark(x, y);
+    if (nm && nm.id && myPlants && nm.o === myPlants) { editNote(nm); tone.blink(); return; } // (yours: change its note)
     if (nm && nm.note) { if (nm.say) { nm.say = null; } else openNote(nm); tone.blink(); return; }
     const d = hitSky(x, y);
     if (d) {
@@ -3853,7 +3886,7 @@
   addEventListener('keydown', (e) => {
     lastActive = performance.now();
     if (e.key === 'Escape') { markMode = null; document.body.classList.remove('marking'); closeWindows(); return; }
-    if (['BUTTON', 'INPUT'].includes(e.target.tagName)) return;
+    if (['BUTTON', 'INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
     if (e.key === ' ' && me) { me.blink = 1; send({ t: 'blink' }); tone.blink(); e.preventDefault(); }
     if (e.key === '+' || e.key === '=') zoomStep(1);
     if (e.key === '-') zoomStep(-1);
@@ -3872,6 +3905,35 @@
   }
   const singNoted = { self: false, together: false, hand: false }; // say each once per visit
   const noteIn = document.getElementById('note-in');
+  // writing in the bubble of a plant of your own: tap it, and its cloud opens with the words ready to change (or an
+  // empty one, to write a note it didn't have). enter, or tapping anywhere else, keeps it; escape leaves it as it was
+  const noteEd = document.getElementById('note-ed');
+  let editing = null;
+  function editNote(mk) {
+    if (editing && editing !== mk) endEdit(true);
+    editing = mk; mk.editFrom = mk.note || '';
+    openNote(mk, 6e5); // (the cloud stays open while you write)
+    noteEd.value = mk.note || ''; noteEd.hidden = false;
+    view.auto = false; view.vlon = 0; view.idleAt = performance.now() + 6e5; // (the world holds still while you write)
+    setTimeout(() => { noteEd.focus(); noteEd.setSelectionRange(noteEd.value.length, noteEd.value.length); }, 30);
+  }
+  function endEdit(keep) {
+    const mk = editing; if (!mk) return;
+    editing = null; noteEd.hidden = true; noteEd.blur(); view.idleAt = performance.now() + 3000;
+    const note = noteEd.value.replace(/\s+/g, ' ').trim().slice(0, 100);
+    const fade = (ms) => { if (!mk.note) { mk.say = null; return; } if (!mk.say) openNote(mk, ms); mk.say.text = mk.note; mk.say.until = performance.now() + ms; }; // (it was held open while you wrote: now it fades)
+    if (!keep || note === mk.editFrom) { mk.note = mk.editFrom; fade(3000); return; }
+    mk.note = note.toLowerCase(); // (shown right away; the hearth checks it, and everyone sees what it keeps)
+    fade(3000);
+    if (net.live) send({ t: 'renote', id: mk.id, note });
+    else whisper(mk.note ? 'your note is changed.' : 'your note is gone.', 2400);
+  }
+  noteEd.addEventListener('input', () => { if (editing) { editing.note = noteEd.value.toLowerCase(); } });
+  noteEd.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); endEdit(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); endEdit(false); }
+  });
+  noteEd.addEventListener('blur', () => setTimeout(() => { if (editing && document.activeElement !== noteEd) endEdit(true); }, 120));
   const youWin = document.getElementById('you-win'), plantWin = document.getElementById('plant-win'), card = document.getElementById('sing-card'), todayWin = document.getElementById('today-win');
   function closeWindows(except) { for (const w of [youWin, plantWin, card, todayWin]) if (w !== except) w.hidden = true; }
   document.addEventListener('pointerdown', (e) => {

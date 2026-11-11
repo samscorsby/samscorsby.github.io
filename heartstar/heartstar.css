@@ -210,6 +210,12 @@ h1 { font-family: var(--head); font-weight: 400; font-size: 30px; line-height: 1
   padding: 6px 8px; border: 1px solid var(--ui); background: var(--paper); color: var(--ink); border-radius: 2px; outline: none;
 }
 #note-in:focus { box-shadow: 2px 2px 0 var(--ui); }
+/* writing in the bubble of a plant of your own: a see-through box over the cloud, which grows around the words */
+#note-ed {
+  position: fixed; z-index: 2; margin: 0; padding: 0; border: none; outline: none; background: transparent; resize: none; overflow: hidden;
+  font: 13px/17px Scheme, 'Instrument Serif', Georgia, serif; color: #05060a; text-transform: lowercase; caret-color: #05060a;
+}
+#note-ed::placeholder { color: rgba(5, 6, 10, .4); }
 .plant { aspect-ratio: 1; border: 1px solid var(--ui); border-radius: 2px; display: grid; place-items: center; background: var(--paper); }
 .plant canvas { width: 34px; height: 34px; }
 .plant:hover { box-shadow: 2px 2px 0 var(--ui); transform: translate(-1px, -1px); }

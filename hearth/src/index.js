@@ -55,7 +55,7 @@ const MAX_MARKS = 300;
 // tokens per second, burst
 const LIMITS = {
   move: [6, 12], all: [0.25, 1], blink: [2, 4], sing: [14, 20], hush: [2, 4],
-  color: [1, 4], poke: [3, 6], name: [1, 4], mark: [0.2, 4], say: [1 / 1.5, 6], hand: [1, 5], noticed: [1 / 60, 1], away: [1, 6],
+  color: [1, 4], poke: [3, 6], name: [1, 4], mark: [0.2, 4], say: [1 / 1.5, 6], hand: [1, 5], noticed: [1 / 60, 1], away: [1, 6], renote: [0.2, 4],
 };
 
 // strange things that happen to everyone at once
@@ -793,7 +793,10 @@ export class Hearth extends DurableObject {
     // (a key of the tab's own: coming back from the background, a phone opens a new connection while the old one may
     // linger, silent, for a while. the old one is let go first, so there's only ever one of you)
     const k = String(url.searchParams.get('k') || '').replace(/[^a-z0-9]/gi, '').slice(0, 16) || undefined;
-    const me = { id: crypto.randomUUID().slice(0, 8), lat, lon, tz, c, n, k, since: Date.now() };
+    // (and a planter key of the browser's own, so it knows which plants are theirs: only a scrambled copy is kept)
+    const pk = String(url.searchParams.get('p') || '').replace(/[^a-z0-9]/gi, '').slice(0, 32);
+    const o = pk.length >= 8 ? await scramble(`planter:${pk}`) : undefined;
+    const me = { id: crypto.randomUUID().slice(0, 8), lat, lon, tz, c, n, k, o, since: Date.now() };
     if (k) for (const w of this.ctx.getWebSockets()) if (w.deserializeAttachment()?.k === k) await this.leave(w);
     this.ctx.acceptWebSocket(server);
     server.serializeAttachment(me);
@@ -950,7 +953,7 @@ export class Hearth extends DurableObject {
       }
       case 'mark': {
         if (!num(m.lat) || !num(m.lon) || !MARKS.includes(m.k)) return;
-        const mark = { lat: round(clamp(m.lat, -85, 85), 2), lon: round(wrapLon(m.lon), 2), k: m.k, n: me.n || '', t: Date.now() };
+        const mark = { id: crypto.randomUUID().slice(0, 8), o: me.o, lat: round(clamp(m.lat, -85, 85), 2), lon: round(wrapLon(m.lon), 2), k: m.k, n: me.n || '', t: Date.now() };
         // a little note left with it, if any: short, and kind (it's checked like a message; if it can't be, or it's a
         // link, the plant goes in without it)
         const raw = tidySay(m.note, NOTE_MAX);
@@ -958,8 +961,26 @@ export class Hearth extends DurableObject {
           const note = await boinked(this.env, raw);
           if (note) mark.note = note;
         }
-        this.broadcast({ t: 'mark', lat: mark.lat, lon: mark.lon, k: mark.k, n: mark.n, at: mark.t, note: mark.note });
+        this.broadcast({ t: 'mark', id: mark.id, o: mark.o, lat: mark.lat, lon: mark.lon, k: mark.k, n: mark.n, at: mark.t, note: mark.note });
         await this.remember('marks', mark, MARK_LIFE, MAX_MARKS);
+        break;
+      }
+      case 'renote': {
+        // the one who planted it changes its note (or adds one, or takes it away): checked just like a new one
+        const marks = await this.load('marks', MARK_LIFE);
+        const mark = marks.find((x) => x.id && x.id === m.id);
+        if (!mark || !me.o || mark.o !== me.o) return;
+        const raw = tidySay(m.note, NOTE_MAX);
+        let note = '';
+        if (raw) {
+          if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(raw) || raw.split(' ').some((w) => ELSEWHERE.test(w)) || (PHONE.lastIndex = 0, PHONE.test(raw))) return this.send(ws, { t: 'renoted', ok: false, why: "that note can't go on a plant." });
+          note = await boinked(this.env, raw);
+          if (!note) return this.send(ws, { t: 'renoted', ok: false, why: "the hearth couldn't check that one just now. try again soon." });
+        }
+        if (note) mark.note = note; else delete mark.note;
+        await this.ctx.storage.put('marks', marks);
+        this.send(ws, { t: 'renoted', ok: true, id: mark.id });
+        this.broadcast({ t: 'renote', id: mark.id, note: mark.note || '' });
         break;
       }
     }

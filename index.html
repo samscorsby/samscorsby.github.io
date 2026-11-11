@@ -54,9 +54,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="preload" href="/fonts/Scheme.otf" as="font" type="font/otf" crossorigin>
-  <link rel="stylesheet" href="heartstar/heartstar.css?v=67">
+  <link rel="stylesheet" href="heartstar/heartstar.css?v=69">
 </head>
 <body class="intro">
+  <textarea id="note-ed" maxlength="100" rows="1" spellcheck="false" aria-label="your plant's note" placeholder="a little note…" hidden></textarea>
   <canvas id="sky" aria-label="the world of scorsby: a blue planet with ears and a face, turning slowly. every small face on it is someone here right now."></canvas>
 
   <header id="top">
@@ -125,6 +126,7 @@
     <p class="small">choose something, then tap the world.<br>everyone can see it for a day.</p>
     <div id="plants"></div>
     <input id="note-in" maxlength="100" autocomplete="off" placeholder="leave a little note with it (if you like)">
+
   </section>
 
   <section id="sing-card" class="win" hidden>
@@ -150,7 +152,7 @@
   <script src="heartstar/land.js?v=4"></script>
   <script src="heartstar/cities.js?v=1"></script>
   <script src="heartstar/quotes.js" defer></script>
-  <script src="heartstar/heartstar.js?v=270"></script>
+  <script src="heartstar/heartstar.js?v=275"></script>
   <script src="/subscribe.js?v=12" defer></script>
   <script src="/js/tab-face.js?v=6" defer></script>
 </body>

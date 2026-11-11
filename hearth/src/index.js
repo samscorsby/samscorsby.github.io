@@ -85,11 +85,11 @@ const unleet = (t) => [...t].map((ch) => LEET[ch] ?? ch).join('');
 const squeeze = (t) => t.replace(/(.)\1+/g, '$1');
 const lettersOf = (t) => unleet(t).replace(/[^\p{L}]/gu, '');
 
-function tidySay(raw, max = SAY_MAX) {
+function tidySay(raw, max = SAY_MAX, keepCase = false) {
   return String(raw ?? '')
     .normalize('NFKC')
     .replace(/[^\p{L}\p{N}\p{P}\p{Zs}\p{Extended_Pictographic}♥❤️<>=~^+$|€]/gu, '') // no invisible or control characters
-    .replace(/\s+/g, ' ').trim().toLowerCase().slice(0, max);
+    .replace(/\s+/g, ' ').trim()[keepCase ? 'toString' : 'toLowerCase']().slice(0, max);
 }
 
 // links, handles and emails don't travel either
@@ -208,14 +208,18 @@ async function oneSweet(env) {
 }
 
 // the message as everyone will see it, or null if it can't be checked right now
-async function boinked(env, text) {
+async function boinked(env, text, keep = null) {
   const toks = text.replace(PHONE, ' boink ').split(' ').filter(Boolean);
-  const fromList = listBoinks(toks);
-  const fromJudge = await judgeBoinks(env, toks);
+  // (judged lowercase; kept as written. words matching keep, like a comment's links set aside, are shown to the judge as
+  // an ordinary word and never boinked: the link itself was checked on its own)
+  const kept = toks.map((t) => !!(keep && keep.test(t)));
+  const low = toks.map((t, i) => (kept[i] ? 'this' : t.toLowerCase()));
+  const fromList = listBoinks(low);
+  const fromJudge = await judgeBoinks(env, low);
   if (!fromJudge) return null;
   const out = [];
   toks.forEach((t, i) => {
-    if (!(fromList[i] || fromJudge[i]) || t === 'boink') { out.push(t); return; }
+    if (kept[i] || !(fromList[i] || fromJudge[i]) || t.toLowerCase() === 'boink') { out.push(t); return; }
     const tail = (t.match(/[.,!?…]+$/u) || [''])[0];
     if (out.length && /^boink[.,!?…]*$/u.test(out[out.length - 1])) out[out.length - 1] = `boink${tail}`; // one boink per run
     else out.push(`boink${tail}`);
@@ -301,14 +305,180 @@ async function subscribe(request, env) {
   return reply(200, { ok: true });
 }
 
+// ------------------------------------------------------------------ comments (on the blog's posts)
+// little notes left under a post, and replies to them (three levels deep at most: a reply to a reply to a reply joins
+// the third). kept in the letters database with only what's shown: the post, a name if given, the words, when. no
+// email, no address. every one is kindly checked like a message to the planet, and any link in it is looked at first.
+const COMMENT_MAX = 600, COMMENT_LINKS = 2, COMMENT_DEPTH = 2; // (depth 0, 1 and 2: a comment, a reply, a reply to that)
+const POST_RE = /^[^\s/?#<>"\\]{1,160}$/;
+const URL_RE = /\bhttps?:\/\/[^\s<>"'`]+/gi;
+// link shorteners hide where they go, so they're not taken
+const SHORTENERS = new Set(['bit.ly', 'tinyurl.com', 't.co', 'goo.gl', 'is.gd', 'ow.ly', 'buff.ly', 'cutt.ly', 'rebrand.ly', 'shorturl.at', 'tiny.cc', 'rb.gy', 'v.gd', 'qr.ae', 'lnkd.in']);
+const recentNotes = new Map(); // ip -> times lately. in memory only, for a few minutes, never written down.
+function tooManyNotes(ip, now = Date.now()) {
+  const times = (recentNotes.get(ip) || []).filter((t) => now - t < 10 * 60 * 1000);
+  times.push(now); recentNotes.set(ip, times);
+  if (recentNotes.size > 5000) recentNotes.clear();
+  return times.length > 12; // a dozen in ten minutes is plenty for a person, even in a lively conversation
+}
+// a link is fine if it's a plain web address, not a shortener, and (when the hearth has a key for it) not on google's
+// list of known scam, phishing and malware sites
+async function linksOk(env, links) {
+  const urls = [];
+  for (const raw of links) {
+    let u; try { u = new URL(raw); } catch { return false; }
+    if (!/^https?:$/.test(u.protocol) || u.username || u.password) return false;
+    if (SHORTENERS.has(u.hostname.replace(/^www\./, ''))) return false;
+    urls.push(u.href);
+  }
+  if (!urls.length || !env.SAFE_BROWSING_KEY) return true;
+  try {
+    const r = await fetch(`https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${env.SAFE_BROWSING_KEY}`, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        client: { clientId: 'scorsby', clientVersion: '1' },
+        threatInfo: { threatTypes: ['MALWARE', 'SOCIAL_ENGINEERING', 'UNWANTED_SOFTWARE', 'POTENTIALLY_HARMFUL_APPLICATION'],
+          platformTypes: ['ANY_PLATFORM'], threatEntryTypes: ['URL'], threatEntries: urls.map((url) => ({ url })) },
+      }),
+    }).then((x) => x.json());
+    return !(r && r.matches && r.matches.length);
+  } catch { return false; } // (if it can't be asked, the link waits for another day)
+}
+async function commentsTable(env) {
+  await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, post TEXT NOT NULL, parent INTEGER, depth INTEGER NOT NULL DEFAULT 0, name TEXT, text TEXT NOT NULL, said TEXT NOT NULL, gone INTEGER NOT NULL DEFAULT 0)').run();
+  await env.LETTERS.prepare('CREATE INDEX IF NOT EXISTS comments_post ON comments (post)').run();
+  await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS comment_flags (comment INTEGER NOT NULL, who TEXT NOT NULL, PRIMARY KEY (comment, who))').run();
+  try { await env.LETTERS.prepare('ALTER TABLE comments ADD COLUMN kept INTEGER NOT NULL DEFAULT 0').run(); } catch {} // (samuel looked, and kept it up)
+}
+// three different readers marking a note "not kind" hide it (gone = 2, hidden by readers), until samuel looks. one he
+// has brought back stays up. a reader is a random token their browser keeps, and only a scrambled copy of it is kept
+const FLAGS_TO_HIDE = 3;
+async function scramble(s) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`scorsby-flags:${s}`));
+  return [...new Uint8Array(d)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+async function comments(request, env) {
+  const url = new URL(request.url), origin = request.headers.get('Origin');
+  const cors = {
+    'access-control-allow-origin': origin || '*', 'access-control-allow-methods': 'GET, POST, OPTIONS',
+    'access-control-allow-headers': 'content-type, x-key', vary: 'Origin', 'content-type': 'application/json',
+  };
+  const reply = (status, body) => new Response(JSON.stringify(body), { status, headers: cors });
+  if (!env.LETTERS) return reply(503, { ok: false, why: "the comments aren't open yet." });
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  // samuel's side (the moderation page, scorsby.us/mod): every note, newest first, and taking one down or bringing it
+  // back. only with the key, which is set as a secret on the hearth (wrangler secret put COMMENTS_KEY)
+  const keyOk = () => env.COMMENTS_KEY && request.headers.get('x-key') === env.COMMENTS_KEY;
+  if (url.pathname === '/comments/all' || url.pathname === '/comments/mod') {
+    if (!allowed(origin, env, url.origin)) return reply(403, { ok: false, why: 'not from here.' });
+    if (!keyOk()) return reply(403, { ok: false, why: "that key isn't right." });
+    await commentsTable(env);
+    if (url.pathname === '/comments/all') {
+      const rows = await env.LETTERS.prepare('SELECT id, post, parent, depth, name, text, said, gone, kept, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments ORDER BY id DESC LIMIT 300').all();
+      return reply(200, { ok: true, comments: rows.results || [] });
+    }
+    let m; try { m = await request.json(); } catch { return reply(400, { ok: false, why: "that didn't arrive right." }); }
+    const id = parseInt(m.id, 10);
+    await env.LETTERS.prepare('UPDATE comments SET gone = ?1, kept = ?2 WHERE id = ?3').bind(m.gone ? 1 : 0, m.gone ? 0 : 1, id).run(); // (brought back: kept up, whatever flags come)
+    return reply(200, { ok: true, id, gone: !!m.gone });
+  }
+  // (removing one with a plain link, too: /comments/remove?id=12&key=...)
+  if (url.pathname === '/comments/remove') {
+    if (!env.COMMENTS_KEY || url.searchParams.get('key') !== env.COMMENTS_KEY) return new Response('not yours to remove.', { status: 403 });
+    const id = parseInt(url.searchParams.get('id'), 10);
+    await commentsTable(env);
+    await env.LETTERS.prepare('UPDATE comments SET gone = 1 WHERE id = ?1').bind(id).run();
+    return new Response(`removed comment ${id}.`, { headers: { 'content-type': 'text/plain; charset=utf-8' } });
+  }
+  if (!allowed(origin, env, url.origin)) return reply(403, { ok: false, why: 'not from here.' });
+  await commentsTable(env);
+  if (request.method === 'GET') {
+    const post = url.searchParams.get('post') || '';
+    if (!POST_RE.test(post)) return reply(400, { ok: false, why: 'which post?' });
+    const rows = await env.LETTERS.prepare('SELECT id, parent, depth, name, text, said FROM comments WHERE post = ?1 AND gone = 0 ORDER BY id LIMIT 500').bind(post).all();
+    return reply(200, { ok: true, comments: rows.results || [] });
+  }
+  if (request.method !== 'POST') return reply(405, { ok: false, why: 'get or post only.' });
+  const ip = request.headers.get('cf-connecting-ip') || '';
+  if (url.pathname === '/comments/flag') {
+    let f; try { f = await request.json(); } catch { return reply(400, { ok: false }); }
+    const id = parseInt(f.id, 10), who = String(f.who || '').replace(/[^a-z0-9]/gi, '').slice(0, 32);
+    if (!id || who.length < 8) return reply(400, { ok: false });
+    if (tooManyNotes(ip)) return reply(429, { ok: false, why: 'that is a lot. come back in a little while.' });
+    await env.LETTERS.prepare('INSERT OR IGNORE INTO comment_flags (comment, who) VALUES (?1, ?2)').bind(id, await scramble(who)).run();
+    const n = (await env.LETTERS.prepare('SELECT COUNT(*) AS n FROM comment_flags WHERE comment = ?1').bind(id).first())?.n || 0;
+    let hidden = false;
+    if (n >= FLAGS_TO_HIDE) hidden = ((await env.LETTERS.prepare('UPDATE comments SET gone = 2 WHERE id = ?1 AND gone = 0 AND kept = 0').bind(id).run()).meta?.changes || 0) > 0;
+    return reply(200, { ok: true, hidden });
+  }
+  let m;
+  try { m = await request.json(); } catch { return reply(400, { ok: false, why: "that didn't arrive right." }); }
+  // a field people never see, and a note written faster than a person could: both mean a robot. it's told all is well.
+  if (m.website || !(Number(m.ms) >= 2500)) return reply(200, { ok: true, comment: null });
+  if (tooManyNotes(ip)) return reply(429, { ok: false, why: "that's a lot of notes. take a breath and come back in a few minutes." });
+  const post = String(m.post || '');
+  if (!POST_RE.test(post)) return reply(400, { ok: false, why: 'which post?' });
+  // the links come out first (so they keep their capitals, and aren't read as words), then come back after the check
+  const links = [];
+  const raw = String(m.text || '').normalize('NFKC').slice(0, COMMENT_MAX + 400)
+    .replace(URL_RE, (u) => { links.push(u.replace(/[.,!?;:)\]]+$/, '')); return ` linkhere${links.length - 1} `; });
+  if (links.length > COMMENT_LINKS) return reply(400, { ok: false, why: 'two links at most, please.' });
+  const tidy = tidySay(raw, COMMENT_MAX, true); // (comments keep their capitals)
+  if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(tidy.replace(/linkhere\d/gi, ''))) return reply(400, { ok: false, why: 'try some words.' });
+  if (!(await linksOk(env, links))) return reply(400, { ok: false, why: "that link can't come in. (no link shorteners, and nothing unsafe.)" });
+  const kind = await boinked(env, tidy, /^linkhere\d$/i);
+  if (!kind) return reply(503, { ok: false, why: "the hearth couldn't check that one just now. try again soon." });
+  const text = kind.replace(/linkhere(\d)/gi, (w, i) => links[+i] || '');
+  // a reply goes under what it answers; deeper than three levels, it joins the third
+  let parent = null, depth = 0;
+  if (m.parent != null) {
+    const up = await env.LETTERS.prepare('SELECT id, parent, depth FROM comments WHERE id = ?1 AND post = ?2 AND gone = 0').bind(parseInt(m.parent, 10), post).first();
+    if (!up) return reply(400, { ok: false, why: "the note you're answering isn't here any more." });
+    if (up.depth >= COMMENT_DEPTH) { parent = up.parent; depth = up.depth; } else { parent = up.id; depth = up.depth + 1; }
+  }
+  const name = cleanName(m.name), said = new Date().toISOString();
+  const r = await env.LETTERS.prepare('INSERT INTO comments (post, parent, depth, name, text, said) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(post, parent, depth, name, text, said).run();
+  return reply(200, { ok: true, boinked: kind !== tidy, comment: { id: r.meta?.last_row_id, parent, depth, name, text, said } });
+}
+
+// once a week (monday morning), a letter to samuel with the week's new comments, if there were any: each with its post,
+// and the moderation page's address. sent through resend (RESEND_KEY), to MOD_EMAIL: both set as secrets on the hearth
+async function weeklyNotes(env) {
+  if (!env.LETTERS || !env.RESEND_KEY || !env.MOD_EMAIL) return;
+  await commentsTable(env);
+  const since = new Date(Date.now() - 7 * 864e5).toISOString();
+  const rows = (await env.LETTERS.prepare('SELECT id, post, depth, name, text, said, gone, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments WHERE said >= ?1 ORDER BY post, id').bind(since).all()).results || [];
+  if (!rows.length) return; // (a quiet week: no letter)
+  const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const title = (p) => p.replace(/^\d{4}-\d{2}-\d{2}_?/, '').replace(/_/g, ' ');
+  const posts = [...new Set(rows.map((r) => r.post))];
+  const hidden = rows.filter((r) => r.gone).length;
+  let html = `<div style="font-family:ui-monospace,Menlo,Consolas,monospace;max-width:620px;color:#05060a">`
+    + `<p>${rows.length} new note${rows.length === 1 ? '' : 's'} on the blog this week, on ${posts.length} post${posts.length === 1 ? '' : 's'}${hidden ? ` (${hidden} hidden)` : ''}.</p>`;
+  for (const p of posts) {
+    html += `<h3 style="font-weight:normal;margin:1.4em 0 .4em"><a href="https://scorsby.us/blog/${encodeURIComponent(p)}.html#comments">${esc(title(p))}</a></h3>`;
+    for (const r of rows.filter((x) => x.post === p)) {
+      const tag = r.gone === 2 ? ' · hidden by readers' : r.gone ? ' · taken down' : r.flags ? ` · ${r.flags} flagged it` : '';
+      html += `<p style="margin:.5em 0 .5em ${r.depth * 16}px"><span style="opacity:.6">${esc(r.name ? r.name + ' scorsby' : 'someone')}${r.depth ? ' · a reply' : ''}${tag}</span><br>${esc(r.text)}</p>`;
+    }
+  }
+  html += `<p style="margin-top:1.6em"><a href="https://scorsby.us/mod">take one down, or bring one back</a></p></div>`;
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST', headers: { authorization: `Bearer ${env.RESEND_KEY}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ from: env.MOD_FROM || 'world of scorsby <onboarding@resend.dev>', to: [env.MOD_EMAIL], subject: `${rows.length} new note${rows.length === 1 ? '' : 's'} on the blog this week`, html }),
+  }).catch((e) => console.warn('weekly letter could not be sent:', e?.message));
+}
+
 const lobby = (env) => env.LOBBY.get(env.LOBBY.idFromName('lobby'));
 let picked = null; // this worker's last answer from the lobby
 let statusSeen = null; // and the last numbers it gave the other pages
 
 export default {
+  async scheduled(event, env, ctx) { ctx.waitUntil(weeklyNotes(env)); }, // (monday mornings: the week's notes, to samuel)
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/subscribe') return subscribe(request, env);
+    if (url.pathname === '/comments' || url.pathname.startsWith('/comments/')) return comments(request, env);
     // just the numbers, for the other pages' corners: how many scorsbys are here, and today's love. nobody joins.
     if (url.pathname === '/status') {
       // (each copy of this worker remembers the answer for 15 seconds, so readers barely touch the lobby)

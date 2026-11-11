@@ -212,7 +212,7 @@ with open(root / "sitemap.xml", "w", encoding="utf-8") as f:
         f.write(f"  <url><loc>{xml_escape(loc)}</loc><lastmod>{mod}</lastmod></url>\n")
     f.write("</urlset>\n")
 with open(root / "robots.txt", "w", encoding="utf-8") as f:
-    f.write("User-agent: *\nDisallow: /blog/archive/\nDisallow: /blog/old/\nDisallow: /old_site/\nDisallow: /archive/\n\n"
+    f.write("User-agent: *\nDisallow: /blog/archive/\nDisallow: /blog/old/\nDisallow: /old_site/\nDisallow: /archive/\nDisallow: /mod\n\n"
             f"Sitemap: {SITE}/sitemap.xml\n")
 print(f"🗺️  sitemap.xml: {len(urls)} pages")
 

@@ -3,5 +3,6 @@ Disallow: /blog/archive/
 Disallow: /blog/old/
 Disallow: /old_site/
 Disallow: /archive/
+Disallow: /mod
 
 Sitemap: https://scorsby.us/sitemap.xml

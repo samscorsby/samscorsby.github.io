@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>notes left on the blog</title>
+    <link rel="stylesheet" href="/style.css?v=6">
+    <link rel="icon" href="/favicon.webp" type="image/x-icon">
+    <style>
+      /* samuel's page: every note left under the blog's posts, newest first, to take down (or bring back) */
+      #mod { display: block; flex: none; width: 100%; box-sizing: border-box; max-width: 680px; margin: 2.5em auto 4em; padding: 0 16px; text-transform: lowercase; text-align: left; }
+      #mod h1 { font-family: 'BodyFont', sans-serif; font-size: 1.3em; font-weight: normal; text-align: center; margin: 0 0 .3em; -webkit-text-stroke: 0; color: inherit; }
+      #mod .m-sub { text-align: center; font-size: .85em; opacity: .6; margin: 0 0 1.6em; }
+      #mod .m-key { display: flex; gap: 8px; justify-content: center; margin: 2em 0; }
+      #mod .m-key input { font: inherit; padding: 6px 8px; border: 1px solid #05060a; border-radius: 3px; width: 16em; }
+      #mod button { font: inherit; text-transform: lowercase; cursor: pointer; background: #fff; color: #05060a; border: 1px solid #05060a; border-radius: 3px; box-shadow: 2px 2px 0 #05060a; padding: 3px 12px; }
+      #mod button:active { transform: translate(2px, 2px); box-shadow: none; }
+      #mod .m-tabs { display: flex; gap: 8px; justify-content: center; margin: 0 0 1.4em; }
+      #mod .m-tabs button[aria-pressed="true"] { background: #05060a; color: #fff; }
+      #mod .m-tools { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 0 0 1.4em; }
+      #mod .m-tools select, #mod .m-tools input { font: inherit; font-size: .85em; text-transform: lowercase; padding: 4px 8px; border: 1px solid #05060a; border-radius: 3px; background: #fff; max-width: 100%; }
+      #mod .m-tools input { width: 12em; }
+      #mod .m-list { display: grid; gap: 14px; }
+      #mod .m-note { border: 1px solid #05060a; border-radius: 3px; box-shadow: 3px 3px 0 #05060a; padding: 10px 12px; display: grid; gap: 6px; background: #fff; }
+      #mod .m-note.gone { opacity: .5; box-shadow: none; border-style: dashed; }
+      #mod .m-post { font-size: .8em; opacity: .7; }
+      #mod .m-post a { color: inherit; }
+      #mod .m-head { font-size: .85em; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+      #mod .m-head .m-reply { opacity: .6; }
+      #mod .m-head .m-why { color: #c2185b; }
+      #mod .m-words { margin: 0; line-height: 1.5; overflow-wrap: anywhere; text-transform: none; }
+      #mod .m-words a { text-transform: none; }
+      #mod .m-row { display: flex; justify-content: flex-end; }
+      #mod .m-quiet { text-align: center; opacity: .6; }
+    </style>
+  </head>
+  <body>
+    <main id="mod">
+      <h1>notes left on the blog</h1>
+      <p class="m-sub" id="m-sub">newest first. take one down if it isn't kind; you can always bring it back.</p>
+      <div id="m-body"></div>
+    </main>
+    <script>
+      (() => {
+        // (on this computer it's a preview of the notes kept in this browser; ?live talks to the real hearth instead)
+        const q0 = new URLSearchParams(location.search), LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+        const PREVIEW = (LOCAL || q0.has('preview')) && !q0.has('live');
+        const API = 'https://scorsby-hearth.samrobertsbaca.workers.dev/comments';
+        const body = document.getElementById('m-body');
+        const COLORS = ['#00b4ff', '#ff5fae', '#62d64a', '#ff9a3c', '#9b6bff', '#ffd23f', '#ff4d4d', '#e83ad8', '#b6f03a', '#ffb38a', '#7fd2ff', '#5b4cff'];
+        const colorOf = (name) => { let h = 7; for (const ch of name || 'someone') h = (h * 31 + ch.codePointAt(0)) >>> 0; return name ? COLORS[h % COLORS.length] : '#c9c4bd'; };
+        const when = (iso) => new Date(iso).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).toLowerCase();
+        const titleOf = (post) => post.replace(/^\d{4}-\d{2}-\d{2}_?/, '').replace(/_/g, ' ') || post;
+        const keyGet = () => { try { return localStorage.getItem('scorsby-notes-key') || ''; } catch { return ''; } };
+        const keySet = (k) => { try { k ? localStorage.setItem('scorsby-notes-key', k) : localStorage.removeItem('scorsby-notes-key'); } catch {} };
+
+        // ---- where the notes are (on this computer: the preview ones, kept in this browser)
+        const previewPosts = () => Object.keys(localStorage).filter((k) => k.startsWith('scorsby-comments:'));
+        async function all() {
+          if (PREVIEW) {
+            const out = [];
+            for (const k of previewPosts()) for (const c of JSON.parse(localStorage.getItem(k) || '[]')) out.push({ ...c, post: k.slice('scorsby-comments:'.length), gone: c.gone || 0 });
+            return { ok: true, comments: out.sort((a, b) => b.id - a.id) };
+          }
+          return fetch(`${API}/all`, { headers: { 'x-key': keyGet() } }).then((r) => r.json()).catch(() => ({ ok: false, why: "the hearth couldn't be reached." }));
+        }
+        async function setGone(c, gone) {
+          if (PREVIEW) {
+            const k = `scorsby-comments:${c.post}`, list = JSON.parse(localStorage.getItem(k) || '[]');
+            for (const x of list) if (x.id === c.id) { x.gone = gone ? 1 : 0; x.kept = !gone; }
+            localStorage.setItem(k, JSON.stringify(list));
+            return { ok: true };
+          }
+          return fetch(`${API}/mod`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-key': keyGet() }, body: JSON.stringify({ id: c.id, gone }) })
+            .then((r) => r.json()).catch(() => ({ ok: false }));
+        }
+
+        // ---- the page
+        function askKey(why) {
+          body.innerHTML = `<p class="m-quiet">${why || 'this page is just for you. what is the key?'}</p><form class="m-key"><input type="password" autocomplete="current-password" placeholder="the key"><button>open</button></form>`;
+          body.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); keySet(body.querySelector('input').value.trim()); show(); });
+        }
+        // what you're looking at: which notes (up, taken down, flagged), on which post, in what order, matching what
+        const view = { tab: 'shown', post: '', sort: 'new', q: '', when: 'any', from: '', to: '' }; // (when: any, day, week, month, or a range from/to)
+        let notes = null;
+        function words(text) {
+          const frag = document.createDocumentFragment(); let last = 0;
+          for (const m of text.matchAll(/\bhttps?:\/\/[^\s<>"'`]+/gi)) {
+            frag.append(text.slice(last, m.index));
+            const a = document.createElement('a'); a.href = m[0]; a.target = '_blank'; a.rel = 'nofollow ugc noopener noreferrer'; a.textContent = m[0]; frag.append(a);
+            last = m.index + m[0].length;
+          }
+          frag.append(text.slice(last)); return frag;
+        }
+        async function show() {
+          if (!PREVIEW && !keyGet()) return askKey();
+          body.innerHTML = '<p class="m-quiet">gathering the notes…</p>';
+          const r = await all();
+          if (!r.ok) { keySet(''); return askKey(r.why || "that key isn't right."); }
+          notes = r.comments;
+          draw();
+        }
+        function draw() {
+          const up = notes.filter((c) => !c.gone), gone = notes.filter((c) => c.gone), flaggedOnes = notes.filter((c) => (c.flags || 0) > 0);
+          document.getElementById('m-sub').textContent = `${up.length} up, ${gone.length} taken down${flaggedOnes.length ? `, ${flaggedOnes.length} flagged` : ''}.${PREVIEW ? ' (a preview: the notes kept in this browser)' : ''}`;
+          body.innerHTML = '';
+          // the tabs
+          const tabs = document.createElement('div'); tabs.className = 'm-tabs';
+          for (const [k, label] of [['shown', `up (${up.length})`], ['gone', `taken down (${gone.length})`], ['flagged', `flagged (${flaggedOnes.length})`]]) {
+            const b = document.createElement('button'); b.textContent = label; b.setAttribute('aria-pressed', view.tab === k);
+            b.addEventListener('click', () => { view.tab = k; draw(); }); tabs.append(b);
+          }
+          // which post, what order, and a search
+          const tools = document.createElement('div'); tools.className = 'm-tools';
+          const counts = new Map(); for (const c of notes) counts.set(c.post, (counts.get(c.post) || 0) + 1);
+          const postSel = document.createElement('select'); postSel.setAttribute('aria-label', 'which post');
+          postSel.append(new Option(`every post (${counts.size})`, ''));
+          for (const [p, n] of [...counts].sort((x, y) => y[0].localeCompare(x[0]))) postSel.append(new Option(`${titleOf(p)} (${n})`, p));
+          postSel.value = view.post; postSel.addEventListener('change', () => { view.post = postSel.value; draw(); });
+          const sortSel = document.createElement('select'); sortSel.setAttribute('aria-label', 'order');
+          for (const [v, l] of [['new', 'newest first'], ['old', 'oldest first'], ['flags', 'most flagged first'], ['post', 'by post, as they go']]) sortSel.append(new Option(l, v));
+          sortSel.value = view.sort; sortSel.addEventListener('change', () => { view.sort = sortSel.value; draw(); });
+          const search = document.createElement('input'); search.type = 'search'; search.placeholder = 'search'; search.value = view.q;
+          let t = 0; search.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { view.q = search.value; draw(); const s2 = body.querySelector('.m-tools input'); s2.focus(); s2.setSelectionRange(s2.value.length, s2.value.length); }, 200); });
+          // when: any time, the past day, week or month, or between two dates
+          const whenSel = document.createElement('select'); whenSel.setAttribute('aria-label', 'when');
+          for (const [v, l] of [['any', 'any time'], ['day', 'the past day'], ['week', 'the past week'], ['month', 'the past month'], ['range', 'between dates…']]) whenSel.append(new Option(l, v));
+          whenSel.value = view.when; whenSel.addEventListener('change', () => { view.when = whenSel.value; draw(); });
+          tools.append(postSel, sortSel, whenSel, search);
+          if (view.when === 'range') {
+            for (const k of ['from', 'to']) {
+              const d = document.createElement('input'); d.type = 'date'; d.value = view[k]; d.setAttribute('aria-label', k); d.title = k;
+              d.addEventListener('change', () => { view[k] = d.value; draw(); });
+              tools.append(d);
+            }
+          }
+          // the notes
+          const q = view.q.trim().toLowerCase();
+          let these = view.tab === 'shown' ? up : view.tab === 'gone' ? gone : flaggedOnes;
+          if (view.post) these = these.filter((c) => c.post === view.post);
+          if (q) these = these.filter((c) => c.text.toLowerCase().includes(q) || (c.name || 'someone').includes(q));
+          // (by when it was left: the past day, week or month, or from one day to another, both days included, in your own time)
+          const ago = { day: 864e5, week: 7 * 864e5, month: 30 * 864e5 }[view.when];
+          if (ago) these = these.filter((c) => Date.now() - new Date(c.said) <= ago);
+          if (view.when === 'range') {
+            const from = view.from ? new Date(`${view.from}T00:00:00`) : null, to = view.to ? new Date(`${view.to}T23:59:59.999`) : null;
+            these = these.filter((c) => { const t = new Date(c.said); return (!from || t >= from) && (!to || t <= to); });
+          }
+          const order = { new: (a, b) => b.id - a.id, old: (a, b) => a.id - b.id, flags: (a, b) => (b.flags || 0) - (a.flags || 0) || b.id - a.id, post: (a, b) => a.post.localeCompare(b.post) || a.id - b.id }[view.sort];
+          these = [...these].sort(order);
+          const list = document.createElement('div'); list.className = 'm-list';
+          if (!these.length) list.innerHTML = `<p class="m-quiet">${q || view.post || view.when !== 'any' ? 'nothing matches.' : view.tab === 'shown' ? 'no notes yet.' : view.tab === 'gone' ? 'nothing taken down.' : 'nothing flagged.'}</p>`;
+          for (const c of these) {
+            const el = document.createElement('div'); el.className = 'm-note' + (c.gone ? ' gone' : '');
+            const post = document.createElement('div'); post.className = 'm-post';
+            const a = document.createElement('a'); a.href = `/blog/${encodeURIComponent(c.post)}.html#comments`; a.textContent = `on “${titleOf(c.post)}”`; post.append(a);
+            const head = document.createElement('div'); head.className = 'm-head';
+            const dot = document.createElement('span'); dot.className = 'c-dot'; dot.style.background = colorOf(c.name);
+            head.append(dot, `${c.name ? c.name + ' scorsby' : 'someone'} · ${when(c.said)}`);
+            if (c.depth) { const r2 = document.createElement('span'); r2.className = 'm-reply'; r2.textContent = '· a reply'; head.append(r2); }
+            // (how readers feel about it: flags, and whether they hid it, or you kept it up)
+            const flags = c.flags || 0, why = c.gone === 2 ? `hidden by readers (${flags} flagged it)` : flags ? `${flags} flagged it${c.kept ? ', you kept it up' : ''}` : c.kept ? 'you kept it up' : '';
+            if (why) { const w = document.createElement('span'); w.className = 'm-why'; w.textContent = `· ${why}`; head.append(w); }
+            const p = document.createElement('p'); p.className = 'm-words'; p.append(words(c.text));
+            const row = document.createElement('div'); row.className = 'm-row';
+            const btn = document.createElement('button'); btn.textContent = c.gone ? 'bring back' : 'take down';
+            btn.addEventListener('click', async () => { btn.disabled = true; const r3 = await setGone(c, !c.gone); if (r3.ok) show(); else { btn.disabled = false; btn.textContent = 'try again'; } });
+            row.append(btn);
+            el.append(post, head, p, row); list.append(el);
+          }
+          body.append(tabs, tools, list);
+        }
+        show();
+      })();
+    </script>
+  </body>
+</html>

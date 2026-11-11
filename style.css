@@ -532,3 +532,42 @@ nav.world-nav.scrolled { box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25); }
   .wn-links { order: 1; } .wn-status { order: 2; text-align: right; } .wn-clock-menu { order: 3; text-align: right; }
 }
 
+
+/* ===== little notes under a blog post (js/comments.js) ===== */
+#comments { max-width: 640px; margin: 3.5em auto 0; padding: 0 4px; text-transform: lowercase; }
+#comments h3 { font-size: 1.05em; font-weight: normal; text-align: center; margin: 0 0 1em; letter-spacing: .02em; }
+#comments .c-preview, #comments .c-quiet { text-align: center; font-size: .8em; opacity: .6; margin: -.6em 0 1.2em; }
+.c-form { display: grid; gap: 8px; margin: 0 0 1.6em; }
+.c-form .c-name { display: flex; align-items: center; gap: 6px; font-size: .85em; opacity: .85; }
+.c-form .c-name input { width: 9em; }
+.c-form input, .c-form textarea {
+  font: inherit; font-size: .92em; text-transform: lowercase; color: inherit; background: #fff;
+  border: 1px solid #05060a; border-radius: 3px; padding: 6px 8px; outline: none; box-sizing: border-box;
+}
+.c-form textarea { width: 100%; resize: vertical; line-height: 1.45; text-transform: none; } /* (what you type, as you type it) */
+.c-form input:focus, .c-form textarea:focus { box-shadow: 2px 2px 0 #05060a; }
+.c-form .c-row { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.c-form .c-said { font-size: .8em; opacity: .7; }
+.c-form button, .c-reply {
+  font: inherit; text-transform: lowercase; cursor: pointer; background: #fff; color: #05060a;
+  border: 1px solid #05060a; border-radius: 3px; box-shadow: 2px 2px 0 #05060a; padding: 4px 12px;
+}
+.c-form button:active, .c-reply:active { transform: translate(2px, 2px); box-shadow: none; }
+.c-form button:disabled { opacity: .5; }
+.c-trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.c-list { display: grid; gap: 1.1em; }
+.c-note { display: grid; gap: 4px; }
+.c-head { font-size: .82em; opacity: .75; display: flex; align-items: center; gap: 6px; }
+.c-head b { font-weight: normal; opacity: 1; }
+.c-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #05060a; flex: none; }
+.c-words { margin: 0; line-height: 1.55; overflow-wrap: anywhere; text-transform: none; } /* (as written, capitals and all) */
+.c-words a { text-decoration: underline; text-transform: none; } /* (a link keeps its capitals: some addresses need them) */
+.c-host { opacity: .55; font-size: .85em; }
+.c-reply { justify-self: start; font-size: .75em; padding: 1px 8px; box-shadow: 1px 1px 0 #05060a; }
+.c-acts { display: flex; align-items: center; gap: 10px; }
+.c-flag { font: inherit; font-size: .72em; text-transform: lowercase; background: none; border: none; padding: 0; color: inherit; opacity: .45; cursor: pointer; text-decoration: underline dotted; }
+.c-flag:hover { opacity: .8; }
+.c-flag:disabled { cursor: default; text-decoration: none; }
+.c-kids { display: grid; gap: 1em; margin-left: 14px; padding-left: 12px; border-left: 1px dashed rgba(5, 6, 10, .3); }
+.c-kids:empty { display: none; }
+.c-note > .c-form { margin: 6px 0 4px; }

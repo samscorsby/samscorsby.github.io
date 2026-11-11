@@ -18,5 +18,7 @@
     // pages allowed to connect. localhost is always allowed for development.
     "ALLOWED_ORIGINS": "https://scorsby.us,https://www.scorsby.us,https://samscorsby.github.io"
   },
+  // once a week, monday morning (15:00 utc, 8am in denver): a letter to samuel with the week's new comments
+  "triggers": { "crons": ["0 15 * * 1"] },
   "observability": { "enabled": true }
 }

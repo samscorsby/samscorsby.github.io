@@ -360,6 +360,14 @@
       c.lineTo(x1 + (x2 - x1) * t + nx * j, y1 + (y2 - y1) * t + ny * j);
     }
   }
+  function inkPath(pts, seed, amp, closed = true) {
+    c.beginPath();
+    pts.forEach(([x, y], i) => {
+      const jx = (hash(seed + i * 3.7 + boil * 9.1) - 0.5) * 2 * amp, jy = (hash(seed + i * 5.9 + boil * 7.3) - 0.5) * 2 * amp;
+      if (i) c.lineTo(x + jx, y + jy); else c.moveTo(x + jx, y + jy);
+    });
+    if (closed) c.closePath();
+  }
   function heartPath(x, y, r) {
     c.beginPath();
     c.moveTo(x, y + r * 0.9);
@@ -886,8 +894,9 @@
 
   // ------------------------------------------------------------------ omens: strange things that happen to everyone
   let omen = null;
-  const OMEN_DUR = { eclipse: 11000, flock: 12000, sneeze: 3200, hearts: 10000, colorstorm: 9000, unison: 12000, ears: 6000, heartstar: 10000, thirdeye: 11000, goldrain: 10000, wings: 9000 };
+  const OMEN_DUR = { turn: 16000, eclipse: 11000, flock: 12000, sneeze: 3200, hearts: 10000, colorstorm: 9000, unison: 12000, ears: 6000, heartstar: 10000, thirdeye: 11000, goldrain: 10000, wings: 9000 };
   const OMEN_WORDS = {
+    turn: () => turnWords(),
     eclipse: 'moonsby is hugging sunsby. everyone gets a little night.',
     flock: 'the glongingstons are passing through.',
     sneeze: 'achoo. bless you, world.',
@@ -910,6 +919,7 @@
     if (k === 'sneeze') setMood('o', 2000);
     if (k === 'colorstorm') setMood(pick(['grin', 'teeth', 'tongue']), OMEN_DUR[k]);
     if (k === 'eclipse') setMood('sleepy', 8000);
+    if (k === 'turn') { const tn = turnNear(); if (tn && tn.kind === 'night') { setMood('sleepy', 6000); setTimeout(() => setMood('gold', 7000), 6500); } else if (tn && tn.kind === 'day') setMood('gold', 12000); else setMood('smile', 12000); }
     if (k === 'wings') setMood('angel', OMEN_DUR[k]);
     if (k === 'goldrain') { setMood('gold', OMEN_DUR[k]); for (let i = 0; i < 90; i++) raining.push({ gold: true, x: rand(0, VW), y: rand(-VH, -20), vy: rand(0.12, 0.22), sw: rand(0, TAU), s: rand(5, 9), at: performance.now() + rand(0, 6500) }); }
     if (k === 'hearts') for (let i = 0; i < 70; i++) raining.push({ x: rand(0, VW), y: rand(-VH, -20), vy: rand(0.04, 0.09), sw: rand(0, TAU), s: rand(7, 16), at: performance.now() + rand(0, 6000) });
@@ -926,7 +936,7 @@
 
   // the world's face can be pulled like taffy, like the face on the mario 64 title screen.
   // offsets are in screen pixels; when you let go, each part springs back.
-  const PARTS = ['eyeL', 'eyeR', 'nose', 'mouth', 'earL', 'earR', 'antL', 'antR', 'eye3', 'm0', 'm1', 'm2', 'm3', 'm4', 'm5', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6'];
+  const PARTS = ['eyeL', 'eyeR', 'nose', 'mouth', 'earL', 'earR', 'antL', 'antR', 'hat', 'eye3', 'm0', 'm1', 'm2', 'm3', 'm4', 'm5', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6'];
   const pull = Object.fromEntries(PARTS.map((k) => [k, { x: 0, y: 0, vx: 0, vy: 0, held: false }]));
   function updatePulls() {
     for (const k of PARTS) {
@@ -945,6 +955,7 @@
     squish: 0, cross: 0, blush: 0, scramble: 0, stalks: 0, orbit: 0, flip: 0, drip: 0, stache: 0, tall: 0, spin: 0,
     pixel: 0, googly: 0, heartnose: 0, gold: 0, antenna: 0, angel: 0,
     swirl: 0, jitter: 0, worm: 0, bubble: 0, garden: 0, clock: 0, meltdown: 0, swap: 0, wall: 0, hug: 0,
+    beanie: 0, flake: 0, blossom: 0, butterfly: 0, shades: 0, leaf: 0,
   };
   const MOODS = {
     smile: {}, grin: { mo: 1, mw: 190 }, o: { oh: 1, mw: 150 }, wink: { lidL: 0 }, tongue: { mo: 0.6, tongue: 1 },
@@ -963,7 +974,20 @@
     swap: { swap: 1, er: 210, nose: 150 }, // two noses for eyes, and an eye for a nose
     goofy: { wall: 1, hug: 1, er: 300, pr: 125, ex: 330, mw: 300, mc: 0.95, my: 260 }, // pupils as big as the nose, a grin hugging the face // a huge U grin, eyes bulging and looking out to the sides
     clock: { clock: 1, er: 120, pr: 60, ex: 330, ey: -210, mw: 110, my: 400, ny: 0, nose: 80 },
+    // the seasons' own (each only comes up in its season, and goes again like any other)
+    beanie: { beanie: 1, blush: 1 }, flake: { flake: 1, tongue: 1, mo: 0.6 }, // winter: a knit hat; a snowflake caught on the tongue
+    blossom: { blossom: 1, blush: 0.6 }, butterfly: { butterfly: 1, oh: 0.8, mw: 110 }, // spring: a flower on an ear; a butterfly on the nose
+    shades: { shades: 1, mo: 0.5, mw: 200 }, // summer: sunglasses
+    leaf: { leaf: 1, mw: 150 }, // autumn: a leaf come to rest on his head
   };
+  // the season where you are (by the month, turned around in the south): ?season= tries one
+  const SEASON_MOODS = { winter: ['beanie', 'flake'], spring: ['blossom', 'butterfly'], summer: ['shades'], autumn: ['leaf'] };
+  function season(d = new Date()) {
+    const q = params.get('season'); if (SEASON_MOODS[q]) return q;
+    const north = ['winter', 'winter', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'][d.getMonth()];
+    const south = me && me.v && latOf(me.v) < -5;
+    return south ? { winter: 'summer', summer: 'winter', spring: 'autumn', autumn: 'spring' }[north] : north;
+  }
   const pf = { cur: { ...FACE_BASE }, target: { ...FACE_BASE }, mood: 'smile', next: 7000, honk: 0, wink: 0, winkSide: -1, blink: 0, nextBlink: 3000, lx: 0, ly: 0, hit: null, hold: 0, sing: 0, singing: false, rings: [], spinA: 0 };
   let calmMood = null; // while breathing or humming together, the world keeps one calm face and nothing else stirs
   function setMood(m, hold = 0) {
@@ -993,7 +1017,7 @@
       'swirl', 'bugeye', 'bubble', 'garden', 'clock', 'meltdown', 'swap', 'goofy'];
     const joyful = ['grin', 'tongue', 'hearts', 'teeth', 'grin', 'hearts'];
     const quiet = ['shy', 'tiny', 'wink', 'smile'];
-    const pool = [...strange];
+    const pool = [...strange, ...SEASON_MOODS[season()], ...SEASON_MOODS[season()]]; // (the season's, a little more often than the rest)
     if (n >= 3) pool.push(...joyful, ...joyful);
     else if (n >= 2) pool.push(...joyful);
     else pool.push(...quiet, ...quiet);
@@ -1297,6 +1321,29 @@
 
     for (const draw of pupils) draw();
 
+    if (f.shades > 0.02) {
+      // round sunglasses, slid down a little
+      const k = f.shades, gy = f.ey - (1 - k) * 400;
+      c.globalAlpha = A * Math.min(1, k * 1.5);
+      // (the two lenses meet in the middle, like his eyes do; the tint is deeper toward the top, like aviators)
+      const gr = f.er + 12; // (snug: the rim just covers the eyes' inky edges)
+      for (const sd of [-1, 1]) { // the arms, back toward the ears
+        c.beginPath(); c.moveTo(sd * (f.ex + gr * 0.92), gy - gr * 0.3); c.lineTo(sd * (f.ex + gr + 150), gy - gr * 0.55); c.lineWidth = 20; c.strokeStyle = '#e0a82a'; c.stroke();
+      }
+      c.save(); c.beginPath(); c.arc(-f.ex, gy, gr, 0, TAU); c.moveTo(f.ex + gr, gy); c.arc(f.ex, gy, gr, 0, TAU); c.clip('nonzero');
+      const tint = c.createLinearGradient(0, gy - gr, 0, gy + gr);
+      tint.addColorStop(0, 'rgba(196, 104, 14, 0.66)'); tint.addColorStop(0.45, 'rgba(236, 160, 34, 0.5)'); tint.addColorStop(1, 'rgba(255, 206, 70, 0.26)');
+      c.fillStyle = tint; c.fillRect(-3000, gy - gr, 6000, gr * 2);
+      c.lineCap = 'round'; c.strokeStyle = 'rgba(255,255,255,.55)';
+      for (const sd of [-1, 1]) { c.lineWidth = 30; c.beginPath(); c.moveTo(sd * f.ex - gr * 0.55, gy + gr * 0.05); c.lineTo(sd * f.ex - gr * 0.05, gy - gr * 0.5); c.stroke(); c.lineWidth = 14; c.beginPath(); c.moveTo(sd * f.ex - gr * 0.25, gy + gr * 0.25); c.lineTo(sd * f.ex + gr * 0.2, gy - gr * 0.25); c.stroke(); }
+      c.restore();
+      for (const sd of [-1, 1]) {
+        c.save(); c.beginPath(); c.rect(-3000, -3000, 6000, 6000); c.arc(-sd * f.ex, gy, gr, 0, TAU); c.clip('evenodd');
+        c.beginPath(); c.arc(sd * f.ex, gy, gr, 0, TAU); c.lineWidth = 22; c.strokeStyle = '#e0a82a'; c.stroke();
+        c.restore();
+      }
+      c.globalAlpha = A;
+    }
     // the red nose, which honks (blue, when the world itself is red or pink)
     const noseCol = reddish(ocean()) ? '#00b4ff' : '#ed1c24';
     const honk = 1 + 0.9 * Math.max(0, (pf.honk - now) / 600);
@@ -1329,6 +1376,86 @@
     else if (f.heartnose > 0.5) { heartPath(0, ny, nr * 1.15); c.fillStyle = noseCol; c.fill(); }
     else { wobbleCircle(0, ny, nr, 600, 1 / L, 0); c.fillStyle = noseCol; c.fill(); }
     c.restore();
+
+    // the seasons' things
+    if (f.beanie > 0.02) {
+      // a knit hat perched between the ears, with a pom-pom. pull it and it stretches up off his head
+      const k = f.beanie, y0 = -330 - (1 - k) * 260, [hx, hy0] = loc('hat'), hy = Math.min(hy0, 120), amp = 1.3 / L;
+      c.globalAlpha = A * Math.min(1, k * 1.5);
+      const dome = [];
+      // (the cuff stays put; the cap curves over toward the pull like a floppy hat: its middle line bends, and each
+      // slice of it stays square to that line, so it keeps its roundness as it goes; at rest it's an exact half circle)
+      const spine = (u) => [hx * u * u, y0 - 40 - 430 * u + hy * u * u];
+      const side = (u, sd) => {
+        const [x, y] = spine(u), tx = 2 * u * hx, ty = -430 + 2 * u * hy, tl = Math.hypot(tx, ty) || 1, half = 430 * Math.sqrt(Math.max(0, 1 - u * u));
+        return [x - (ty / tl) * half * sd, y + (tx / tl) * half * sd];
+      };
+      for (let i = 0; i <= 16; i++) dome.push(side(Math.sin((i / 16) * Math.PI / 2), -1)); // (up the left side, then down the right)
+      for (let i = 15; i >= 0; i--) dome.push(side(Math.sin((i / 16) * Math.PI / 2), 1));
+      inkPath(dome, 901, amp); c.fillStyle = '#ff5fae'; c.fill(); c.lineWidth = 34; c.strokeStyle = DARK; c.stroke();
+      const band = [];
+      for (let i = 0; i <= 12; i++) { const a = -Math.PI / 2 + (i / 12) * Math.PI; band.push([395 + Math.cos(a) * 75, y0 - 35 + Math.sin(a) * 75]); }
+      for (let i = 0; i <= 12; i++) { const a = Math.PI / 2 + (i / 12) * Math.PI; band.push([-395 + Math.cos(a) * 75, y0 - 35 + Math.sin(a) * 75]); }
+      inkPath(band, 907, amp); c.fillStyle = '#ff9ccb'; c.fill(); c.stroke();
+      const [tipx, tipy] = spine(1), [t1x, t1y] = [2 * hx, -430 + 2 * hy], t1 = Math.hypot(t1x, t1y) || 1;
+      wobbleCircle(tipx + (t1x / t1) * 70, tipy + (t1y / t1) * 70 + Math.sin(now / 500) * 10, 105, 911, amp, 0); c.fillStyle = '#ff9ccb'; c.fill(); c.stroke();
+      if (k > 0.5) extra.push([...spine(0.6), 330, 'hat']);
+      c.globalAlpha = A;
+    }
+    if (f.flake > 0.5) {
+      // a snowflake drifts down onto his tongue, and melts; then another
+      const t = ((now - (pf.moodAt || now)) % 3400) / 3400, fy = lerp(-900, my + 90, Math.min(1, t / 0.8)), fx = mpx + Math.sin(t * 9) * 60 * (1 - t);
+      if (t < 0.85) {
+        c.save(); c.translate(fx, fy); c.rotate(t * 3); c.globalAlpha = A * (t < 0.8 ? 1 : (0.85 - t) / 0.05);
+        c.lineWidth = 34; c.strokeStyle = DARK; c.lineCap = 'round';
+        for (const col of [DARK, '#fff']) { c.strokeStyle = col; c.lineWidth = col === DARK ? 40 : 20; for (let i = 0; i < 3; i++) { c.rotate(Math.PI / 3); c.beginPath(); c.moveTo(-70, 0); c.lineTo(70, 0); c.stroke(); } }
+        c.restore(); c.globalAlpha = A;
+      }
+    }
+    if (f.blossom > 0.02) {
+      // a flower tucked on his left ear
+      const [qx, qy] = loc('earL'), k = f.blossom, bx = -515 + qx * 0, by = -515;
+      c.save(); c.translate(bx + 60 + qx, by + 40 + qy); c.scale(k, k); c.rotate(Math.sin(now / 900) * 0.08);
+      for (let i = 0; i < 5; i++) { const a = (i / 5) * TAU - Math.PI / 2; c.beginPath(); c.arc(Math.cos(a) * 95, Math.sin(a) * 95, 80, 0, TAU); c.fillStyle = '#ff9ccb'; c.fill(); c.lineWidth = 26; c.strokeStyle = DARK; c.stroke(); }
+      c.beginPath(); c.arc(0, 0, 62, 0, TAU); c.fillStyle = '#ffd23f'; c.fill(); c.lineWidth = 26; c.stroke();
+      c.restore();
+    }
+    if (f.butterfly > 0.5 && pf.mood === 'butterfly') {
+      // a butterfly lands on his nose and rests there, its wings slowly opening and closing
+      const t = now - (pf.moodAt || now), land = Math.min(1, t / 1400), off = pf.bflyOff > (pf.moodAt || 0) ? now - pf.bflyOff : -1;
+      const flap = 0.35 + 0.65 * Math.abs(Math.cos(now / (land < 1 || off >= 0 ? 90 : 600)));
+      let bx = npx + lerp(500, 0, land) + Math.sin(t / 200) * 40 * (1 - land), by = ny - f.nose * 0.55 + lerp(-500, 0, land) + Math.cos(t / 170) * 40 * (1 - land);
+      if (off >= 0) { bx += off * 0.9 + Math.sin(off / 120) * 60; by -= off * 1.2; if (off > 1700) setMood('smile'); } // (shoo: up and away)
+      pf.bfly = off < 0 && land >= 1 ? [bx, by] : null;
+      c.save(); c.translate(bx, by); c.scale(0.62, 0.62);
+      for (const sd of [-1, 1]) {
+        c.save(); c.scale(sd * flap, 1);
+        c.beginPath(); c.moveTo(8, -10); c.bezierCurveTo(40, -170, 210, -190, 185, -70); c.bezierCurveTo(170, -20, 80, 0, 8, -10); c.closePath();
+        c.fillStyle = '#ff9a3c'; c.fill(); c.lineWidth = 22; c.strokeStyle = DARK; c.stroke();
+        c.beginPath(); c.moveTo(8, 5); c.bezierCurveTo(90, 10, 160, 50, 120, 120); c.bezierCurveTo(90, 160, 30, 110, 8, 5); c.closePath();
+        c.fillStyle = '#ffd23f'; c.fill(); c.stroke();
+        c.beginPath(); c.arc(125, -80, 22, 0, TAU); c.fillStyle = '#fff'; c.fill();
+        c.restore();
+      }
+      c.beginPath(); c.moveTo(0, -70); c.lineTo(0, 90); c.lineWidth = 34; c.strokeStyle = DARK; c.stroke();
+      c.lineWidth = 12; for (const sd of [-1, 1]) { c.beginPath(); c.moveTo(0, -70); c.quadraticCurveTo(sd * 20, -130, sd * 55, -150); c.stroke(); }
+      c.restore();
+    }
+    if (f.leaf > 0.02) {      c.globalAlpha = A;
+    }
+    if (f.leaf > 0.02) {
+      // a leaf drifts down and comes to rest on top of his head, rocking a little
+      const t = now - (pf.moodAt || now), fall = Math.min(1, t / 2200), e = 1 - (1 - fall) ** 2;
+      const lx = 160 + Math.sin(t / 300) * 160 * (1 - fall), ly = lerp(-1300, -690, e);
+      c.save(); c.translate(lx, ly); c.rotate(-0.5 + Math.sin(t / (fall < 1 ? 260 : 900)) * (fall < 1 ? 0.7 : 0.12));
+      const pts = [];
+      for (let i = 0; i <= 16; i++) { const u = i / 16, x = -170 + 340 * u; pts.push([x, -Math.sin(u * Math.PI) * 120 * (1 - 0.25 * u)]); }
+      for (let i = 16; i >= 0; i--) { const u = i / 16, x = -170 + 340 * u; pts.push([x, Math.sin(u * Math.PI) * 120 * (1 - 0.25 * u)]); }
+      inkPath(pts, 941, 1.2 / L); c.fillStyle = '#ff9a3c'; c.fill(); c.lineWidth = 26; c.strokeStyle = DARK; c.stroke();
+      c.beginPath(); wobbleLine(-240, 6, -170, 0, 943, 1 / L); c.lineWidth = 22; c.stroke(); // (the stem)
+      c.beginPath(); wobbleLine(-150, 0, 95, -4, 945, 1 / L); c.lineWidth = 14; c.stroke(); // (the vein, stopping short of the tip)
+      c.restore();
+    }
 
     // bubblegum: one pink bubble swells out of the mouth, pops, he blinks twice, and that's the end
     if (f.bubble > 0.02 && pf.mood === 'bubble') {
@@ -1429,6 +1556,7 @@
       nose: [...toScreen(npx, ny), nr * L], eyes: eyes.map(([x, y, r, sd]) => [...toScreen(x, y), r * L, sd]),
       mouth: [...toScreen(mpx, my + w * 0.45), w * 0.9 * L], ants: antTips.map(([x, y, r, k]) => [...toScreen(x, y), Math.max(14, r * L * 1.6), k]),
       extra: extra.map(([x, y, r, k]) => [...toScreen(x, y), Math.max(12, r * L), k]),
+      bfly: pf.bfly && pf.mood === 'butterfly' ? [...toScreen(pf.bfly[0], pf.bfly[1]), Math.max(16, 130 * L)] : null,
     };
   }
 
@@ -1540,6 +1668,7 @@
       else { const k = (sp - 0.3) / 0.7; const w = Math.exp(-k * 4) * Math.cos(k * 22); sxs = 1 + 0.12 * w; sys = 1 - 0.1 * w; }
       c.translate(CX, CY); c.scale(sxs, sys); c.translate(-CX, -CY);
     }
+    faded(() => renderTurnLight(now)); // (the year's turns, behind the world)
     renderRays(now, hue, storm);
     faded(() => { c.save(); c.globalAlpha = awake(now); renderMoon(now, false); c.restore(); });
     if (pf.cur.angel > 0.02) renderWorldWings(now);
@@ -1573,7 +1702,7 @@
     faded(() => { c.save(); c.globalAlpha = awake(now); renderMoon(now, true); c.restore(); });
     c.restore();
 
-    faded(() => { renderFlock(now); renderRain(now, dt); c.save(); c.globalAlpha = woke; renderBursts(now, dt, true); c.restore(); renderPops(now); });
+    faded(() => { renderFlock(now); renderRain(now, dt); renderSnow(now, dt); renderFireworks(now, dt); c.save(); c.globalAlpha = woke; renderBursts(now, dt, true); c.restore(); renderPops(now); });
     for (const draw of drawLast) { c.save(); draw(); c.restore(); }
     drawLast.length = 0;
     renderTogether(now);
@@ -2700,6 +2829,81 @@
   }
 
   // the moon's real phase: 0 new, 0.5 full, from a known new moon and the synodic month
+  // ------------------------------------------------------------------ the calendar
+  // the solstices and equinoxes, from meeus (astronomical algorithms, ch. 27): good to a minute or so. the same moment
+  // for everyone, wherever they are; what it means depends on the half of the world you're in
+  function turnAt(year, q) {
+    const Y = (year - 2000) / 1000;
+    const J0 = [
+      2451623.80984 + 365242.37404 * Y + 0.05169 * Y ** 2 - 0.00411 * Y ** 3 - 0.00057 * Y ** 4,
+      2451716.56767 + 365241.62603 * Y + 0.00325 * Y ** 2 + 0.00888 * Y ** 3 - 0.00030 * Y ** 4,
+      2451810.21715 + 365242.01767 * Y - 0.11575 * Y ** 2 + 0.00337 * Y ** 3 + 0.00078 * Y ** 4,
+      2451900.05952 + 365242.74049 * Y - 0.06223 * Y ** 2 - 0.00823 * Y ** 3 + 0.00032 * Y ** 4][q];
+    const T = (J0 - 2451545) / 36525, W = (35999.373 * T - 2.47) * D2R, dl = 1 + 0.0334 * Math.cos(W) + 0.0007 * Math.cos(2 * W);
+    const TERMS = [[485, 324.96, 1934.136], [203, 337.23, 32964.467], [199, 342.08, 20.186], [182, 27.85, 445267.112], [156, 73.14, 45036.886],
+      [136, 171.52, 22518.443], [77, 222.54, 65928.934], [74, 296.72, 3034.906], [70, 243.58, 9037.513], [58, 119.81, 33718.147],
+      [52, 297.17, 150.678], [50, 21.02, 2281.226], [45, 247.54, 29929.562], [44, 325.15, 31555.956], [29, 60.93, 4443.417],
+      [18, 155.12, 67555.328], [17, 288.79, 4562.452], [16, 198.04, 62894.029], [14, 199.76, 31436.921], [12, 95.39, 14577.848],
+      [12, 287.11, 31931.756], [12, 320.81, 34777.259], [9, 227.73, 1222.114], [8, 15.45, 16859.074]];
+    const S = TERMS.reduce((a, [A, B, C]) => a + A * Math.cos((B + C * T) * D2R), 0);
+    return (J0 + (0.00001 * S) / dl - 2440587.5) * 86400000 - 69000; // (the last bit: from the planets' time to the clocks')
+  }
+  const isSouth = () => !!(me && me.v && latOf(me.v) < -5);
+  // the turn of the year nearest now, if one is within half a day: ?turn=0..3 tries one (march, june, september, december)
+  function turnNear(t = Date.now()) {
+    const q0 = params.get('turn');
+    if (q0 != null && turnAt(2026, +q0)) return turnInfo(+q0, debugTurnAt, new Date(t).getFullYear());
+    const y = new Date(t).getUTCFullYear();
+    for (const yy of [y - 1, y, y + 1]) for (let q = 0; q < 4; q++) { const at = turnAt(yy, q); if (Math.abs(t - at) < 12 * 3600000) return turnInfo(q, at, yy); }
+    return null;
+  }
+  let debugTurnAt = Date.now() + 14000;
+  function turnInfo(q, at, year) {
+    // in the north, june has the longest day and december the longest night; in the south, the other way round
+    const sol = q === 1 || q === 3, longDay = (q === 1) !== isSouth();
+    const spring = (q === 0) !== isSouth();
+    return { q, at, year, kind: sol ? (longDay ? 'day' : 'night') : 'even', spring };
+  }
+  function turnWords() {
+    const tn = turnNear(); if (!tn) return '';
+    const now = Math.abs(Date.now() - tn.at) < 90000;
+    if (tn.kind === 'night') return now ? 'this is the longest night of the year. from here on, the light comes back.' : 'today has the longest night of the year. from here on, the light comes back.';
+    if (tn.kind === 'day') return now ? 'this is the longest day of the year. sunsby is staying up late.' : 'today is the longest day of the year. sunsby is staying up late.';
+    return `day and night are even today, everywhere. ${tn.spring ? 'spring is on its way.' : 'autumn is on its way.'}`;
+  }
+  // at the very moment, everyone here sees it; anyone who comes by within half a day sees it once
+  let turnSeen = '';
+  setInterval(() => {
+    const tn = turnNear(); if (!tn || omen || calmMood || performance.now() < intro.ui + 8000) return;
+    const key = `scorsby-turn-${tn.year}-${tn.q}`, atMoment = Math.abs(Date.now() - tn.at) < 60000;
+    if (atMoment && turnSeen !== key + ':now') { turnSeen = key + ':now'; startOmen('turn'); store.set(key, '1'); return; }
+    if (!atMoment && !store.get(key) && turnSeen !== key) { turnSeen = key; store.set(key, '1'); startOmen('turn'); }
+  }, 5000);
+  function renderTurnLight(now) {
+    // a soft light rising behind the world: warm for the longest day and the light coming back, half warm and half
+    // night for the even days
+    const k = env(omenP('turn', now)); if (k <= 0) return;
+    const tn = turnNear() || { kind: 'even' }, p = omenP('turn', now);
+    const rise = tn.kind === 'night' ? smooth(0.35, 0.75, p) : smooth(0, 0.4, p);
+    const glow = (x0, x1, col) => {
+      const g = c.createRadialGradient(CX, CY, R * 0.95, CX, CY, R * (1.5 + 1.1 * rise));
+      g.addColorStop(0, col.replace('A', (0.55 * k).toFixed(3))); g.addColorStop(1, col.replace('A', '0'));
+      c.save(); c.beginPath(); c.rect(x0, 0, x1 - x0, VH); c.clip(); c.fillStyle = g; c.fillRect(0, 0, VW, VH); c.restore();
+    };
+    if (tn.kind === 'even') { glow(0, CX, 'rgba(255,196,80,A)'); glow(CX, VW, 'rgba(110,120,255,A)'); }
+    else if (tn.kind === 'night' && rise < 0.05) glow(0, VW, `rgba(90,80,200,${'A'})`);
+    else glow(0, VW, 'rgba(255,196,80,A)');
+  }
+
+  // a full moon: moonsby stays up all night for it (and says so, once, if you're here at night)
+  const fullMoon = () => Math.abs(moonPhase() - 0.5) < 0.034 || params.has('fullmoon'); // (about a day either side)
+  setInterval(() => {
+    const h = hourNow(); if (!fullMoon() || !(h >= 19 || h < 5) || omen || calmMood || performance.now() < intro.ui + 15000) return;
+    const key = `scorsby-fullmoon-${Math.floor((Date.now() - Date.UTC(2000, 0, 6, 18, 14)) / (29.530588853 * 86400000))}`;
+    if (store.get(key)) return; store.set(key, '1');
+    whisper('the moon is full tonight. moonsby stayed up to see it with you.', 4200, true, null, true);
+  }, 7000);
+
   function moonPhase(t = Date.now()) {
     const SYN = 29.530588853, NEW = Date.UTC(2000, 0, 6, 18, 14);
     return ((((t - NEW) / 86400000) % SYN) + SYN) % SYN / SYN;
@@ -2811,7 +3015,7 @@
     Object.assign(moon, { x, y, r, z });
     orbFace(x, y, r, {
       fill: '#f4ecc9', spot: '#e2d6a6', spots: [[-300, 260, 90], [330, 300, 70], [380, -250, 60], [-420, -80, 50], [80, 480, 55]],
-      nose: '#c9b98a', noseR: 105, closed: !(moon.awake > now), cheeks: ecl > 0.3 ? 'rgba(255,120,150,0.5)' : null, seed: 3, phase: moonPhase(),
+      nose: '#c9b98a', noseR: 105, closed: !(moon.awake > now) && !fullMoon(), cheeks: ecl > 0.3 ? 'rgba(255,120,150,0.5)' : null, seed: 3, phase: moonPhase(),
     });
     if (ecl > 0.35) {
       // little hearts rise from the hug
@@ -2983,6 +3187,90 @@
   }
 
   const rainLine = () => (T === THEMES.night ? DARK : ink()); // (black at night, like the little characters)
+  // ?newyear tries it (midnight comes a few seconds after it loads)
+  const newYearAt = () => { if (params.has('newyear')) return nyDebug; const d = new Date(); return new Date(d.getFullYear() + (d.getMonth() === 0 && d.getDate() === 1 && d.getHours() < 1 ? 0 : 1), 0, 1).getTime(); };
+  const nyDebug = Date.now() + 16000;
+  let nyCount = -1;
+  const rockets = [], sparks = [];
+  setInterval(() => {
+    const at = newYearAt(), left = at - Date.now();
+    // the last ten seconds, counted down together
+    if (left > 0 && left <= 10500 && nyCount !== Math.ceil(left / 1000)) {
+      nyCount = Math.ceil(left / 1000);
+      whisperHeld = performance.now() + left + 11000; holding = true; whisper(String(nyCount), 900, true); holding = false; // (the countdown and the greeting have the words to themselves)
+      if (nyCount === 10) setMood('o', 11000);
+    }
+    if (left <= 0 && left > -2000 && nyCount !== 0) {
+      nyCount = 0;
+      holding = true; whisper('happy new year, everyone everywhere ♥', 7000, true, null, false, true); holding = false;
+      setMood('hearts', 9000); tone.omen && tone.omen('turn');
+    }
+  }, 200);
+  function fireworksNow() {
+    // how busy the sky is: a lot in the first three minutes after midnight, then now and then until half past
+    const since = Date.now() - newYearAt() + (params.has('newyear') ? 0 : 0);
+    const d = new Date(), local = d.getMonth() === 0 && d.getDate() === 1 && d.getHours() === 0;
+    const t = params.has('newyear') ? since : local ? d.getMinutes() * 60000 + d.getSeconds() * 1000 : -1;
+    if (t < 0) return 0;
+    return t < 180000 ? 1 : t < 1800000 ? 0.12 : 0;
+  }
+  const FIRE = ['#ff5fae', '#ffd23f', '#62d64a', '#00b4ff', '#9b6bff', '#ff9a3c', '#ff4d4d'];
+  function renderFireworks(now, dt) {
+    const busy = calmMood ? 0 : fireworksNow();
+    if (busy && rockets.length < 8 && Math.random() < dt * 0.0016 * busy)
+      { const vx = (Math.random() - 0.5) * 0.3 * VW / 1000; rockets.push({ x: VW * (0.1 + Math.random() * 0.8), y: VH + 10, vx, ax: -vx * (0.4 + Math.random() * 1.2) / 1000, vy: -(0.55 + Math.random() * 0.25) * VH / 1000, top: VH * (0.08 + Math.random() * 0.35), col: pick(FIRE) }); } // (off at a slant, curving as they climb)
+    for (let i = rockets.length - 1; i >= 0; i--) {
+      const r = rockets[i];
+      r.x += r.vx * dt; r.y += r.vy * dt; r.vx += r.ax * dt;
+      const sp0 = Math.hypot(r.vx, r.vy) || 1;
+      c.beginPath(); c.moveTo(r.x, r.y); c.lineTo(r.x - (r.vx / sp0) * 18, r.y - (r.vy / sp0) * 18); c.lineWidth = 3; c.lineCap = 'round'; c.strokeStyle = r.col; c.stroke();
+      if (r.y <= r.top) {
+        rockets.splice(i, 1);
+        const n = small ? 28 : 44, sp = (0.08 + Math.random() * 0.07) * Math.min(VW, VH) / 400, two = Math.random() < 0.4 ? pick(FIRE) : r.col;
+        if (Math.random() < 0.35) {
+          // now and then a heart: the sparks fly out along a heart's outline, and fall slower so it keeps its shape a while
+          // (a little loose, like a real one: tipped a bit, a little lopsided, each spark not quite where it should be)
+          const hn = n + 10, hs = sp * (1 + Math.random() * 0.3), tip = (Math.random() - 0.5) * 0.16, lop = 1 + (Math.random() - 0.5) * 0.25;
+          for (let j = 0; j < hn; j++) {
+            const t = (j / hn) * TAU + (Math.random() - 0.5) * 0.12, hx0 = 16 * Math.sin(t) ** 3 * (Math.sin(t) > 0 ? lop : 1), hy0 = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+            const jit = 0.85 + Math.random() * 0.3, hx = (hx0 * Math.cos(tip) - hy0 * Math.sin(tip)) * jit, hy = (hx0 * Math.sin(tip) + hy0 * Math.cos(tip)) * jit;
+            sparks.push({ x: r.x, y: r.y, vx: (hx / 16) * hs, vy: (hy / 16) * hs, born: now, life: 1600 + Math.random() * 300, col: j % 2 ? two : r.col, g: 0.25 }); // (in the rocket's own colors, like the round ones)
+          }
+        } else for (let j = 0; j < n; j++) { const a = (j / n) * TAU + Math.random() * 0.2, v = sp * (0.6 + Math.random() * 0.4); sparks.push({ x: r.x, y: r.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, born: now, life: 1300 + Math.random() * 700, col: j % 2 ? two : r.col }); }
+        if (busy >= 1 && sparks.length < 400) tone.poke && tone.poke();
+      }
+    }
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const p = sparks[i], age = (now - p.born) / p.life;
+      if (age >= 1) { sparks.splice(i, 1); continue; }
+      p.vy += 0.00006 * (p.g ?? 1) * dt * Math.min(VW, VH) / 400; const drag = p.g ? 0.985 : 0.995; p.vx *= drag; p.vy *= drag;
+      const x0 = p.x, y0 = p.y; p.x += p.vx * dt; p.y += p.vy * dt;
+      c.globalAlpha = (1 - age) ** 1.3; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(x0 - p.vx * 60, y0 - p.vy * 60); c.lineTo(p.x, p.y); c.lineWidth = 3.4 * (1 - age * 0.5); c.strokeStyle = p.col; c.stroke(); // (a little streak)
+    }
+    c.globalAlpha = 1;
+  }
+  const flakes = [];
+  function snowing(d = new Date()) {
+    if (params.has('snow')) return true;
+    if (season(d) !== 'winter') return false;
+    const day = Math.floor((d - new Date(d.getFullYear(), 0, 1)) / 86400000), block = Math.floor(d.getHours() / 3);
+    let h = (day * 8 + block + d.getFullYear() * 977) >>> 0; h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0; h = Math.imul(h ^ (h >>> 13), 3266489909) >>> 0;
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296 < 0.35; // (about one stretch of three hours in three: a fair amount, never all winter)
+  }
+  let snowCheckAt = 0, snowNow = false;
+  function renderSnow(now, dt) {
+    if (now > snowCheckAt) { snowNow = snowing() && !calmMood; snowCheckAt = now + 60000; }
+    // soft white flakes drifting down over everything, never many
+    if (snowNow && flakes.length < (small ? 45 : 90) && Math.random() < dt * (small ? 0.012 : 0.025))
+      flakes.push({ x: Math.random() * VW, y: -10, vy: 0.018 + Math.random() * 0.03, s: 1.4 + Math.random() * 2.6, sw: Math.random() * TAU });
+    for (let i = flakes.length - 1; i >= 0; i--) {
+      const p = flakes[i];
+      p.y += p.vy * dt * (0.6 + p.s / 4); p.sw += dt / 1400;
+      if (p.y > VH + 10) { flakes.splice(i, 1); continue; }
+      c.beginPath(); c.arc(p.x + Math.sin(p.sw) * 18, p.y, p.s, 0, TAU); c.fillStyle = 'rgba(255,255,255,0.85)'; c.fill();
+    }
+  }
   function renderRain(now, dt) {
     for (let i = raining.length - 1; i >= 0; i--) {
       const h = raining[i];
@@ -3012,9 +3300,9 @@
     clearTimeout(waitTimer);
     if (!waiting.length) return;
     const now = performance.now();
-    if (now < whisperUntil) { waitTimer = setTimeout(nextWhisper, whisperUntil - now + 80); return; }
+    if (now < Math.max(whisperUntil, whisperHeld)) { waitTimer = setTimeout(nextWhisper, Math.max(whisperUntil, whisperHeld) - now + 80); return; }
     const w = waiting.shift();
-    whisper(w.text, waiting.length > 2 ? Math.min(w.ms, 3000) : w.ms, true, w.link); // a long line moves a little faster
+    whisper(w.text, waiting.length > 2 ? Math.min(w.ms, 3000) : w.ms, true, w.link, false, w.rainbow); // a long line moves a little faster
     if (waiting.length) waitTimer = setTimeout(nextWhisper, whisperUntil - performance.now() + 80);
   }
   // where a whisper's lines break: two (or more) sentences get a line each if each fits on one line;
@@ -3055,11 +3343,14 @@
   }
   let ritualVoice = false; // while scorsby breathes or sings, only its own words are whispered
   const ritualSay = (text, ms) => { ritualVoice = true; whisper(text, ms); ritualVoice = false; };
-  function whisper(text, ms = 4200, urgent = true, link = null, queue = false) {
+  // (a moment can keep the words to itself, like the new year's countdown: anything else waits until it's over)
+  let whisperHeld = 0, holding = false;
+  function whisper(text, ms = 4200, urgent = true, link = null, queue = false, rainbow = false) {
     if (calmMood && !ritualVoice) return;
     const now = performance.now();
+    if (now < whisperHeld && !holding) { waiting.push({ text, ms, link, rainbow }); if (waiting.length > 10) waiting.splice(0, waiting.length - 10); nextWhisper(); return; }
     if (queue && (now < whisperUntil || waiting.length)) {
-      waiting.push({ text, ms, link });
+      waiting.push({ text, ms, link, rainbow });
       if (waiting.length > 10) waiting.splice(0, waiting.length - 10);
       nextWhisper();
       return;
@@ -3069,7 +3360,7 @@
     clearTimeout(whisperTimer); clearInterval(typer);
     whisperTimer = setTimeout(() => {
       whisperEl.textContent = '';
-      whisperEl.classList.toggle('quote', !!link);
+      whisperEl.classList.toggle('quote', !!link); whisperEl.classList.toggle('rainbow', !!rainbow);
       let host = whisperEl;
       if (link) { host = document.createElement('a'); host.href = link.u; host.target = '_blank'; host.rel = 'noopener'; whisperEl.appendChild(host); }
       const full = link ? `“${text}”` : text;
@@ -3084,6 +3375,17 @@
       whisperEl.classList.add('on');
       typer = setInterval(() => {
         i += 1;
+        if (rainbow) { // (a rainbow whisper: each letter arrives in its own turn through the colors, like the hi-score)
+          const ch = chars[i - 1], br = breaks.has(i - 1);
+          const l = br || ch === '\n' ? document.createTextNode('\n') : document.createElement('span');
+          if (l.style) { l.textContent = ch; l.style.setProperty('--i', i); }
+          line.insertBefore(l, tail);
+          if (i % 3 === 0 && i > 6) tone.tick();
+          if (i < chars.length) return;
+          clearInterval(typer);
+          whisperTimer = setTimeout(() => whisperEl.classList.remove('on'), ms);
+          return;
+        }
         const shown = chars.slice(0, i).map((ch, j) => (breaks.has(j) ? '\n' : ch)).join('');
         const k = Math.max(shown.lastIndexOf(' '), shown.lastIndexOf('\n'));
         head.data = shown.slice(0, k + 1); tailText.data = shown.slice(k + 1);
@@ -3261,7 +3563,7 @@
     updatePresence();
     welcome();
   }
-  setInterval(() => { if (!net.live && !omen && Math.random() < 0.5) startOmen(pick(Object.keys(OMEN_DUR))); }, 70000);
+  setInterval(() => { if (!net.live && !omen && Math.random() < 0.5) startOmen(pick(Object.keys(OMEN_DUR).filter((k) => k !== 'turn'))); }, 70000); // (the year's turns come only when they come)
 
   const MARK_LIFE = 24 * 3600 * 1000; // (a plant lasts a day)
   const addMark = (m) => marks.push({ v: vec(m.lat, m.lon), k: m.k, n: m.n || '', t: m.at || m.t || Date.now(), seed: rand(0, 99), sx: -1e4, note: m.note ? String(m.note).slice(0, 100) : '', id: m.id || '', o: m.o || '' });
@@ -3784,10 +4086,11 @@
     if (hitMoon(x, y)) {
       moon.awake = now + 4000;
       chooseSky('night'); store.set('scorsby-theme', 'night');
-      whisper(`moonsby says goodnight. tonight is a ${phaseName(moonPhase())}.`, 3600);
+      whisper(fullMoon() ? 'moonsby is up all night: the moon is full.' : `moonsby says goodnight. tonight is a ${phaseName(moonPhase())}.`, 3600);
       tone.chime();
       return;
     }
+    if (pf.hit && !calmMood && pf.hit.bfly && Math.hypot(x - pf.hit.bfly[0], y - pf.hit.bfly[1]) < pf.hit.bfly[2]) { pf.bflyOff = now; tone.blink(); return; } // (the butterfly, shooed)
     if (pf.hit && !calmMood) {
       const [nx, ny, nr] = pf.hit.nose;
       if (Math.hypot(x - nx, y - ny) < nr * 1.3) {
@@ -4567,7 +4870,7 @@
     arrive() { this.note(392, 2.4, 0.03); },
     together() { [0, 2, 4, 7].forEach((k, i) => this.note(PENTA[k], 3, 0.04, 'sine', i * 0.05)); },
     omen(k) {
-      const seqs = { eclipse: [0, 1, 0], flock: [4, 5, 7, 8, 7], sneeze: [8, 0], hearts: [5, 7, 8, 7, 5], colorstorm: [0, 2, 4, 5, 7, 8], unison: [2, 2, 2], ears: [6, 6], heartstar: [0, 4, 7, 8], thirdeye: [0, 7, 0, 8], goldrain: [8, 7, 5, 4, 2, 0], wings: [0, 4, 7, 8] };
+      const seqs = { turn: [0, 4, 7, 12], eclipse: [0, 1, 0], flock: [4, 5, 7, 8, 7], sneeze: [8, 0], hearts: [5, 7, 8, 7, 5], colorstorm: [0, 2, 4, 5, 7, 8], unison: [2, 2, 2], ears: [6, 6], heartstar: [0, 4, 7, 8], thirdeye: [0, 7, 0, 8], goldrain: [8, 7, 5, 4, 2, 0], wings: [0, 4, 7, 8] };
       (seqs[k] || [0]).forEach((n, i) => this.note(PENTA[n], 2.2, 0.035, 'sine', i * 0.16));
     },
     swell() {

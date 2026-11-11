@@ -362,7 +362,7 @@ async function comments(request, env) {
   const reply = (status, body) => new Response(JSON.stringify(body), { status, headers: cors });
   if (!env.LETTERS) return reply(503, { ok: false, why: "the comments aren't open yet." });
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-  // samuel's side (the moderation page, scorsby.us/notes): every note, newest first, and taking one down or bringing it
+  // samuel's side (the moderation page, scorsby.us/mod): every note, newest first, and taking one down or bringing it
   // back. only with the key, which is set as a secret on the hearth (wrangler secret put COMMENTS_KEY)
   const keyOk = () => env.COMMENTS_KEY && request.headers.get('x-key') === env.COMMENTS_KEY;
   if (url.pathname === '/comments/all' || url.pathname === '/comments/mod') {

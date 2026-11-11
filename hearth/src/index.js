@@ -350,6 +350,8 @@ async function commentsTable(env) {
   await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS comment_flags (comment INTEGER NOT NULL, who TEXT NOT NULL, PRIMARY KEY (comment, who))').run();
   try { await env.LETTERS.prepare('ALTER TABLE comments ADD COLUMN kept INTEGER NOT NULL DEFAULT 0').run(); } catch {} // (samuel looked, and kept it up)
   try { await env.LETTERS.prepare('ALTER TABLE comments ADD COLUMN me INTEGER NOT NULL DEFAULT 0').run(); } catch {} // (samuel wrote it: posted with the key)
+  try { await env.LETTERS.prepare('ALTER TABLE comments ADD COLUMN o TEXT').run(); } catch {} // (a scrambled copy of the writer's browser key, so they can take it back)
+  try { await env.LETTERS.prepare('ALTER TABLE comments ADD COLUMN edited TEXT').run(); } catch {} // (when its writer last changed it)
 }
 // three different readers marking a note "not kind" hide it (gone = 2, hidden by readers), until samuel looks. one he
 // has brought back stays up. a reader is a random token their browser keeps, and only a scrambled copy of it is kept
@@ -357,6 +359,20 @@ const FLAGS_TO_HIDE = 3;
 async function scramble(s) {
   const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`scorsby-flags:${s}`));
   return [...new Uint8Array(d)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+// a note's words, checked: the links come out first (so they keep their capitals, and aren't read as words), then
+// come back after the kindness check
+async function checkComment(env, words) {
+  const links = [];
+  const raw = String(words || '').normalize('NFKC').slice(0, COMMENT_MAX + 400)
+    .replace(URL_RE, (u) => { links.push(u.replace(/[.,!?;:)\]]+$/, '')); return ` linkhere${links.length - 1} `; });
+  if (links.length > COMMENT_LINKS) return { status: 400, why: 'two links at most, please.' };
+  const tidy = tidySay(raw, COMMENT_MAX, true); // (comments keep their capitals)
+  if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(tidy.replace(/linkhere\d/gi, ''))) return { status: 400, why: 'try some words.' };
+  if (!(await linksOk(env, links))) return { status: 400, why: "that link can't come in. (no link shorteners, and nothing unsafe.)" };
+  const kind = await boinked(env, tidy, /^linkhere\d$/i);
+  if (!kind) return { status: 503, why: "the hearth couldn't check that one just now. try again soon." };
+  return { text: kind.replace(/linkhere(\d)/gi, (w, i) => links[+i] || ''), boinked: kind !== tidy };
 }
 async function comments(request, env) {
   const url = new URL(request.url), origin = request.headers.get('Origin');
@@ -375,7 +391,7 @@ async function comments(request, env) {
     if (!keyOk()) return reply(403, { ok: false, why: "that key isn't right." });
     await commentsTable(env);
     if (url.pathname === '/comments/all') {
-      const rows = await env.LETTERS.prepare('SELECT id, post, parent, depth, name, text, said, gone, kept, me, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments ORDER BY id DESC LIMIT 300').all();
+      const rows = await env.LETTERS.prepare('SELECT id, post, parent, depth, name, text, said, gone, kept, me, edited, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments ORDER BY id DESC LIMIT 300').all();
       return reply(200, { ok: true, comments: rows.results || [] });
     }
     let m; try { m = await request.json(); } catch { return reply(400, { ok: false, why: "that didn't arrive right." }); }
@@ -396,11 +412,40 @@ async function comments(request, env) {
   if (request.method === 'GET') {
     const post = url.searchParams.get('post') || '';
     if (!POST_RE.test(post)) return reply(400, { ok: false, why: 'which post?' });
-    const rows = await env.LETTERS.prepare('SELECT id, parent, depth, name, text, said, me FROM comments WHERE post = ?1 AND gone = 0 ORDER BY id LIMIT 500').bind(post).all();
+    // (and the ones their writers took back that still have replies under them: just their place, no words)
+    const rows = await env.LETTERS.prepare(`SELECT id, parent, depth, CASE WHEN gone = 3 THEN '' ELSE name END AS name, CASE WHEN gone = 3 THEN '' ELSE text END AS text, said, me, gone, edited FROM comments
+      WHERE post = ?1 AND (gone = 0 OR (gone = 3 AND EXISTS (SELECT 1 FROM comments k WHERE k.parent = comments.id AND k.gone = 0))) ORDER BY id LIMIT 500`).bind(post).all();
     return reply(200, { ok: true, comments: rows.results || [] });
   }
   if (request.method !== 'POST') return reply(405, { ok: false, why: 'get or post only.' });
   const ip = request.headers.get('cf-connecting-ip') || '';
+  const theirs = async (row, who) => keyOk() || (who.length >= 8 && !!row.o && row.o === await scramble(`writer:${who}`));
+  if (url.pathname === '/comments/edit') {
+    // changing one: only from the browser that wrote it (or samuel's), checked like a new note
+    let f; try { f = await request.json(); } catch { return reply(400, { ok: false }); }
+    const id = parseInt(f.id, 10), who = String(f.who || '').replace(/[^a-z0-9]/gi, '').slice(0, 32);
+    if (!id) return reply(400, { ok: false });
+    if (tooManyNotes(ip)) return reply(429, { ok: false, why: "that's a lot of notes. take a breath and come back in a few minutes." });
+    const row = await env.LETTERS.prepare('SELECT o FROM comments WHERE id = ?1 AND gone = 0').bind(id).first();
+    if (!row) return reply(400, { ok: false, why: "that note isn't here any more." });
+    if (!(await theirs(row, who))) return reply(403, { ok: false, why: "that one isn't yours to change." });
+    const ck = await checkComment(env, f.text);
+    if (!ck.text) return reply(ck.status, { ok: false, why: ck.why });
+    const edited = new Date().toISOString();
+    await env.LETTERS.prepare('UPDATE comments SET text = ?1, edited = ?2 WHERE id = ?3').bind(ck.text, edited, id).run();
+    return reply(200, { ok: true, boinked: ck.boinked, text: ck.text, edited });
+  }
+  if (url.pathname === '/comments/delete') {
+    // taking one back: only from the browser that wrote it (or samuel's)
+    let f; try { f = await request.json(); } catch { return reply(400, { ok: false }); }
+    const id = parseInt(f.id, 10), who = String(f.who || '').replace(/[^a-z0-9]/gi, '').slice(0, 32);
+    if (!id) return reply(400, { ok: false });
+    const row = await env.LETTERS.prepare('SELECT o FROM comments WHERE id = ?1 AND gone = 0').bind(id).first();
+    if (!row) return reply(200, { ok: true }); // (already gone)
+    if (!(await theirs(row, who))) return reply(403, { ok: false, why: "that one isn't yours to take back." });
+    await env.LETTERS.prepare('UPDATE comments SET gone = 3 WHERE id = ?1').bind(id).run();
+    return reply(200, { ok: true });
+  }
   if (url.pathname === '/comments/flag') {
     let f; try { f = await request.json(); } catch { return reply(400, { ok: false }); }
     const id = parseInt(f.id, 10), who = String(f.who || '').replace(/[^a-z0-9]/gi, '').slice(0, 32);
@@ -419,17 +464,9 @@ async function comments(request, env) {
   if (tooManyNotes(ip)) return reply(429, { ok: false, why: "that's a lot of notes. take a breath and come back in a few minutes." });
   const post = String(m.post || '');
   if (!POST_RE.test(post)) return reply(400, { ok: false, why: 'which post?' });
-  // the links come out first (so they keep their capitals, and aren't read as words), then come back after the check
-  const links = [];
-  const raw = String(m.text || '').normalize('NFKC').slice(0, COMMENT_MAX + 400)
-    .replace(URL_RE, (u) => { links.push(u.replace(/[.,!?;:)\]]+$/, '')); return ` linkhere${links.length - 1} `; });
-  if (links.length > COMMENT_LINKS) return reply(400, { ok: false, why: 'two links at most, please.' });
-  const tidy = tidySay(raw, COMMENT_MAX, true); // (comments keep their capitals)
-  if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(tidy.replace(/linkhere\d/gi, ''))) return reply(400, { ok: false, why: 'try some words.' });
-  if (!(await linksOk(env, links))) return reply(400, { ok: false, why: "that link can't come in. (no link shorteners, and nothing unsafe.)" });
-  const kind = await boinked(env, tidy, /^linkhere\d$/i);
-  if (!kind) return reply(503, { ok: false, why: "the hearth couldn't check that one just now. try again soon." });
-  const text = kind.replace(/linkhere(\d)/gi, (w, i) => links[+i] || '');
+  const ck = await checkComment(env, m.text);
+  if (!ck.text) return reply(ck.status, { ok: false, why: ck.why });
+  const text = ck.text;
   // a reply goes under what it answers; deeper than three levels, it joins the third
   let parent = null, depth = 0;
   if (m.parent != null) {
@@ -439,8 +476,9 @@ async function comments(request, env) {
   }
   // (written with the key: it's samuel's, it wears his mark, and readers' flags can't hide it)
   const name = cleanName(m.name), said = new Date().toISOString(), me = keyOk() ? 1 : 0;
-  const r = await env.LETTERS.prepare('INSERT INTO comments (post, parent, depth, name, text, said, me, kept) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)').bind(post, parent, depth, name, text, said, me).run();
-  return reply(200, { ok: true, boinked: kind !== tidy, comment: { id: r.meta?.last_row_id, parent, depth, name, text, said, me } });
+  const who = String(m.who || '').replace(/[^a-z0-9]/gi, '').slice(0, 32), o = who.length >= 8 ? await scramble(`writer:${who}`) : null;
+  const r = await env.LETTERS.prepare('INSERT INTO comments (post, parent, depth, name, text, said, me, kept, o) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7, ?8)').bind(post, parent, depth, name, text, said, me, o).run();
+  return reply(200, { ok: true, boinked: ck.boinked, comment: { id: r.meta?.last_row_id, parent, depth, name, text, said, me } });
 }
 
 // once a week (monday morning), a letter to samuel with the week's new comments, if there were any: each with its post,

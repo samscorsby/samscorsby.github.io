@@ -572,6 +572,11 @@ nav.world-nav.scrolled { box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25); }
 .c-flag { font: inherit; font-size: .72em; text-transform: lowercase; background: none; border: none; padding: 0; color: inherit; opacity: .45; cursor: pointer; text-decoration: underline dotted; }
 .c-flag:hover { opacity: .8; }
 .c-flag:disabled { cursor: default; text-decoration: none; }
+.c-gone { margin: 0; font-size: .82em; opacity: .5; }
+.c-icon { display: inline-flex; align-items: center; gap: 4px; font: inherit; font-size: .72em; text-transform: lowercase; background: none; border: none; box-shadow: none; padding: 2px; color: inherit; opacity: .45; cursor: pointer; }
+.c-icon:hover, .c-icon[data-sure] { opacity: .85; }
+.c-icon:disabled { cursor: default; }
+.c-edited { opacity: .6; /* (in the .75 of the line: the same .45 as "not kind?") */ cursor: help; text-decoration: underline dotted; text-underline-offset: 2px; }
 .c-kids { display: grid; gap: 1em; margin-left: 14px; padding-left: 12px; border-left: 1px dashed rgba(5, 6, 10, .3); }
 .c-kids:empty { display: none; }
 .c-note > .c-form { margin: 6px 0 4px; }

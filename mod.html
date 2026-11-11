@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>notes left on the blog</title>
-    <link rel="stylesheet" href="/style.css?v=7">
+    <link rel="stylesheet" href="/style.css?v=8">
     <link rel="icon" href="/favicon.webp" type="image/x-icon">
     <style>
       /* samuel's page: every note left under the blog's posts, newest first, to take down (or bring back) */
@@ -161,7 +161,7 @@
             head.append(dot, `${c.name ? c.name + ' scorsby' : 'someone'}${c.me ? ' (you)' : ''} · ${when(c.said)}`);
             if (c.depth) { const r2 = document.createElement('span'); r2.className = 'm-reply'; r2.textContent = '· a reply'; head.append(r2); }
             // (how readers feel about it: flags, and whether they hid it, or you kept it up)
-            const flags = c.flags || 0, why = c.gone === 2 ? `hidden by readers (${flags} flagged it)` : flags ? `${flags} flagged it${c.kept ? ', you kept it up' : ''}` : c.kept ? 'you kept it up' : '';
+            const flags = c.flags || 0, why = c.gone === 3 ? 'deleted by its writer' : c.gone === 2 ? `hidden by readers (${flags} flagged it)` : flags ? `${flags} flagged it${c.kept ? ', you kept it up' : ''}` : c.kept ? 'you kept it up' : '';
             if (why) { const w = document.createElement('span'); w.className = 'm-why'; w.textContent = `· ${why}`; head.append(w); }
             const p = document.createElement('p'); p.className = 'm-words'; p.append(words(c.text));
             const row = document.createElement('div'); row.className = 'm-row';

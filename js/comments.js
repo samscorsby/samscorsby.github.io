@@ -17,6 +17,9 @@
   const flaggedKey = 'scorsby-flagged', flagged = () => { try { return new Set(JSON.parse(localStorage.getItem(flaggedKey) || '[]')); } catch { return new Set(); } };
   const rememberFlag = (id) => { try { const f = flagged(); f.add(id); localStorage.setItem(flaggedKey, JSON.stringify([...f])); } catch {} };
   const rememberName = (n) => { try { if (n) localStorage.setItem('scorsby-name', n); } catch {} };
+  // the notes written in this browser (so they can be taken back)
+  const mineKey = 'scorsby-mine', mine = () => { try { return new Set(JSON.parse(localStorage.getItem(mineKey) || '[]')); } catch { return new Set(); } };
+  const rememberMine = (id) => { try { const s = mine(); s.add(id); localStorage.setItem(mineKey, JSON.stringify([...s])); } catch {} };
   // (samuel's browser holds the moderation key: what he writes here goes with it, and wears his mark)
   const modKey = () => { try { return localStorage.getItem('scorsby-notes-key') || ''; } catch { return ''; } };
   // his mark: the turning triangle, with the point at its center
@@ -33,7 +36,10 @@
   const previewKey = `scorsby-comments:${post}`;
   const previewList = () => { try { return JSON.parse(localStorage.getItem(previewKey) || '[]'); } catch { return []; } };
   async function load() {
-    if (PREVIEW) return previewList().filter((c) => !c.gone); // (taken down on the moderation page)
+    if (PREVIEW) { // (taken down on the moderation page, or taken back: those with replies keep their place)
+      const list = previewList(), kids = new Set(list.filter((c) => !c.gone).map((c) => c.parent));
+      return list.filter((c) => !c.gone || (c.gone === 3 && kids.has(c.id))).map((c) => (c.gone ? { ...c, name: '', text: '' } : c));
+    }
     const r = await fetch(`${API}?post=${encodeURIComponent(post)}`).then((x) => x.json()).catch(() => null);
     return r && r.ok ? r.comments : null;
   }
@@ -46,8 +52,28 @@
       return { ok: true, comment: c };
     }
     const headers = { 'content-type': 'application/json' }; if (modKey()) headers['x-key'] = modKey();
-    return fetch(API, { method: 'POST', headers, body: JSON.stringify({ post, ...note }) })
+    return fetch(API, { method: 'POST', headers, body: JSON.stringify({ post, who: reader, ...note }) })
       .then((x) => x.json()).catch(() => ({ ok: false, why: 'that note got lost on the way. try again?' }));
+  }
+  async function takeBack(id) {
+    if (PREVIEW) {
+      const list = previewList(); for (const c of list) if (c.id === id) c.gone = 3;
+      try { localStorage.setItem(previewKey, JSON.stringify(list)); } catch {}
+      return { ok: true };
+    }
+    const headers = { 'content-type': 'application/json' }; if (modKey()) headers['x-key'] = modKey();
+    return fetch(`${API}/delete`, { method: 'POST', headers, body: JSON.stringify({ post, id, who: reader }) })
+      .then((x) => x.json()).catch(() => ({ ok: false }));
+  }
+  async function change(id, text) {
+    if (PREVIEW) {
+      const list = previewList(), edited = new Date().toISOString(); for (const c of list) if (c.id === id) { c.text = text.slice(0, 600); c.edited = edited; }
+      try { localStorage.setItem(previewKey, JSON.stringify(list)); } catch {}
+      return { ok: true, text: text.slice(0, 600), edited };
+    }
+    const headers = { 'content-type': 'application/json' }; if (modKey()) headers['x-key'] = modKey();
+    return fetch(`${API}/edit`, { method: 'POST', headers, body: JSON.stringify({ post, id, who: reader, text }) })
+      .then((x) => x.json()).catch(() => ({ ok: false, why: 'that change got lost on the way. try again?' }));
   }
   async function flag(id) {
     if (PREVIEW) {
@@ -80,11 +106,22 @@
   }
   function noteEl(c) {
     const el = document.createElement('div'); el.className = 'c-note'; el.dataset.id = c.id;
+    if (c.gone) { // (taken back, with replies under it: just its place)
+      const q = document.createElement('p'); q.className = 'c-quiet c-gone'; q.textContent = '(a note its writer deleted)';
+      const kids = document.createElement('div'); kids.className = 'c-kids';
+      el.append(q, kids); return el;
+    }
     const head = document.createElement('div'); head.className = 'c-head';
     let dot = document.createElement('span'); dot.className = 'c-dot'; dot.style.background = colorOf(c.name);
     if (c.me) { dot = tri(); el.classList.add('c-me'); }
     const who = document.createElement('b'); who.textContent = c.name ? `${c.name} scorsby` : 'someone';
     head.append(dot, who, ` · ${day(c.said)}`);
+    if (c.edited) { // (when, on hover or a tap)
+      const at = new Date(c.edited).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).toLowerCase();
+      const e = document.createElement('span'); e.className = 'c-edited'; e.tabIndex = 0; e.title = `edited ${at}`; e.dataset.at = at; e.textContent = 'edited';
+      e.addEventListener('click', () => { e.textContent = e.textContent === 'edited' ? `edited ${at}` : 'edited'; });
+      head.append(' · ', e);
+    }
     const p = document.createElement('p'); p.className = 'c-words'; p.append(words(c.text));
     const reply = document.createElement('button'); reply.type = 'button'; reply.className = 'c-reply'; reply.textContent = 'reply';
     reply.addEventListener('click', () => openForm(el, c.id));
@@ -100,7 +137,23 @@
       rememberFlag(c.id); nk.textContent = r.hidden ? 'thanks. it is hidden now.' : 'thanks, noted.';
       if (r.hidden) setTimeout(() => el.remove(), 1400);
     });
-    const acts = document.createElement('div'); acts.className = 'c-acts'; acts.append(reply, nk);
+    const acts = document.createElement('div'); acts.className = 'c-acts'; acts.append(reply);
+    if (mine().has(c.id)) {
+      // your own: change it (the pencil), or delete it (the trash, which asks once). instead of "not kind?", which you wouldn't need
+      const ed = document.createElement('button'); ed.type = 'button'; ed.className = 'c-icon'; ed.innerHTML = PENCIL; ed.setAttribute('aria-label', 'edit'); ed.title = 'edit';
+      ed.addEventListener('click', () => editIn(el, c));
+      const tb = document.createElement('button'); tb.type = 'button'; tb.className = 'c-icon'; tb.innerHTML = TRASH; tb.setAttribute('aria-label', 'delete'); tb.title = 'delete';
+      tb.addEventListener('click', async () => {
+        if (!tb.dataset.sure) { tb.dataset.sure = '1'; tb.innerHTML = `${TRASH}<span>delete?</span>`; setTimeout(() => { if (!tb.disabled) { delete tb.dataset.sure; tb.innerHTML = TRASH; } }, 4000); return; }
+        tb.disabled = true; tb.textContent = '…';
+        const r = await takeBack(c.id);
+        if (!r || !r.ok) { tb.disabled = false; tb.textContent = (r && r.why) || 'try again'; return; }
+        c.gone = 3; c.name = ''; c.text = '';
+        if (!all.some((x) => x.parent === c.id && !x.gone)) all = all.filter((x) => x !== c);
+        draw(all);
+      });
+      acts.append(ed, tb);
+    } else acts.append(nk);
     const kids = document.createElement('div'); kids.className = 'c-kids';
     el.append(head, p, acts, kids);
     return el;
@@ -113,6 +166,34 @@
       const up = c.parent != null && byId.get(c.parent);
       (up ? up.querySelector(':scope > .c-kids') : listEl).append(el);
     }
+  }
+
+  // little line drawings, in the ink of the words
+  const ICON = (d) => `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const PENCIL = ICON('<path d="M10.5 2.5l3 3-8 8H2.5v-3z"/><path d="M9 4l3 3"/>');
+  const TRASH = ICON('<path d="M2.5 4.5h11"/><path d="M6 4.5V3h4v1.5"/><path d="M4 4.5l.7 9h6.6l.7-9"/><path d="M6.8 7v4.5M9.2 7v4.5"/>');
+  function editIn(el, c) {
+    const p = el.querySelector(':scope > .c-words'), acts = el.querySelector(':scope > .c-acts');
+    if (el.querySelector(':scope > .c-form')) return;
+    const f = document.createElement('form'); f.className = 'c-form c-editing';
+    f.innerHTML = `<textarea name="text" maxlength="900" rows="3"></textarea><div class="c-row"><span class="c-said" aria-live="polite"></span><span><button type="button" class="c-flag c-cancel">never mind</button> <button type="submit">save</button></span></div>`;
+    f.elements.text.value = c.text;
+    p.hidden = true; acts.hidden = true; p.after(f);
+    const t = f.elements.text; t.focus(); t.setSelectionRange(t.value.length, t.value.length);
+    const close = () => { f.remove(); p.hidden = false; acts.hidden = false; };
+    f.querySelector('.c-cancel').addEventListener('click', close);
+    t.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = t.value.trim(), said = f.querySelector('.c-said'), btn = f.querySelector('button[type="submit"]');
+      if (!text) { said.textContent = 'try some words. (or the trash takes it away)'; return; }
+      if (text === c.text) { close(); return; }
+      btn.disabled = true; said.textContent = 'saving…';
+      const r = await change(c.id, text);
+      btn.disabled = false;
+      if (!r || !r.ok) { said.textContent = (r && r.why) || 'that change got lost on the way. try again?'; return; }
+      c.text = r.text; c.edited = r.edited; draw(all);
+    });
   }
 
   // ---- writing one (a note, or a reply under one)
@@ -136,7 +217,7 @@
       if (!r || !r.ok) { said.textContent = (r && r.why) || 'that note got lost on the way. try again?'; return; }
       rememberName(f.elements.who.value.trim().toLowerCase());
       f.elements.text.value = ''; said.textContent = r.boinked ? 'sent (with a boink or two).' : 'sent ♥';
-      if (r.comment) { all.push(r.comment); draw(all); }
+      if (r.comment) { if (r.comment.id != null) rememberMine(r.comment.id); all.push(r.comment); draw(all); }
       if (parent != null) f.remove();
     });
     return f;

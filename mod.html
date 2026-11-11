@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>notes left on the blog</title>
-    <link rel="stylesheet" href="/style.css?v=8">
+    <link rel="stylesheet" href="/style.css?v=9">
     <link rel="icon" href="/favicon.webp" type="image/x-icon">
     <style>
       /* samuel's page: every note left under the blog's posts, newest first, to take down (or bring back) */
@@ -31,7 +31,9 @@
       #mod .m-head .m-why { color: #c2185b; }
       #mod .m-words { margin: 0; line-height: 1.5; overflow-wrap: anywhere; text-transform: none; }
       #mod .m-words a { text-transform: none; }
-      #mod .m-row { display: flex; justify-content: flex-end; }
+      #mod .m-row { display: flex; justify-content: flex-end; gap: 8px; }
+      #mod .m-forever { background: none; box-shadow: none; border-color: transparent; text-decoration: underline dotted; opacity: .6; }
+      #mod .m-forever[data-sure] { opacity: 1; color: #c2185b; }
       #mod .m-quiet { text-align: center; opacity: .6; }
     </style>
   </head>
@@ -60,7 +62,7 @@
         async function all() {
           if (PREVIEW) {
             const out = [];
-            for (const k of previewPosts()) for (const c of JSON.parse(localStorage.getItem(k) || '[]')) out.push({ ...c, post: k.slice('scorsby-comments:'.length), gone: c.gone || 0 });
+            for (const k of previewPosts()) for (const c of JSON.parse(localStorage.getItem(k) || '[]')) if (c.gone !== 4) out.push({ ...c, post: k.slice('scorsby-comments:'.length), gone: c.gone || 0 });
             return { ok: true, comments: out.sort((a, b) => b.id - a.id) };
           }
           return fetch(`${API}/all`, { headers: { 'x-key': keyGet() } }).then((r) => r.json()).catch(() => ({ ok: false, why: "the hearth couldn't be reached." }));
@@ -75,6 +77,29 @@
           return fetch(`${API}/mod`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-key': keyGet() }, body: JSON.stringify({ id: c.id, gone }) })
             .then((r) => r.json()).catch(() => ({ ok: false }));
         }
+
+        async function forever(c) {
+          if (PREVIEW) {
+            const k = `scorsby-comments:${c.post}`, list = JSON.parse(localStorage.getItem(k) || '[]');
+            const kids = list.some((x) => x.parent === c.id && x.gone !== 4);
+            const next = kids ? list.map((x) => (x.id === c.id ? { ...x, gone: 4, name: '', text: '' } : x)) : list.filter((x) => x.id !== c.id);
+            localStorage.setItem(k, JSON.stringify(next));
+            return { ok: true };
+          }
+          return fetch(`${API}/mod`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-key': keyGet() }, body: JSON.stringify({ id: c.id, forever: true }) })
+            .then((r) => r.json()).catch(() => ({ ok: false }));
+        }
+
+        // a little scorsby face, in the name's color (in place of a plain dot)
+        const faceOf = (color) => {
+          const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '46 60 1819 1646'); s.setAttribute('class', 'c-face'); s.setAttribute('aria-hidden', 'true');
+          s.innerHTML = `<circle cx="438" cy="452" r="392" fill="#05060a"/><circle cx="1473" cy="452" r="392" fill="#05060a"/><circle cx="955" cy="969" r="737" fill="#05060a"/>`
+            + `<g fill="${color}"><circle cx="438" cy="452" r="296"/><circle cx="1473" cy="452" r="296"/><circle cx="955" cy="969" r="641"/></g>`
+            + `<circle cx="694" cy="883" r="258" fill="#fff"/><circle cx="1211" cy="883" r="258" fill="#fff"/>`
+            + `<circle cx="697" cy="883" r="114" fill="#05060a"/><circle cx="1214" cy="883" r="114" fill="#05060a"/>`
+            + `<circle cx="955" cy="1096" r="124" fill="#ec2028"/><path d="M766 1254A191 191 0 0 0 1145 1254" fill="none" stroke="#05060a" stroke-width="84" stroke-linecap="round"/>`;
+          return s;
+        };
 
         // ---- the page
         function askKey(why) {
@@ -156,8 +181,8 @@
             const post = document.createElement('div'); post.className = 'm-post';
             const a = document.createElement('a'); a.href = `/blog/${encodeURIComponent(c.post)}.html#comments`; a.textContent = `on “${titleOf(c.post)}”`; post.append(a);
             const head = document.createElement('div'); head.className = 'm-head';
-            let dot = document.createElement('span'); dot.className = 'c-dot'; dot.style.background = colorOf(c.name);
-            if (c.me) { dot = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); dot.setAttribute('viewBox', '-50 -50 100 100'); dot.setAttribute('class', 'c-tri'); dot.innerHTML = '<polygon points="0,-40 34.641,20 -34.641,20" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><circle r="7" fill="currentColor"/>'; }
+            let dot = faceOf(colorOf(c.name));
+            if (c.me) { dot = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); dot.setAttribute('viewBox', '-50 -50 100 100'); dot.setAttribute('class', 'c-tri'); dot.innerHTML = '<polygon points="0,-40 34.641,20 -34.641,20" fill="none" stroke="currentColor" stroke-width="5.3" stroke-linejoin="round"/><circle r="6" fill="currentColor"/>'; }
             head.append(dot, `${c.name ? c.name + ' scorsby' : 'someone'}${c.me ? ' (you)' : ''} · ${when(c.said)}`);
             if (c.depth) { const r2 = document.createElement('span'); r2.className = 'm-reply'; r2.textContent = '· a reply'; head.append(r2); }
             // (how readers feel about it: flags, and whether they hid it, or you kept it up)
@@ -168,6 +193,15 @@
             const btn = document.createElement('button'); btn.textContent = c.gone ? 'bring back' : 'take down';
             btn.addEventListener('click', async () => { btn.disabled = true; const r3 = await setGone(c, !c.gone); if (r3.ok) show(); else { btn.disabled = false; btn.textContent = 'try again'; } });
             row.append(btn);
+            if (c.gone) {
+              // gone for good (asks once): replies under it keep their place, without its words
+              const fb = document.createElement('button'); fb.className = 'm-forever'; fb.textContent = 'delete forever';
+              fb.addEventListener('click', async () => {
+                if (!fb.dataset.sure) { fb.dataset.sure = '1'; fb.textContent = 'really? it can’t come back'; setTimeout(() => { if (!fb.disabled) { delete fb.dataset.sure; fb.textContent = 'delete forever'; } }, 4000); return; }
+                fb.disabled = true; const r4 = await forever(c); if (r4.ok) show(); else { fb.disabled = false; fb.textContent = (r4 && r4.why) || 'try again'; }
+              });
+              row.prepend(fb);
+            }
             el.append(post, head, p, row); list.append(el);
           }
           body.append(tabs, tools, list);

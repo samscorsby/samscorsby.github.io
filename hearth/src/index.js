@@ -391,11 +391,21 @@ async function comments(request, env) {
     if (!keyOk()) return reply(403, { ok: false, why: "that key isn't right." });
     await commentsTable(env);
     if (url.pathname === '/comments/all') {
-      const rows = await env.LETTERS.prepare('SELECT id, post, parent, depth, name, text, said, gone, kept, me, edited, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments ORDER BY id DESC LIMIT 300').all();
+      const rows = await env.LETTERS.prepare('SELECT id, post, parent, depth, name, text, said, gone, kept, me, edited, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments WHERE gone != 4 ORDER BY id DESC LIMIT 300').all();
       return reply(200, { ok: true, comments: rows.results || [] });
     }
     let m; try { m = await request.json(); } catch { return reply(400, { ok: false, why: "that didn't arrive right." }); }
     const id = parseInt(m.id, 10);
+    if (m.forever) {
+      // deleting forever (only one already taken down): with replies under it, its place stays; otherwise all of it goes
+      const row = await env.LETTERS.prepare('SELECT gone FROM comments WHERE id = ?1').bind(id).first();
+      if (!row || !row.gone) return reply(400, { ok: false, why: 'take it down first.' });
+      const kids = await env.LETTERS.prepare('SELECT 1 FROM comments WHERE parent = ?1 AND gone != 4 LIMIT 1').bind(id).first();
+      if (kids) await env.LETTERS.prepare("UPDATE comments SET gone = 4, name = '', text = '', o = NULL, edited = NULL WHERE id = ?1").bind(id).run();
+      else await env.LETTERS.prepare('DELETE FROM comments WHERE id = ?1').bind(id).run();
+      await env.LETTERS.prepare('DELETE FROM comment_flags WHERE comment = ?1').bind(id).run();
+      return reply(200, { ok: true, id, forever: true });
+    }
     await env.LETTERS.prepare('UPDATE comments SET gone = ?1, kept = ?2 WHERE id = ?3').bind(m.gone ? 1 : 0, m.gone ? 0 : 1, id).run(); // (brought back: kept up, whatever flags come)
     return reply(200, { ok: true, id, gone: !!m.gone });
   }
@@ -413,8 +423,8 @@ async function comments(request, env) {
     const post = url.searchParams.get('post') || '';
     if (!POST_RE.test(post)) return reply(400, { ok: false, why: 'which post?' });
     // (and the ones their writers took back that still have replies under them: just their place, no words)
-    const rows = await env.LETTERS.prepare(`SELECT id, parent, depth, CASE WHEN gone = 3 THEN '' ELSE name END AS name, CASE WHEN gone = 3 THEN '' ELSE text END AS text, said, me, gone, edited FROM comments
-      WHERE post = ?1 AND (gone = 0 OR (gone = 3 AND EXISTS (SELECT 1 FROM comments k WHERE k.parent = comments.id AND k.gone = 0))) ORDER BY id LIMIT 500`).bind(post).all();
+    const rows = await env.LETTERS.prepare(`SELECT id, parent, depth, CASE WHEN gone IN (3, 4) THEN '' ELSE name END AS name, CASE WHEN gone IN (3, 4) THEN '' ELSE text END AS text, said, me, gone, edited FROM comments
+      WHERE post = ?1 AND (gone = 0 OR (gone IN (3, 4) AND EXISTS (SELECT 1 FROM comments k WHERE k.parent = comments.id AND k.gone = 0))) ORDER BY id LIMIT 500`).bind(post).all();
     return reply(200, { ok: true, comments: rows.results || [] });
   }
   if (request.method !== 'POST') return reply(405, { ok: false, why: 'get or post only.' });
@@ -442,7 +452,7 @@ async function comments(request, env) {
     if (!id) return reply(400, { ok: false });
     const row = await env.LETTERS.prepare('SELECT o FROM comments WHERE id = ?1 AND gone = 0').bind(id).first();
     if (!row) return reply(200, { ok: true }); // (already gone)
-    if (!(await theirs(row, who))) return reply(403, { ok: false, why: "that one isn't yours to take back." });
+    if (!(await theirs(row, who))) return reply(403, { ok: false, why: "that one isn't yours to delete." });
     await env.LETTERS.prepare('UPDATE comments SET gone = 3 WHERE id = ?1').bind(id).run();
     return reply(200, { ok: true });
   }

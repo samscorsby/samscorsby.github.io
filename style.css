@@ -560,8 +560,9 @@ nav.world-nav.scrolled { box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25); }
 .c-head { font-size: .82em; opacity: .75; display: flex; align-items: center; gap: 6px; }
 .c-head b { font-weight: normal; opacity: 1; }
 .c-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #05060a; flex: none; }
+.c-face { width: 22px; height: 20px; margin: -3px 0; flex: none; overflow: visible; }
 /* samuel's own notes: the turning triangle, with the point at its center */
-.c-tri { width: 14px; height: 14px; flex: none; overflow: visible; color: #05060a; animation: c-tri 12s linear infinite; }
+.c-tri { width: 22px; height: 22px; margin: -4px -1px; flex: none; overflow: visible; color: #05060a; animation: c-tri 12s linear infinite; }
 @keyframes c-tri { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .c-tri { animation: none; } }
 .c-words { margin: 0; line-height: 1.55; overflow-wrap: anywhere; text-transform: none; } /* (as written, capitals and all) */
@@ -577,6 +578,6 @@ nav.world-nav.scrolled { box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25); }
 .c-icon:hover, .c-icon[data-sure] { opacity: .85; }
 .c-icon:disabled { cursor: default; }
 .c-edited { opacity: .6; /* (in the .75 of the line: the same .45 as "not kind?") */ cursor: help; text-decoration: underline dotted; text-underline-offset: 2px; }
-.c-kids { display: grid; gap: 1em; margin-left: 14px; padding-left: 12px; border-left: 1px dashed rgba(5, 6, 10, .3); }
+.c-kids { display: grid; gap: 1em; margin-top: .7em; margin-left: 14px; padding-left: 12px; border-left: 1px dashed rgba(5, 6, 10, .3); }
 .c-kids:empty { display: none; }
 .c-note > .c-form { margin: 6px 0 4px; }

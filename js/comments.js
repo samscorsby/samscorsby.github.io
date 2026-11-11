@@ -11,6 +11,16 @@
   // the scorsby colors, so a name always has the same little dot
   const COLORS = ['#00b4ff', '#ff5fae', '#62d64a', '#ff9a3c', '#9b6bff', '#ffd23f', '#ff4d4d', '#e83ad8', '#b6f03a', '#ffb38a', '#7fd2ff', '#5b4cff'];
   const colorOf = (name) => { let h = 7; for (const ch of name || 'someone') h = (h * 31 + ch.codePointAt(0)) >>> 0; return name ? COLORS[h % COLORS.length] : '#c9c4bd'; };
+  // a little scorsby face, in the name's color (in place of a plain dot)
+  const faceOf = (color) => {
+    const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '46 60 1819 1646'); s.setAttribute('class', 'c-face'); s.setAttribute('aria-hidden', 'true');
+    s.innerHTML = `<circle cx="438" cy="452" r="392" fill="#05060a"/><circle cx="1473" cy="452" r="392" fill="#05060a"/><circle cx="955" cy="969" r="737" fill="#05060a"/>`
+      + `<g fill="${color}"><circle cx="438" cy="452" r="296"/><circle cx="1473" cy="452" r="296"/><circle cx="955" cy="969" r="641"/></g>`
+      + `<circle cx="694" cy="883" r="258" fill="#fff"/><circle cx="1211" cy="883" r="258" fill="#fff"/>`
+      + `<circle cx="697" cy="883" r="114" fill="#05060a"/><circle cx="1214" cy="883" r="114" fill="#05060a"/>`
+      + `<circle cx="955" cy="1096" r="124" fill="#ec2028"/><path d="M766 1254A191 191 0 0 0 1145 1254" fill="none" stroke="#05060a" stroke-width="84" stroke-linecap="round"/>`;
+    return s;
+  };
   const day = (iso) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toLowerCase();
   const myName = () => { try { return localStorage.getItem('scorsby-name') || ''; } catch { return ''; } };
   const reader = (() => { try { let k = localStorage.getItem('scorsby-reader'); if (!k) { k = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2); localStorage.setItem('scorsby-reader', k); } return k; } catch { return Math.random().toString(36).slice(2, 14); } })();
@@ -27,8 +37,8 @@
   function tri() {
     const s = document.createElementNS(NS, 'svg'); s.setAttribute('viewBox', '-50 -50 100 100'); s.setAttribute('class', 'c-tri'); s.setAttribute('role', 'img'); s.setAttribute('aria-label', 'samuel');
     const t = document.createElementNS(NS, 'title'); t.textContent = 'samuel, who writes here';
-    const p = document.createElementNS(NS, 'polygon'); p.setAttribute('points', '0,-40 34.641,20 -34.641,20'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor'); p.setAttribute('stroke-width', '8'); p.setAttribute('stroke-linejoin', 'round');
-    const d = document.createElementNS(NS, 'circle'); d.setAttribute('r', '7'); d.setAttribute('fill', 'currentColor');
+    const p = document.createElementNS(NS, 'polygon'); p.setAttribute('points', '0,-40 34.641,20 -34.641,20'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor'); p.setAttribute('stroke-width', '5.3'); p.setAttribute('stroke-linejoin', 'round');
+    const d = document.createElementNS(NS, 'circle'); d.setAttribute('r', '6'); d.setAttribute('fill', 'currentColor');
     s.append(t, p, d); return s;
   }
 
@@ -38,7 +48,7 @@
   async function load() {
     if (PREVIEW) { // (taken down on the moderation page, or taken back: those with replies keep their place)
       const list = previewList(), kids = new Set(list.filter((c) => !c.gone).map((c) => c.parent));
-      return list.filter((c) => !c.gone || (c.gone === 3 && kids.has(c.id))).map((c) => (c.gone ? { ...c, name: '', text: '' } : c));
+      return list.filter((c) => !c.gone || ((c.gone === 3 || c.gone === 4) && kids.has(c.id))).map((c) => (c.gone ? { ...c, name: '', text: '' } : c));
     }
     const r = await fetch(`${API}?post=${encodeURIComponent(post)}`).then((x) => x.json()).catch(() => null);
     return r && r.ok ? r.comments : null;
@@ -107,12 +117,12 @@
   function noteEl(c) {
     const el = document.createElement('div'); el.className = 'c-note'; el.dataset.id = c.id;
     if (c.gone) { // (taken back, with replies under it: just its place)
-      const q = document.createElement('p'); q.className = 'c-quiet c-gone'; q.textContent = '(a note its writer deleted)';
+      const q = document.createElement('p'); q.className = 'c-quiet c-gone'; q.textContent = c.gone === 4 ? "(a note that isn't here any more)" : '(a note its writer deleted)';
       const kids = document.createElement('div'); kids.className = 'c-kids';
       el.append(q, kids); return el;
     }
     const head = document.createElement('div'); head.className = 'c-head';
-    let dot = document.createElement('span'); dot.className = 'c-dot'; dot.style.background = colorOf(c.name);
+    let dot = faceOf(colorOf(c.name));
     if (c.me) { dot = tri(); el.classList.add('c-me'); }
     const who = document.createElement('b'); who.textContent = c.name ? `${c.name} scorsby` : 'someone';
     head.append(dot, who, ` · ${day(c.said)}`);

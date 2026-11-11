@@ -1498,5 +1498,146 @@
    "TNT Atlanta Radio (Vietnam), internet radio, Nov 9, 19:14 UTC"
   ],
   "heard_total": 49
+ },
+ {
+  "catalog": "ISA014",
+  "number": 14,
+  "title": "ISA014 Chile English",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-11",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-11T04:02+00:00",
+  "listened_hours": 24,
+  "length": 2173.05,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Chinese Granulate Gachsaran",
+    "duration": 196.17
+   },
+   {
+    "n": 2,
+    "title": "euforia x1.04",
+    "duration": 117.69
+   },
+   {
+    "n": 3,
+    "title": "Spanish Granulate música en español",
+    "duration": 93.49
+   },
+   {
+    "n": 4,
+    "title": "top 40 Lowpass hits",
+    "duration": 104.64
+   },
+   {
+    "n": 5,
+    "title": "Rule 99 Number music",
+    "duration": 743.06
+   },
+   {
+    "n": 6,
+    "title": "Austria 102.7 Granulate",
+    "duration": 184.75
+   },
+   {
+    "n": 7,
+    "title": "French Dream 1855 Room Fiesta",
+    "duration": 188.98
+   },
+   {
+    "n": 8,
+    "title": "√511 Serbian Apintie",
+    "duration": 182.79
+   },
+   {
+    "n": 9,
+    "title": "News Bit Rotate English hydrmes",
+    "duration": 226.03
+   },
+   {
+    "n": 10,
+    "title": "kbit Loop Phase",
+    "duration": 135.45
+   }
+  ],
+  "cover": "archive/covers/ISA014.jpg",
+  "cover_png": "archive/covers/ISA014.png",
+  "palette": [
+   "#7B24AE",
+   "#C834AE",
+   "#4E2E95",
+   "#331943",
+   "#F9F6FB"
+  ],
+  "seed": "1156457394499198437",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Dangdut2 (Indonesia), internet radio, Nov 11, 00:06 UTC",
+   "林州人民广播电台 (Honan, China), internet radio, Nov 10, 08:03 UTC",
+   "Radio Apintie (Suriname), internet radio, Nov 10, 10:03 UTC",
+   "Radio Gachsaran (Gachsaran, Islamic Republic Of Iran), internet radio, Nov 10, 13:18 UTC",
+   "Taraf România - Radio Petrecere (Romania), internet radio, Nov 10, 21:02 UTC",
+   "Pride FM (The United Kingdom Of Great Britain And Northern Ireland), internet radio, Nov 10, 22:03 UTC",
+   "lancaster - ck-flor, live microphone, Nov 10, 07:04 UTC",
+   "Radio Prača (Bosnia And Herzegovina), internet radio, Nov 10, 15:11 UTC",
+   "VAJ Prince Rupert Radio (E to WNA), 2054.0 kHz AM via 0-30 MHz SDR | Amherst, NH USA, Nov 11, 01:02 UTC",
+   "[nws0427",
+   "Radio Firenze 95.4 (Italy), 95.4 MHz FM, Nov 10, 06:03 UTC",
+   "Radio Europa, 5835.0 kHz AM via Wessex KiWi V1 - G8JNJ - 0-30MHz - South West UK, Nov 10, 19:02 UTC",
+   "96.6 SKY ABC RADIO (Riyadh, Saudi Arabia), 96.6 MHz FM, Nov 10, 21:02 UTC",
+   "RPC Radio (Panama), internet radio, Nov 10, 07:03 UTC",
+   "EUFORIA 98.5 (Parral) - 98.5 FM - XHJS-FM - VMedia Comunicaciones - Parral, Chihuahua (Parral, Chihuahua, Mexico), 98.5 MHz FM, Nov 11, 03:02 UTC",
+   "Radio América 104.5 FM (Ecuador), 104.5 MHz FM, Nov 10, 23:03 UTC",
+   "89.7 Bay (Malta), 89.7 MHz FM, Nov 10, 12:20 UTC",
+   "Hit Radio FFH - 90er (MP3) (Germany), internet radio, Nov 11, 03:04 UTC",
+   "Sun 91.1 (Anguilla), 91.1 MHz FM, Nov 10, 21:02 UTC",
+   "JUKEBOX 94.3 (Georgia), 94.3 MHz FM, Nov 10, 18:04 UTC",
+   "[ENDE292",
+   "Radio Comercial (Cabo Verde), internet radio, Nov 11, 01:04 UTC",
+   "101.5 Xe'ek (Mérida) - 101.5 FM - XHYK-FM - Península Studios - Mérida, Yucatán (Mérida, Yucatán, Mexico), 101.5 MHz FM, Nov 10, 04:03 UTC",
+   "KTAL-LP (New Mexico, The United States Of America), internet radio, Nov 10, 04:03 UTC",
+   "Radio La Red 102.1 FM (Pichincha, Ecuador), 102.1 MHz FM, Nov 11, 01:07 UTC",
+   "MIXTRAL.COM (France), internet radio, Nov 11, 02:02 UTC",
+   "gair wood - 001, live microphone, Nov 10, 14:05 UTC",
+   "Radio Activity (Italy), internet radio, Nov 10, 07:03 UTC",
+   "Radio Rama (salento, lecce, Italy), internet radio, Nov 10, 23:03 UTC",
+   "Leatherneck Jamboree Ole Number Nine (), archive, Nov 10, 23:04 UTC",
+   "radio.earth - kozmic, live microphone, Nov 10, 13:19 UTC",
+   "Radio Romania DIGITAL (I to SEu), 5955.0 kHz AM via 0-30 MHz SDR | Alcudia Mallorca España, Nov 10, 19:01 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz SDR | COVENTRY, TWP., OH, Nov 10, 05:03 UTC",
+   "stream - 083, live microphone, Nov 10, 23:04 UTC",
+   "RLM Bastia (France), internet radio, Nov 10, 23:03 UTC",
+   "Quran Radio راديو القرآن - Maher Al Mueaqly - ماهر المعيقلي (Kuwait City, Kuwait), internet radio, Nov 10, 12:20 UTC",
+   "Christopher Alvarado With Mystified- Mystical Recursion [treetrunk 325",
+   "Telerumination - Telerumination I (Telerumination, 2015), archive, 2015, Nov 11, 03:02 UTC",
+   "Radio Yar Plus2 (California, Islamic Republic Of Iran), internet radio, Nov 10, 17:03 UTC",
+   "Rádio Nova 98.9 FM (Porto, Portugal), 98.9 MHz FM, Nov 11, 03:02 UTC",
+   "Star 102.7 - Cairns - 102.7 FM (AAC+) (Queensland, Australia), 102.7 MHz FM, Nov 10, 08:03 UTC",
+   "Beirut Beats Station (Lebanon), internet radio, Nov 10, 07:03 UTC",
+   "FT8 data, 80 m, 3573.0 kHz USB via OE5SLN Web-SDR | Mehrnbach, Upper Austria, Austria, Nov 10, 06:02 UTC",
+   "Hard Times (Charles Dickens, 2007), archive, 2007, Nov 10, 22:04 UTC",
+   "The Far Reaches (Electricwest vs. Mise en Scene), archive, Nov 10, 17:04 UTC",
+   "Radio Bhumi (India), internet radio, Nov 10, 11:15 UTC",
+   "Romaradio IAR (I to SEu), 1855.0 kHz AM via 0-30 MHz SDR G8PFR | Ross-On-Wye, England, Nov 10, 20:02 UTC",
+   "NRJ Fiesta Latina (France), internet radio, Nov 11, 01:07 UTC",
+   "Radio I Have A Dream (France), internet radio, Nov 10, 20:04 UTC",
+   "Radio Quran (Egypt), internet radio, Nov 11, 00:06 UTC",
+   "Radio Šumadinac (Serbia), internet radio, Nov 10, 19:03 UTC",
+   "Easy Country (The United Arab Emirates), internet radio, Nov 11, 00:04 UTC",
+   "John Dene of Toronto; a Comedy of Whitehall (Herbert George Jenkins, 2012), archive, 2012, Nov 10, 19:03 UTC",
+   "To The Common Golfer (T. W. H. Crosland, 2017), archive, 2017, Nov 11, 02:03 UTC",
+   "losvilos - bodegon, live microphone, Nov 10, 15:11 UTC",
+   "Peterchens Mondfahrt (Gerdt von Bassewitz, 2006), archive, 2006, Nov 10, 18:04 UTC",
+   "The Casebook Of Gregory Hood 46 06 17 Murder Of Gregory Hood (), archive, Nov 10, 08:03 UTC",
+   "NBC News 1944-06-07 Brave Tomorrow (1944), archive, 1944, Nov 11, 03:02 UTC",
+   "amsterdam - hydrophile 5, live microphone, Nov 10, 06:04 UTC",
+   "Sumergido - Recuerdo De La Gravedad (en vivo) (Sumergido, 2012), archive, 2012, Nov 10, 21:04 UTC",
+   "Orcasound Lab hydrophone (the Salish Sea), live hydrophone, Nov 10, 14:05 UTC",
+   "Joce production fm (Curacao), internet radio, Nov 10, 10:03 UTC"
+  ],
+  "heard_total": 62
  }
 ]

@@ -55,7 +55,7 @@ const MAX_MARKS = 300;
 // tokens per second, burst
 const LIMITS = {
   move: [6, 12], all: [0.25, 1], blink: [2, 4], sing: [14, 20], hush: [2, 4],
-  color: [1, 4], poke: [3, 6], name: [1, 4], mark: [0.2, 4], say: [1 / 1.5, 6], hand: [1, 5], noticed: [1 / 60, 1], away: [1, 6], renote: [0.2, 4],
+  color: [1, 4], poke: [3, 6], name: [1, 4], mark: [0.2, 4], say: [1 / 1.5, 6], hand: [1, 5], noticed: [1 / 60, 1], away: [1, 6], renote: [0.2, 4], replant: [1, 8],
 };
 
 // strange things that happen to everyone at once
@@ -1031,6 +1031,17 @@ export class Hearth extends DurableObject {
         await this.ctx.storage.put('marks', marks);
         this.send(ws, { t: 'renoted', ok: true, id: mark.id });
         this.broadcast({ t: 'renote', id: mark.id, note: mark.note || '' });
+        break;
+      }
+      case 'replant': {
+        // the one who planted it moves it somewhere else (it keeps its age: moving doesn't make it last longer)
+        if (!num(m.lat) || !num(m.lon)) return;
+        const marks = await this.load('marks', MARK_LIFE);
+        const mark = marks.find((x) => x.id && x.id === m.id);
+        if (!mark || !me.o || mark.o !== me.o) return;
+        mark.lat = round(clamp(m.lat, -85, 85), 2); mark.lon = round(wrapLon(m.lon), 2);
+        await this.ctx.storage.put('marks', marks);
+        this.broadcast({ t: 'replant', id: mark.id, lat: mark.lat, lon: mark.lon });
         break;
       }
     }

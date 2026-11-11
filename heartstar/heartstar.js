@@ -3344,6 +3344,12 @@
         if (mk) { mk.note = String(m.note || '').slice(0, 100); if (mk.say) mk.say.text = mk.note; if (!mk.note) mk.say = null; }
         break;
       }
+      case 'replant': {
+        // a plant moved (by whoever planted it): unless it's the one you're carrying just now
+        const mk = marks.find((x) => x.id && x.id === m.id);
+        if (mk && Number.isFinite(m.lat) && Number.isFinite(m.lon) && pointer.plant !== mk) mk.v = vec(m.lat, m.lon);
+        break;
+      }
       case 'renoted':
         if (m.ok) whisper('your note is changed.', 2400);
         else { whisper(m.why || "that note couldn't be changed just now.", 3200); const mk = marks.find((x) => x.id === m.id); if (mk) { mk.note = mk.editFrom || ''; if (!mk.note) mk.say = null; } }
@@ -3617,7 +3623,9 @@
     Object.assign(pointer, { down: true, x: e.clientX, y: e.clientY, moved: 0, held: false, seen: e.pointerType === 'mouse' });
     const s = hit(e.clientX, e.clientY);
     pointer.onMe = s && s.mine;
-    pointer.part = s ? null : hitPart(e.clientX, e.clientY);
+    const pm = !s && hitMark(e.clientX, e.clientY);
+    pointer.plant = pm && pm.id && myPlants && pm.o === myPlants && !markMode ? pm : null; // (one of yours: it can be carried somewhere else)
+    pointer.part = s || pointer.plant ? null : hitPart(e.clientX, e.clientY);
     if (pointer.part) { const q = pull[pointer.part]; q.held = true; pointer.px0 = e.clientX - q.x; pointer.py0 = e.clientY - q.y; }
     if (pointer.onMe) holdTimer = setTimeout(() => { if (pointer.moved < 6) { pointer.held = true; loveEveryone(); } }, 650);
   });
@@ -3635,7 +3643,7 @@
     if (!pointer.down) {
       const s = hit(e.clientX, e.clientY);
       const mk = !s && hitMark(e.clientX, e.clientY); // (only a plant with a note answers the pointer)
-      cv.classList.toggle('pointing', !!(s || (mk && mk.note) || markMode || (sunAt.r && Math.hypot(e.clientX - sunAt.x, e.clientY - sunAt.y) < sunAt.r * 1.3) || hitPart(e.clientX, e.clientY) || hitSky(e.clientX, e.clientY) || hitMoon(e.clientX, e.clientY)));
+      cv.classList.toggle('pointing', !!(s || (mk && (mk.note || (mk.id && myPlants && mk.o === myPlants))) || markMode || (sunAt.r && Math.hypot(e.clientX - sunAt.x, e.clientY - sunAt.y) < sunAt.r * 1.3) || hitPart(e.clientX, e.clientY) || hitSky(e.clientX, e.clientY) || hitMoon(e.clientX, e.clientY)));
       if (mk && mk.note && e.pointerType === 'mouse') { hoverNote = mk; openNote(mk, 700); showTip(null); }
       else showTip(s);
       return;
@@ -3651,6 +3659,15 @@
       const d = Math.hypot(x, y), max = R * (ear ? 2.4 : 1.4); // (an ear can be pulled right down its side of the face)
       if (d > max) { x *= max / d; y *= max / d; }
       q.x = x; q.y = y; q.vx = q.vy = 0;
+      return;
+    }
+    if (pointer.plant) {
+      // carrying a plant of yours: it follows the pointer over the world (its note waits until it's set down)
+      const mk = pointer.plant, ll = unproject(e.clientX, e.clientY - mk.ss * 0.3);
+      if (editing === mk) endEdit(true);
+      mk.say = null;
+      if (ll) { mk.v = vec(ll[0], ll[1]); mk.carried = true; }
+      pointer.dragging = true; cv.classList.add('grabbing');
       return;
     }
     if (pointer.onMe && me) {
@@ -3693,6 +3710,14 @@
     view.idleAt = performance.now() + 5000;
     if (e.pointerType !== 'mouse') pointer.seen = false;
     if (pointer.onMe && pointer.moved >= 6) { sendMove(true); whisper(`you wandered to the ${side(me.v)} side.`, 2600, false); }
+    if (pointer.plant) {
+      const mk = pointer.plant; pointer.plant = null;
+      if (mk.carried) {
+        mk.carried = false; tone.blink();
+        if (net.live) send({ t: 'replant', id: mk.id, lat: latOf(mk.v), lon: lonOf(mk.v) });
+        if (!wasTap) return;
+      }
+    }
     if (!wasTap || e.type === 'pointercancel') return;
     tap(e.clientX, e.clientY, e.pointerType);
   };

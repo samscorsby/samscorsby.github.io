@@ -208,15 +208,18 @@ async function oneSweet(env) {
 }
 
 // the message as everyone will see it, or null if it can't be checked right now
-async function boinked(env, text) {
+async function boinked(env, text, keep = null) {
   const toks = text.replace(PHONE, ' boink ').split(' ').filter(Boolean);
-  const low = toks.map((t) => t.toLowerCase()); // (judged lowercase; kept as written)
+  // (judged lowercase; kept as written. words matching keep, like a comment's links set aside, are shown to the judge as
+  // an ordinary word and never boinked: the link itself was checked on its own)
+  const kept = toks.map((t) => !!(keep && keep.test(t)));
+  const low = toks.map((t, i) => (kept[i] ? 'this' : t.toLowerCase()));
   const fromList = listBoinks(low);
   const fromJudge = await judgeBoinks(env, low);
   if (!fromJudge) return null;
   const out = [];
   toks.forEach((t, i) => {
-    if (!(fromList[i] || fromJudge[i]) || t.toLowerCase() === 'boink') { out.push(t); return; }
+    if (kept[i] || !(fromList[i] || fromJudge[i]) || t.toLowerCase() === 'boink') { out.push(t); return; }
     const tail = (t.match(/[.,!?…]+$/u) || [''])[0];
     if (out.length && /^boink[.,!?…]*$/u.test(out[out.length - 1])) out[out.length - 1] = `boink${tail}`; // one boink per run
     else out.push(`boink${tail}`);
@@ -423,7 +426,7 @@ async function comments(request, env) {
   const tidy = tidySay(raw, COMMENT_MAX, true); // (comments keep their capitals)
   if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(tidy.replace(/linkhere\d/gi, ''))) return reply(400, { ok: false, why: 'try some words.' });
   if (!(await linksOk(env, links))) return reply(400, { ok: false, why: "that link can't come in. (no link shorteners, and nothing unsafe.)" });
-  const kind = await boinked(env, tidy);
+  const kind = await boinked(env, tidy, /^linkhere\d$/i);
   if (!kind) return reply(503, { ok: false, why: "the hearth couldn't check that one just now. try again soon." });
   const text = kind.replace(/linkhere(\d)/gi, (w, i) => links[+i] || '');
   // a reply goes under what it answers; deeper than three levels, it joins the third

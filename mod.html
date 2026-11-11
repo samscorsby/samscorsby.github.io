@@ -18,6 +18,9 @@
       #mod button:active { transform: translate(2px, 2px); box-shadow: none; }
       #mod .m-tabs { display: flex; gap: 8px; justify-content: center; margin: 0 0 1.4em; }
       #mod .m-tabs button[aria-pressed="true"] { background: #05060a; color: #fff; }
+      #mod .m-tools { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 0 0 1.4em; }
+      #mod .m-tools select, #mod .m-tools input { font: inherit; font-size: .85em; text-transform: lowercase; padding: 4px 8px; border: 1px solid #05060a; border-radius: 3px; background: #fff; max-width: 100%; }
+      #mod .m-tools input { width: 12em; }
       #mod .m-list { display: grid; gap: 14px; }
       #mod .m-note { border: 1px solid #05060a; border-radius: 3px; box-shadow: 3px 3px 0 #05060a; padding: 10px 12px; display: grid; gap: 6px; background: #fff; }
       #mod .m-note.gone { opacity: .5; box-shadow: none; border-style: dashed; }
@@ -40,7 +43,9 @@
     </main>
     <script>
       (() => {
-        const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname), PREVIEW = LOCAL || new URLSearchParams(location.search).has('preview');
+        // (on this computer it's a preview of the notes kept in this browser; ?live talks to the real hearth instead)
+        const q0 = new URLSearchParams(location.search), LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+        const PREVIEW = (LOCAL || q0.has('preview')) && !q0.has('live');
         const API = 'https://scorsby-hearth.samrobertsbaca.workers.dev/comments';
         const body = document.getElementById('m-body');
         const COLORS = ['#00b4ff', '#ff5fae', '#62d64a', '#ff9a3c', '#9b6bff', '#ffd23f', '#ff4d4d', '#e83ad8', '#b6f03a', '#ffb38a', '#7fd2ff', '#5b4cff'];
@@ -76,7 +81,9 @@
           body.innerHTML = `<p class="m-quiet">${why || 'this page is just for you. what is the key?'}</p><form class="m-key"><input type="password" autocomplete="current-password" placeholder="the key"><button>open</button></form>`;
           body.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); keySet(body.querySelector('input').value.trim()); show(); });
         }
-        let filter = 'shown';
+        // what you're looking at: which notes (up, taken down, flagged), on which post, in what order, matching what
+        const view = { tab: 'shown', post: '', sort: 'new', q: '' };
+        let notes = null;
         function words(text) {
           const frag = document.createDocumentFragment(); let last = 0;
           for (const m of text.matchAll(/\bhttps?:\/\/[^\s<>"'`]+/gi)) {
@@ -91,18 +98,41 @@
           body.innerHTML = '<p class="m-quiet">gathering the notes…</p>';
           const r = await all();
           if (!r.ok) { keySet(''); return askKey(r.why || "that key isn't right."); }
-          const notes = r.comments;
-          const shown = notes.filter((c) => !c.gone), gone = notes.filter((c) => c.gone);
-          document.getElementById('m-sub').textContent = `${shown.length} up, ${gone.length} taken down. newest first.${PREVIEW ? ' (a preview: the notes kept in this browser)' : ''}`;
+          notes = r.comments;
+          draw();
+        }
+        function draw() {
+          const up = notes.filter((c) => !c.gone), gone = notes.filter((c) => c.gone), flaggedOnes = notes.filter((c) => (c.flags || 0) > 0);
+          document.getElementById('m-sub').textContent = `${up.length} up, ${gone.length} taken down${flaggedOnes.length ? `, ${flaggedOnes.length} flagged` : ''}.${PREVIEW ? ' (a preview: the notes kept in this browser)' : ''}`;
           body.innerHTML = '';
+          // the tabs
           const tabs = document.createElement('div'); tabs.className = 'm-tabs';
-          for (const [k, label] of [['shown', `up (${shown.length})`], ['gone', `taken down (${gone.length})`]]) {
-            const b = document.createElement('button'); b.textContent = label; b.setAttribute('aria-pressed', filter === k);
-            b.addEventListener('click', () => { filter = k; show(); }); tabs.append(b);
+          for (const [k, label] of [['shown', `up (${up.length})`], ['gone', `taken down (${gone.length})`], ['flagged', `flagged (${flaggedOnes.length})`]]) {
+            const b = document.createElement('button'); b.textContent = label; b.setAttribute('aria-pressed', view.tab === k);
+            b.addEventListener('click', () => { view.tab = k; draw(); }); tabs.append(b);
           }
+          // which post, what order, and a search
+          const tools = document.createElement('div'); tools.className = 'm-tools';
+          const counts = new Map(); for (const c of notes) counts.set(c.post, (counts.get(c.post) || 0) + 1);
+          const postSel = document.createElement('select'); postSel.setAttribute('aria-label', 'which post');
+          postSel.append(new Option(`every post (${counts.size})`, ''));
+          for (const [p, n] of [...counts].sort((x, y) => y[0].localeCompare(x[0]))) postSel.append(new Option(`${titleOf(p)} (${n})`, p));
+          postSel.value = view.post; postSel.addEventListener('change', () => { view.post = postSel.value; draw(); });
+          const sortSel = document.createElement('select'); sortSel.setAttribute('aria-label', 'order');
+          for (const [v, l] of [['new', 'newest first'], ['old', 'oldest first'], ['flags', 'most flagged first'], ['post', 'by post, as they go']]) sortSel.append(new Option(l, v));
+          sortSel.value = view.sort; sortSel.addEventListener('change', () => { view.sort = sortSel.value; draw(); });
+          const search = document.createElement('input'); search.type = 'search'; search.placeholder = 'search'; search.value = view.q;
+          let t = 0; search.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { view.q = search.value; draw(); const s2 = body.querySelector('.m-tools input'); s2.focus(); s2.setSelectionRange(s2.value.length, s2.value.length); }, 200); });
+          tools.append(postSel, sortSel, search);
+          // the notes
+          const q = view.q.trim().toLowerCase();
+          let these = view.tab === 'shown' ? up : view.tab === 'gone' ? gone : flaggedOnes;
+          if (view.post) these = these.filter((c) => c.post === view.post);
+          if (q) these = these.filter((c) => c.text.toLowerCase().includes(q) || (c.name || 'someone').includes(q));
+          const order = { new: (a, b) => b.id - a.id, old: (a, b) => a.id - b.id, flags: (a, b) => (b.flags || 0) - (a.flags || 0) || b.id - a.id, post: (a, b) => a.post.localeCompare(b.post) || a.id - b.id }[view.sort];
+          these = [...these].sort(order);
           const list = document.createElement('div'); list.className = 'm-list';
-          const these = filter === 'shown' ? shown : gone;
-          if (!these.length) list.innerHTML = `<p class="m-quiet">${filter === 'shown' ? 'no notes yet.' : 'nothing taken down.'}</p>`;
+          if (!these.length) list.innerHTML = `<p class="m-quiet">${q || view.post ? 'nothing matches.' : view.tab === 'shown' ? 'no notes yet.' : view.tab === 'gone' ? 'nothing taken down.' : 'nothing flagged.'}</p>`;
           for (const c of these) {
             const el = document.createElement('div'); el.className = 'm-note' + (c.gone ? ' gone' : '');
             const post = document.createElement('div'); post.className = 'm-post';
@@ -121,7 +151,7 @@
             row.append(btn);
             el.append(post, head, p, row); list.append(el);
           }
-          body.append(tabs, list);
+          body.append(tabs, tools, list);
         }
         show();
       })();

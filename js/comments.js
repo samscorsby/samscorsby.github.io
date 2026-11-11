@@ -13,13 +13,16 @@
   const colorOf = (name) => { let h = 7; for (const ch of name || 'someone') h = (h * 31 + ch.codePointAt(0)) >>> 0; return name ? COLORS[h % COLORS.length] : '#c9c4bd'; };
   const day = (iso) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toLowerCase();
   const myName = () => { try { return localStorage.getItem('scorsby-name') || ''; } catch { return ''; } };
+  const reader = (() => { try { let k = localStorage.getItem('scorsby-reader'); if (!k) { k = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2); localStorage.setItem('scorsby-reader', k); } return k; } catch { return Math.random().toString(36).slice(2, 14); } })();
+  const flaggedKey = 'scorsby-flagged', flagged = () => { try { return new Set(JSON.parse(localStorage.getItem(flaggedKey) || '[]')); } catch { return new Set(); } };
+  const rememberFlag = (id) => { try { const f = flagged(); f.add(id); localStorage.setItem(flaggedKey, JSON.stringify([...f])); } catch {} };
   const rememberName = (n) => { try { if (n) localStorage.setItem('scorsby-name', n); } catch {} };
 
   // ---- where they're kept
   const previewKey = `scorsby-comments:${post}`;
   const previewList = () => { try { return JSON.parse(localStorage.getItem(previewKey) || '[]'); } catch { return []; } };
   async function load() {
-    if (PREVIEW) return previewList();
+    if (PREVIEW) return previewList().filter((c) => !c.gone); // (taken down on the moderation page)
     const r = await fetch(`${API}?post=${encodeURIComponent(post)}`).then((x) => x.json()).catch(() => null);
     return r && r.ok ? r.comments : null;
   }
@@ -33,6 +36,16 @@
     }
     return fetch(API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ post, ...note }) })
       .then((x) => x.json()).catch(() => ({ ok: false, why: 'that note got lost on the way. try again?' }));
+  }
+  async function flag(id) {
+    if (PREVIEW) {
+      // (in the preview, one browser is one reader, so a single flag counts as three: to see what happens)
+      const list = previewList(); for (const c of list) if (c.id === id) { c.flags = (c.flags || 0) + 3; if (c.flags >= 3 && !c.kept) c.gone = 2; }
+      try { localStorage.setItem(previewKey, JSON.stringify(list)); } catch {}
+      return { ok: true, hidden: true };
+    }
+    return fetch(`${API}/flag`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ post, id, who: reader }) })
+      .then((x) => x.json()).catch(() => ({ ok: false }));
   }
 
   // ---- drawing them
@@ -62,8 +75,21 @@
     const p = document.createElement('p'); p.className = 'c-words'; p.append(words(c.text));
     const reply = document.createElement('button'); reply.type = 'button'; reply.className = 'c-reply'; reply.textContent = 'reply';
     reply.addEventListener('click', () => openForm(el, c.id));
+    // "not kind?": asks once, then counts. enough different readers, and the note hides itself until samuel looks
+    const nk = document.createElement('button'); nk.type = 'button'; nk.className = 'c-flag';
+    const done = flagged().has(c.id);
+    nk.textContent = done ? 'noted' : 'not kind?'; nk.disabled = done;
+    nk.addEventListener('click', async () => {
+      if (!nk.dataset.sure) { nk.dataset.sure = '1'; nk.textContent = 'mark as not kind?'; return; }
+      nk.disabled = true; nk.textContent = '…';
+      const r = await flag(c.id);
+      if (!r || !r.ok) { nk.disabled = false; nk.textContent = 'try again'; return; }
+      rememberFlag(c.id); nk.textContent = r.hidden ? 'thanks. it is hidden now.' : 'thanks, noted.';
+      if (r.hidden) setTimeout(() => el.remove(), 1400);
+    });
+    const acts = document.createElement('div'); acts.className = 'c-acts'; acts.append(reply, nk);
     const kids = document.createElement('div'); kids.className = 'c-kids';
-    el.append(head, p, reply, kids);
+    el.append(head, p, acts, kids);
     return el;
   }
   function draw(list) {

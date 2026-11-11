@@ -343,16 +343,42 @@ async function linksOk(env, links) {
 async function commentsTable(env) {
   await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, post TEXT NOT NULL, parent INTEGER, depth INTEGER NOT NULL DEFAULT 0, name TEXT, text TEXT NOT NULL, said TEXT NOT NULL, gone INTEGER NOT NULL DEFAULT 0)').run();
   await env.LETTERS.prepare('CREATE INDEX IF NOT EXISTS comments_post ON comments (post)').run();
+  await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS comment_flags (comment INTEGER NOT NULL, who TEXT NOT NULL, PRIMARY KEY (comment, who))').run();
+  try { await env.LETTERS.prepare('ALTER TABLE comments ADD COLUMN kept INTEGER NOT NULL DEFAULT 0').run(); } catch {} // (samuel looked, and kept it up)
+}
+// three different readers marking a note "not kind" hide it (gone = 2, hidden by readers), until samuel looks. one he
+// has brought back stays up. a reader is a random token their browser keeps, and only a scrambled copy of it is kept
+const FLAGS_TO_HIDE = 3;
+async function scramble(s) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`scorsby-flags:${s}`));
+  return [...new Uint8Array(d)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 async function comments(request, env) {
   const url = new URL(request.url), origin = request.headers.get('Origin');
   const cors = {
     'access-control-allow-origin': origin || '*', 'access-control-allow-methods': 'GET, POST, OPTIONS',
-    'access-control-allow-headers': 'content-type', vary: 'Origin', 'content-type': 'application/json',
+    'access-control-allow-headers': 'content-type, x-key', vary: 'Origin', 'content-type': 'application/json',
   };
   const reply = (status, body) => new Response(JSON.stringify(body), { status, headers: cors });
   if (!env.LETTERS) return reply(503, { ok: false, why: "the comments aren't open yet." });
-  // (removing one: a private link only samuel has, with the key set as a secret on the hearth)
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  // samuel's side (the moderation page, scorsby.us/notes): every note, newest first, and taking one down or bringing it
+  // back. only with the key, which is set as a secret on the hearth (wrangler secret put COMMENTS_KEY)
+  const keyOk = () => env.COMMENTS_KEY && request.headers.get('x-key') === env.COMMENTS_KEY;
+  if (url.pathname === '/comments/all' || url.pathname === '/comments/mod') {
+    if (!allowed(origin, env, url.origin)) return reply(403, { ok: false, why: 'not from here.' });
+    if (!keyOk()) return reply(403, { ok: false, why: "that key isn't right." });
+    await commentsTable(env);
+    if (url.pathname === '/comments/all') {
+      const rows = await env.LETTERS.prepare('SELECT id, post, parent, depth, name, text, said, gone, kept, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments ORDER BY id DESC LIMIT 300').all();
+      return reply(200, { ok: true, comments: rows.results || [] });
+    }
+    let m; try { m = await request.json(); } catch { return reply(400, { ok: false, why: "that didn't arrive right." }); }
+    const id = parseInt(m.id, 10);
+    await env.LETTERS.prepare('UPDATE comments SET gone = ?1, kept = ?2 WHERE id = ?3').bind(m.gone ? 1 : 0, m.gone ? 0 : 1, id).run(); // (brought back: kept up, whatever flags come)
+    return reply(200, { ok: true, id, gone: !!m.gone });
+  }
+  // (removing one with a plain link, too: /comments/remove?id=12&key=...)
   if (url.pathname === '/comments/remove') {
     if (!env.COMMENTS_KEY || url.searchParams.get('key') !== env.COMMENTS_KEY) return new Response('not yours to remove.', { status: 403 });
     const id = parseInt(url.searchParams.get('id'), 10);
@@ -360,7 +386,6 @@ async function comments(request, env) {
     await env.LETTERS.prepare('UPDATE comments SET gone = 1 WHERE id = ?1').bind(id).run();
     return new Response(`removed comment ${id}.`, { headers: { 'content-type': 'text/plain; charset=utf-8' } });
   }
-  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
   if (!allowed(origin, env, url.origin)) return reply(403, { ok: false, why: 'not from here.' });
   await commentsTable(env);
   if (request.method === 'GET') {
@@ -371,6 +396,17 @@ async function comments(request, env) {
   }
   if (request.method !== 'POST') return reply(405, { ok: false, why: 'get or post only.' });
   const ip = request.headers.get('cf-connecting-ip') || '';
+  if (url.pathname === '/comments/flag') {
+    let f; try { f = await request.json(); } catch { return reply(400, { ok: false }); }
+    const id = parseInt(f.id, 10), who = String(f.who || '').replace(/[^a-z0-9]/gi, '').slice(0, 32);
+    if (!id || who.length < 8) return reply(400, { ok: false });
+    if (tooManyNotes(ip)) return reply(429, { ok: false, why: 'that is a lot. come back in a little while.' });
+    await env.LETTERS.prepare('INSERT OR IGNORE INTO comment_flags (comment, who) VALUES (?1, ?2)').bind(id, await scramble(who)).run();
+    const n = (await env.LETTERS.prepare('SELECT COUNT(*) AS n FROM comment_flags WHERE comment = ?1').bind(id).first())?.n || 0;
+    let hidden = false;
+    if (n >= FLAGS_TO_HIDE) hidden = ((await env.LETTERS.prepare('UPDATE comments SET gone = 2 WHERE id = ?1 AND gone = 0 AND kept = 0').bind(id).run()).meta?.changes || 0) > 0;
+    return reply(200, { ok: true, hidden });
+  }
   let m;
   try { m = await request.json(); } catch { return reply(400, { ok: false, why: "that didn't arrive right." }); }
   // a field people never see, and a note written faster than a person could: both mean a robot. it's told all is well.
@@ -409,7 +445,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/subscribe') return subscribe(request, env);
-    if (url.pathname === '/comments' || url.pathname === '/comments/remove') return comments(request, env);
+    if (url.pathname === '/comments' || url.pathname.startsWith('/comments/')) return comments(request, env);
     // just the numbers, for the other pages' corners: how many scorsbys are here, and today's love. nobody joins.
     if (url.pathname === '/status') {
       // (each copy of this worker remembers the answer for 15 seconds, so readers barely touch the lobby)

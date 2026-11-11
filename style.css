@@ -564,6 +564,10 @@ nav.world-nav.scrolled { box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25); }
 .c-words a { text-decoration: underline; text-transform: none; } /* (a link keeps its capitals: some addresses need them) */
 .c-host { opacity: .55; font-size: .85em; }
 .c-reply { justify-self: start; font-size: .75em; padding: 1px 8px; box-shadow: 1px 1px 0 #05060a; }
+.c-acts { display: flex; align-items: center; gap: 10px; }
+.c-flag { font: inherit; font-size: .72em; text-transform: lowercase; background: none; border: none; padding: 0; color: inherit; opacity: .45; cursor: pointer; text-decoration: underline dotted; }
+.c-flag:hover { opacity: .8; }
+.c-flag:disabled { cursor: default; text-decoration: none; }
 .c-kids { display: grid; gap: 1em; margin-left: 14px; padding-left: 12px; border-left: 1px dashed rgba(5, 6, 10, .3); }
 .c-kids:empty { display: none; }
 .c-note > .c-form { margin: 6px 0 4px; }

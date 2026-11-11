@@ -544,7 +544,7 @@ nav.world-nav.scrolled { box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25); }
   font: inherit; font-size: .92em; text-transform: lowercase; color: inherit; background: #fff;
   border: 1px solid #05060a; border-radius: 3px; padding: 6px 8px; outline: none; box-sizing: border-box;
 }
-.c-form textarea { width: 100%; resize: vertical; line-height: 1.45; }
+.c-form textarea { width: 100%; resize: vertical; line-height: 1.45; text-transform: none; } /* (what you type, as you type it) */
 .c-form input:focus, .c-form textarea:focus { box-shadow: 2px 2px 0 #05060a; }
 .c-form .c-row { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
 .c-form .c-said { font-size: .8em; opacity: .7; }
@@ -560,7 +560,7 @@ nav.world-nav.scrolled { box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25); }
 .c-head { font-size: .82em; opacity: .75; display: flex; align-items: center; gap: 6px; }
 .c-head b { font-weight: normal; opacity: 1; }
 .c-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #05060a; flex: none; }
-.c-words { margin: 0; line-height: 1.55; overflow-wrap: anywhere; }
+.c-words { margin: 0; line-height: 1.55; overflow-wrap: anywhere; text-transform: none; } /* (as written, capitals and all) */
 .c-words a { text-decoration: underline; text-transform: none; } /* (a link keeps its capitals: some addresses need them) */
 .c-host { opacity: .55; font-size: .85em; }
 .c-reply { justify-self: start; font-size: .75em; padding: 1px 8px; box-shadow: 1px 1px 0 #05060a; }

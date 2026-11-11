@@ -30,7 +30,7 @@
     if (PREVIEW) {
       const list = previewList(), up = note.parent != null ? list.find((c) => c.id === note.parent) : null;
       const depth = up ? Math.min(2, up.depth + 1) : 0, parent = up ? (up.depth >= 2 ? up.parent : up.id) : null;
-      const c = { id: Date.now(), parent, depth, name: (note.name || '').toLowerCase().slice(0, 16), text: note.text.slice(0, 600), said: new Date().toISOString() };
+      const c = { id: Date.now(), parent, depth, name: (note.name || '').toLowerCase().slice(0, 16), text: note.text.slice(0, 600) /* (as written) */, said: new Date().toISOString() };
       list.push(c); try { localStorage.setItem(previewKey, JSON.stringify(list)); } catch {}
       return { ok: true, comment: c };
     }

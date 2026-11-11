@@ -85,11 +85,11 @@ const unleet = (t) => [...t].map((ch) => LEET[ch] ?? ch).join('');
 const squeeze = (t) => t.replace(/(.)\1+/g, '$1');
 const lettersOf = (t) => unleet(t).replace(/[^\p{L}]/gu, '');
 
-function tidySay(raw, max = SAY_MAX) {
+function tidySay(raw, max = SAY_MAX, keepCase = false) {
   return String(raw ?? '')
     .normalize('NFKC')
     .replace(/[^\p{L}\p{N}\p{P}\p{Zs}\p{Extended_Pictographic}♥❤️<>=~^+$|€]/gu, '') // no invisible or control characters
-    .replace(/\s+/g, ' ').trim().toLowerCase().slice(0, max);
+    .replace(/\s+/g, ' ').trim()[keepCase ? 'toString' : 'toLowerCase']().slice(0, max);
 }
 
 // links, handles and emails don't travel either
@@ -210,12 +210,13 @@ async function oneSweet(env) {
 // the message as everyone will see it, or null if it can't be checked right now
 async function boinked(env, text) {
   const toks = text.replace(PHONE, ' boink ').split(' ').filter(Boolean);
-  const fromList = listBoinks(toks);
-  const fromJudge = await judgeBoinks(env, toks);
+  const low = toks.map((t) => t.toLowerCase()); // (judged lowercase; kept as written)
+  const fromList = listBoinks(low);
+  const fromJudge = await judgeBoinks(env, low);
   if (!fromJudge) return null;
   const out = [];
   toks.forEach((t, i) => {
-    if (!(fromList[i] || fromJudge[i]) || t === 'boink') { out.push(t); return; }
+    if (!(fromList[i] || fromJudge[i]) || t.toLowerCase() === 'boink') { out.push(t); return; }
     const tail = (t.match(/[.,!?…]+$/u) || [''])[0];
     if (out.length && /^boink[.,!?…]*$/u.test(out[out.length - 1])) out[out.length - 1] = `boink${tail}`; // one boink per run
     else out.push(`boink${tail}`);
@@ -419,12 +420,12 @@ async function comments(request, env) {
   const raw = String(m.text || '').normalize('NFKC').slice(0, COMMENT_MAX + 400)
     .replace(URL_RE, (u) => { links.push(u.replace(/[.,!?;:)\]]+$/, '')); return ` linkhere${links.length - 1} `; });
   if (links.length > COMMENT_LINKS) return reply(400, { ok: false, why: 'two links at most, please.' });
-  const tidy = tidySay(raw, COMMENT_MAX);
-  if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(tidy.replace(/linkhere\d/g, ''))) return reply(400, { ok: false, why: 'try some words.' });
+  const tidy = tidySay(raw, COMMENT_MAX, true); // (comments keep their capitals)
+  if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(tidy.replace(/linkhere\d/gi, ''))) return reply(400, { ok: false, why: 'try some words.' });
   if (!(await linksOk(env, links))) return reply(400, { ok: false, why: "that link can't come in. (no link shorteners, and nothing unsafe.)" });
   const kind = await boinked(env, tidy);
   if (!kind) return reply(503, { ok: false, why: "the hearth couldn't check that one just now. try again soon." });
-  const text = kind.replace(/linkhere(\d)/g, (w, i) => links[+i] || '');
+  const text = kind.replace(/linkhere(\d)/gi, (w, i) => links[+i] || '');
   // a reply goes under what it answers; deeper than three levels, it joins the third
   let parent = null, depth = 0;
   if (m.parent != null) {
@@ -437,11 +438,40 @@ async function comments(request, env) {
   return reply(200, { ok: true, boinked: kind !== tidy, comment: { id: r.meta?.last_row_id, parent, depth, name, text, said } });
 }
 
+// once a week (monday morning), a letter to samuel with the week's new comments, if there were any: each with its post,
+// and the moderation page's address. sent through resend (RESEND_KEY), to MOD_EMAIL: both set as secrets on the hearth
+async function weeklyNotes(env) {
+  if (!env.LETTERS || !env.RESEND_KEY || !env.MOD_EMAIL) return;
+  await commentsTable(env);
+  const since = new Date(Date.now() - 7 * 864e5).toISOString();
+  const rows = (await env.LETTERS.prepare('SELECT id, post, depth, name, text, said, gone, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments WHERE said >= ?1 ORDER BY post, id').bind(since).all()).results || [];
+  if (!rows.length) return; // (a quiet week: no letter)
+  const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const title = (p) => p.replace(/^\d{4}-\d{2}-\d{2}_?/, '').replace(/_/g, ' ');
+  const posts = [...new Set(rows.map((r) => r.post))];
+  const hidden = rows.filter((r) => r.gone).length;
+  let html = `<div style="font-family:ui-monospace,Menlo,Consolas,monospace;max-width:620px;color:#05060a">`
+    + `<p>${rows.length} new note${rows.length === 1 ? '' : 's'} on the blog this week, on ${posts.length} post${posts.length === 1 ? '' : 's'}${hidden ? ` (${hidden} hidden)` : ''}.</p>`;
+  for (const p of posts) {
+    html += `<h3 style="font-weight:normal;margin:1.4em 0 .4em"><a href="https://scorsby.us/blog/${encodeURIComponent(p)}.html#comments">${esc(title(p))}</a></h3>`;
+    for (const r of rows.filter((x) => x.post === p)) {
+      const tag = r.gone === 2 ? ' · hidden by readers' : r.gone ? ' · taken down' : r.flags ? ` · ${r.flags} flagged it` : '';
+      html += `<p style="margin:.5em 0 .5em ${r.depth * 16}px"><span style="opacity:.6">${esc(r.name ? r.name + ' scorsby' : 'someone')}${r.depth ? ' · a reply' : ''}${tag}</span><br>${esc(r.text)}</p>`;
+    }
+  }
+  html += `<p style="margin-top:1.6em"><a href="https://scorsby.us/mod">take one down, or bring one back</a></p></div>`;
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST', headers: { authorization: `Bearer ${env.RESEND_KEY}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ from: env.MOD_FROM || 'world of scorsby <onboarding@resend.dev>', to: [env.MOD_EMAIL], subject: `${rows.length} new note${rows.length === 1 ? '' : 's'} on the blog this week`, html }),
+  }).catch((e) => console.warn('weekly letter could not be sent:', e?.message));
+}
+
 const lobby = (env) => env.LOBBY.get(env.LOBBY.idFromName('lobby'));
 let picked = null; // this worker's last answer from the lobby
 let statusSeen = null; // and the last numbers it gave the other pages
 
 export default {
+  async scheduled(event, env, ctx) { ctx.waitUntil(weeklyNotes(env)); }, // (monday mornings: the week's notes, to samuel)
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/subscribe') return subscribe(request, env);

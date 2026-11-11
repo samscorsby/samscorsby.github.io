@@ -560,6 +560,10 @@ nav.world-nav.scrolled { box-shadow: 0 2px 0 rgba(29, 26, 94, 0.25); }
 .c-head { font-size: .82em; opacity: .75; display: flex; align-items: center; gap: 6px; }
 .c-head b { font-weight: normal; opacity: 1; }
 .c-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #05060a; flex: none; }
+/* samuel's own notes: the turning triangle, with the point at its center */
+.c-tri { width: 14px; height: 14px; flex: none; overflow: visible; color: #05060a; animation: c-tri 12s linear infinite; }
+@keyframes c-tri { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .c-tri { animation: none; } }
 .c-words { margin: 0; line-height: 1.55; overflow-wrap: anywhere; text-transform: none; } /* (as written, capitals and all) */
 .c-words a { text-decoration: underline; text-transform: none; } /* (a link keeps its capitals: some addresses need them) */
 .c-host { opacity: .55; font-size: .85em; }

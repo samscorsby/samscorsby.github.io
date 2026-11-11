@@ -2130,7 +2130,7 @@
       c.globalAlpha = show * fade * Math.min(1, pz * 3) * (0.55 + 0.45 * meadow);
       doodleCached(m.k === 'head' ? 'scorsby' : m.k, px, py - ds * 0.3 * big, ds * big, m.seed, now, 1.32);
       m.sx = px; m.sy = py - ds * 0.3 * big; m.ss = ds * big;
-      if (m.say) drawNoteOf(m, now); // (its note, if it's open, at the plant's own depth: lower plants and the scorsbys go over it)
+      if (m.say) { const a = c.globalAlpha; drawLast.push(() => { c.globalAlpha = a; drawNoteOf(m, now); }); } // (its note, if it's open, in front of everything: scorsbys never cover it)
     }
     for (const g of found) {
       const [px, py, pz] = project(...g.v);

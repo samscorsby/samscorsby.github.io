@@ -349,6 +349,7 @@ async function commentsTable(env) {
   await env.LETTERS.prepare('CREATE INDEX IF NOT EXISTS comments_post ON comments (post)').run();
   await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS comment_flags (comment INTEGER NOT NULL, who TEXT NOT NULL, PRIMARY KEY (comment, who))').run();
   try { await env.LETTERS.prepare('ALTER TABLE comments ADD COLUMN kept INTEGER NOT NULL DEFAULT 0').run(); } catch {} // (samuel looked, and kept it up)
+  try { await env.LETTERS.prepare('ALTER TABLE comments ADD COLUMN me INTEGER NOT NULL DEFAULT 0').run(); } catch {} // (samuel wrote it: posted with the key)
 }
 // three different readers marking a note "not kind" hide it (gone = 2, hidden by readers), until samuel looks. one he
 // has brought back stays up. a reader is a random token their browser keeps, and only a scrambled copy of it is kept
@@ -374,7 +375,7 @@ async function comments(request, env) {
     if (!keyOk()) return reply(403, { ok: false, why: "that key isn't right." });
     await commentsTable(env);
     if (url.pathname === '/comments/all') {
-      const rows = await env.LETTERS.prepare('SELECT id, post, parent, depth, name, text, said, gone, kept, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments ORDER BY id DESC LIMIT 300').all();
+      const rows = await env.LETTERS.prepare('SELECT id, post, parent, depth, name, text, said, gone, kept, me, (SELECT COUNT(*) FROM comment_flags f WHERE f.comment = comments.id) AS flags FROM comments ORDER BY id DESC LIMIT 300').all();
       return reply(200, { ok: true, comments: rows.results || [] });
     }
     let m; try { m = await request.json(); } catch { return reply(400, { ok: false, why: "that didn't arrive right." }); }
@@ -395,7 +396,7 @@ async function comments(request, env) {
   if (request.method === 'GET') {
     const post = url.searchParams.get('post') || '';
     if (!POST_RE.test(post)) return reply(400, { ok: false, why: 'which post?' });
-    const rows = await env.LETTERS.prepare('SELECT id, parent, depth, name, text, said FROM comments WHERE post = ?1 AND gone = 0 ORDER BY id LIMIT 500').bind(post).all();
+    const rows = await env.LETTERS.prepare('SELECT id, parent, depth, name, text, said, me FROM comments WHERE post = ?1 AND gone = 0 ORDER BY id LIMIT 500').bind(post).all();
     return reply(200, { ok: true, comments: rows.results || [] });
   }
   if (request.method !== 'POST') return reply(405, { ok: false, why: 'get or post only.' });
@@ -436,9 +437,10 @@ async function comments(request, env) {
     if (!up) return reply(400, { ok: false, why: "the note you're answering isn't here any more." });
     if (up.depth >= COMMENT_DEPTH) { parent = up.parent; depth = up.depth; } else { parent = up.id; depth = up.depth + 1; }
   }
-  const name = cleanName(m.name), said = new Date().toISOString();
-  const r = await env.LETTERS.prepare('INSERT INTO comments (post, parent, depth, name, text, said) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(post, parent, depth, name, text, said).run();
-  return reply(200, { ok: true, boinked: kind !== tidy, comment: { id: r.meta?.last_row_id, parent, depth, name, text, said } });
+  // (written with the key: it's samuel's, it wears his mark, and readers' flags can't hide it)
+  const name = cleanName(m.name), said = new Date().toISOString(), me = keyOk() ? 1 : 0;
+  const r = await env.LETTERS.prepare('INSERT INTO comments (post, parent, depth, name, text, said, me, kept) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)').bind(post, parent, depth, name, text, said, me).run();
+  return reply(200, { ok: true, boinked: kind !== tidy, comment: { id: r.meta?.last_row_id, parent, depth, name, text, said, me } });
 }
 
 // once a week (monday morning), a letter to samuel with the week's new comments, if there were any: each with its post,

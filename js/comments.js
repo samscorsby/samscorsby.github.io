@@ -17,6 +17,17 @@
   const flaggedKey = 'scorsby-flagged', flagged = () => { try { return new Set(JSON.parse(localStorage.getItem(flaggedKey) || '[]')); } catch { return new Set(); } };
   const rememberFlag = (id) => { try { const f = flagged(); f.add(id); localStorage.setItem(flaggedKey, JSON.stringify([...f])); } catch {} };
   const rememberName = (n) => { try { if (n) localStorage.setItem('scorsby-name', n); } catch {} };
+  // (samuel's browser holds the moderation key: what he writes here goes with it, and wears his mark)
+  const modKey = () => { try { return localStorage.getItem('scorsby-notes-key') || ''; } catch { return ''; } };
+  // his mark: the turning triangle, with the point at its center
+  const NS = 'http://www.w3.org/2000/svg';
+  function tri() {
+    const s = document.createElementNS(NS, 'svg'); s.setAttribute('viewBox', '-50 -50 100 100'); s.setAttribute('class', 'c-tri'); s.setAttribute('role', 'img'); s.setAttribute('aria-label', 'samuel');
+    const t = document.createElementNS(NS, 'title'); t.textContent = 'samuel, who writes here';
+    const p = document.createElementNS(NS, 'polygon'); p.setAttribute('points', '0,-40 34.641,20 -34.641,20'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor'); p.setAttribute('stroke-width', '8'); p.setAttribute('stroke-linejoin', 'round');
+    const d = document.createElementNS(NS, 'circle'); d.setAttribute('r', '7'); d.setAttribute('fill', 'currentColor');
+    s.append(t, p, d); return s;
+  }
 
   // ---- where they're kept
   const previewKey = `scorsby-comments:${post}`;
@@ -30,11 +41,12 @@
     if (PREVIEW) {
       const list = previewList(), up = note.parent != null ? list.find((c) => c.id === note.parent) : null;
       const depth = up ? Math.min(2, up.depth + 1) : 0, parent = up ? (up.depth >= 2 ? up.parent : up.id) : null;
-      const c = { id: Date.now(), parent, depth, name: (note.name || '').toLowerCase().slice(0, 16), text: note.text.slice(0, 600) /* (as written) */, said: new Date().toISOString() };
+      const c = { id: Date.now(), parent, depth, name: (note.name || '').toLowerCase().slice(0, 16), text: note.text.slice(0, 600) /* (as written) */, said: new Date().toISOString(), me: modKey() ? 1 : 0 };
       list.push(c); try { localStorage.setItem(previewKey, JSON.stringify(list)); } catch {}
       return { ok: true, comment: c };
     }
-    return fetch(API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ post, ...note }) })
+    const headers = { 'content-type': 'application/json' }; if (modKey()) headers['x-key'] = modKey();
+    return fetch(API, { method: 'POST', headers, body: JSON.stringify({ post, ...note }) })
       .then((x) => x.json()).catch(() => ({ ok: false, why: 'that note got lost on the way. try again?' }));
   }
   async function flag(id) {
@@ -69,7 +81,8 @@
   function noteEl(c) {
     const el = document.createElement('div'); el.className = 'c-note'; el.dataset.id = c.id;
     const head = document.createElement('div'); head.className = 'c-head';
-    const dot = document.createElement('span'); dot.className = 'c-dot'; dot.style.background = colorOf(c.name);
+    let dot = document.createElement('span'); dot.className = 'c-dot'; dot.style.background = colorOf(c.name);
+    if (c.me) { dot = tri(); el.classList.add('c-me'); }
     const who = document.createElement('b'); who.textContent = c.name ? `${c.name} scorsby` : 'someone';
     head.append(dot, who, ` · ${day(c.said)}`);
     const p = document.createElement('p'); p.className = 'c-words'; p.append(words(c.text));

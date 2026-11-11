@@ -1,3 +1,3 @@
-### the pixel bazaar
+### scorsby's hum of warmth and wonder
 
-scorsby, nebula-smile, "sold" his joy-spark. "rrombo dombo di di dai!" he hummed. merchant exchanged laughs. grumbleford, frown-code, 'sold' algorithms, got lag. grumbleford 'drowned' scorsby. glowing, scorsby whispered "rrombo dombo di di dai, for deep waves hold new beginnings!" to emoji-swarm, swapped. scorsby returned, good vibes 'fished' from deep. grumbleford plunged, chasing glong-riches.
+scorsby, grinning, taught the moon-piper’s daughter to warm her pipe with a hum: "rrombo dombo di di dai!" when her father shivered, she offered to warm *him* similarly. an elder, watching, later congratulated a mourner on their 'fine heat-sharing' at a solemn gathering, causing universal bright-eyed confusion.

@@ -3869,13 +3869,22 @@
   // out of the shrinking page, and step back in when you return
   const zoomBox = document.getElementById('zoom'), zoomHome = zoomBox.nextSibling;
   let zoomBoxAt = null;
-  // in the void the world is too small to scroll or pinch on, so the whole page listens (only while you're there)
+  // in the void the world is too small to scroll or pinch on, so the whole page listens (only while you're there). and
+  // a trackpad pinch anywhere at all (over the header, a button, the words) zooms the world, never the page: the page
+  // itself zoomed in pushes the buttons off the edges
   addEventListener('wheel', (e) => {
-    if (voidZ === 1 || e.target === cv) return;
+    if (e.target === cv || (voidZ === 1 && !e.ctrlKey)) return;
     e.preventDefault();
     const k = e.ctrlKey ? 0.012 : e.deltaMode === 0 && Math.abs(e.deltaY) < 50 ? 0.006 : 0.0016;
     setTotalZoom(totalZoom() * Math.exp(-(e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY) * k));
   }, { passive: false });
+  // (safari's own pinch: the page never zooms; the world does)
+  // (if the same pinch also arrives as ctrl-wheel steps, those already zoom the world, so the gesture only stops the page)
+  let gesture0 = null, pinchWheelAt = -1e9;
+  addEventListener('wheel', (e) => { if (e.ctrlKey) pinchWheelAt = performance.now(); }, { capture: true, passive: true });
+  addEventListener('gesturestart', (e) => { e.preventDefault(); gesture0 = totalZoom(); }, { passive: false });
+  addEventListener('gesturechange', (e) => { e.preventDefault(); if (gesture0 && e.scale && performance.now() - pinchWheelAt > 300) setTotalZoom(gesture0 * e.scale); }, { passive: false });
+  addEventListener('gestureend', (e) => { e.preventDefault(); gesture0 = null; }, { passive: false });
   let voidPinch = null;
   const span = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
   addEventListener('touchstart', (e) => { if (voidZ < 1 && e.touches.length === 2 && e.target !== cv) voidPinch = { d: span(e.touches), z: totalZoom() }; }, { passive: true });

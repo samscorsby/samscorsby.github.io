@@ -82,7 +82,7 @@
           body.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); keySet(body.querySelector('input').value.trim()); show(); });
         }
         // what you're looking at: which notes (up, taken down, flagged), on which post, in what order, matching what
-        const view = { tab: 'shown', post: '', sort: 'new', q: '' };
+        const view = { tab: 'shown', post: '', sort: 'new', q: '', when: 'any', from: '', to: '' }; // (when: any, day, week, month, or a range from/to)
         let notes = null;
         function words(text) {
           const frag = document.createDocumentFragment(); let last = 0;
@@ -123,16 +123,34 @@
           sortSel.value = view.sort; sortSel.addEventListener('change', () => { view.sort = sortSel.value; draw(); });
           const search = document.createElement('input'); search.type = 'search'; search.placeholder = 'search'; search.value = view.q;
           let t = 0; search.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { view.q = search.value; draw(); const s2 = body.querySelector('.m-tools input'); s2.focus(); s2.setSelectionRange(s2.value.length, s2.value.length); }, 200); });
-          tools.append(postSel, sortSel, search);
+          // when: any time, the past day, week or month, or between two dates
+          const whenSel = document.createElement('select'); whenSel.setAttribute('aria-label', 'when');
+          for (const [v, l] of [['any', 'any time'], ['day', 'the past day'], ['week', 'the past week'], ['month', 'the past month'], ['range', 'between dates…']]) whenSel.append(new Option(l, v));
+          whenSel.value = view.when; whenSel.addEventListener('change', () => { view.when = whenSel.value; draw(); });
+          tools.append(postSel, sortSel, whenSel, search);
+          if (view.when === 'range') {
+            for (const k of ['from', 'to']) {
+              const d = document.createElement('input'); d.type = 'date'; d.value = view[k]; d.setAttribute('aria-label', k); d.title = k;
+              d.addEventListener('change', () => { view[k] = d.value; draw(); });
+              tools.append(d);
+            }
+          }
           // the notes
           const q = view.q.trim().toLowerCase();
           let these = view.tab === 'shown' ? up : view.tab === 'gone' ? gone : flaggedOnes;
           if (view.post) these = these.filter((c) => c.post === view.post);
           if (q) these = these.filter((c) => c.text.toLowerCase().includes(q) || (c.name || 'someone').includes(q));
+          // (by when it was left: the past day, week or month, or from one day to another, both days included, in your own time)
+          const ago = { day: 864e5, week: 7 * 864e5, month: 30 * 864e5 }[view.when];
+          if (ago) these = these.filter((c) => Date.now() - new Date(c.said) <= ago);
+          if (view.when === 'range') {
+            const from = view.from ? new Date(`${view.from}T00:00:00`) : null, to = view.to ? new Date(`${view.to}T23:59:59.999`) : null;
+            these = these.filter((c) => { const t = new Date(c.said); return (!from || t >= from) && (!to || t <= to); });
+          }
           const order = { new: (a, b) => b.id - a.id, old: (a, b) => a.id - b.id, flags: (a, b) => (b.flags || 0) - (a.flags || 0) || b.id - a.id, post: (a, b) => a.post.localeCompare(b.post) || a.id - b.id }[view.sort];
           these = [...these].sort(order);
           const list = document.createElement('div'); list.className = 'm-list';
-          if (!these.length) list.innerHTML = `<p class="m-quiet">${q || view.post ? 'nothing matches.' : view.tab === 'shown' ? 'no notes yet.' : view.tab === 'gone' ? 'nothing taken down.' : 'nothing flagged.'}</p>`;
+          if (!these.length) list.innerHTML = `<p class="m-quiet">${q || view.post || view.when !== 'any' ? 'nothing matches.' : view.tab === 'shown' ? 'no notes yet.' : view.tab === 'gone' ? 'nothing taken down.' : 'nothing flagged.'}</p>`;
           for (const c of these) {
             const el = document.createElement('div'); el.className = 'm-note' + (c.gone ? ' gone' : '');
             const post = document.createElement('div'); post.className = 'm-post';

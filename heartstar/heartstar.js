@@ -3922,9 +3922,9 @@
     editing = null; noteEd.hidden = true; noteEd.blur(); view.idleAt = performance.now() + 3000;
     const note = noteEd.value.replace(/\s+/g, ' ').trim().slice(0, 100);
     const fade = (ms) => { if (!mk.note) { mk.say = null; return; } if (!mk.say) openNote(mk, ms); mk.say.text = mk.note; mk.say.until = performance.now() + ms; }; // (it was held open while you wrote: now it fades)
-    if (!keep || note === mk.editFrom) { mk.note = mk.editFrom; fade(3000); return; }
+    if (!keep || note === mk.editFrom) { mk.note = mk.editFrom; fade(2000); return; }
     mk.note = note.toLowerCase(); // (shown right away; the hearth checks it, and everyone sees what it keeps)
-    fade(3000);
+    fade(2000);
     if (net.live) send({ t: 'renote', id: mk.id, note });
     else whisper(mk.note ? 'your note is changed.' : 'your note is gone.', 2400);
   }

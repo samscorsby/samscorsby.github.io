@@ -1,3 +1,3 @@
-### scorsby's hum of warmth and wonder
+### the wrench's whisper
 
-scorsby, grinning, taught the moon-piper’s daughter to warm her pipe with a hum: "rrombo dombo di di dai!" when her father shivered, she offered to warm *him* similarly. an elder, watching, later congratulated a mourner on their 'fine heat-sharing' at a solemn gathering, causing universal bright-eyed confusion.
+barnaby, a smile-numskull, brooded on his imaginary left-handed wrench. scorsby, pure laughter, shared pip's honey. *pop!* barnaby's shadow. pip, elastic shimmer, hid scorsby beneath a quilt. "wrench hatch, sweet?" barnaby beamed. pip kissed his good eye: "dream! your blind eye gleams!" "glong-shai!" boomed scorsby from quilt, "non-things *truly* are!" he wasn't.

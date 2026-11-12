@@ -1639,5 +1639,120 @@
    "Joce production fm (Curacao), internet radio, Nov 10, 10:03 UTC"
   ],
   "heard_total": 62
+ },
+ {
+  "catalog": "ISA015",
+  "number": 15,
+  "title": "ISA015 Flooto 5450",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-12",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-12T04:02+00:00",
+  "listened_hours": 22,
+  "length": 1987.08,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Ancient 40 Integrate 24915 sport",
+    "duration": 293.93
+   },
+   {
+    "n": 2,
+    "title": "5448 Accumulation float32 be's Spanish",
+    "duration": 374.4
+   },
+   {
+    "n": 3,
+    "title": "New Lowpass Shuffle English",
+    "duration": 256.67
+   },
+   {
+    "n": 4,
+    "title": "Morley Kyoto",
+    "duration": 111.79
+   },
+   {
+    "n": 5,
+    "title": "Overflow data music",
+    "duration": 649.33
+   },
+   {
+    "n": 6,
+    "title": "Gate 5450 music UK",
+    "duration": 89.01
+   },
+   {
+    "n": 7,
+    "title": "Lowpass public radio Channel",
+    "duration": 147.4
+   },
+   {
+    "n": 8,
+    "title": "Backwash Sort Noise",
+    "duration": 64.55
+   }
+  ],
+  "cover": "archive/covers/ISA015.jpg",
+  "cover_png": "archive/covers/ISA015.png",
+  "palette": [
+   "#B42B7E",
+   "#C74070",
+   "#9A3581",
+   "#451B34",
+   "#FAF6F9"
+  ],
+  "seed": "2441298697839089269",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Radio Swiss Jazz (Switzerland), internet radio, Nov 11, 19:03 UTC",
+   "radio libertaire (France), internet radio, Nov 11, 22:02 UTC",
+   "Ancient Faith Ministrie Talk English (The United States Of America), internet radio, Nov 11, 10:02 UTC",
+   "Exclusively AHA (The United Arab Emirates), internet radio, Nov 12, 01:03 UTC",
+   "Radio Verona (Veneto, Italy), internet radio, Nov 11, 09:03 UTC",
+   "Anna Karenina Book 8 (Leo Tolstoy, 2010), archive, 2010, Nov 11, 04:04 UTC",
+   "Carve Deportiva (Montevideo, Uruguay), internet radio, Nov 12, 00:05 UTC",
+   "Positively Sleep Baby -om (The United Arab Emirates), internet radio, Nov 11, 17:04 UTC",
+   "FT8 data, 12 m, 24915.0 kHz USB via Eckrot's Kiwi II, 0-30 MHz SDR, Thuringia, Germany, Nov 11, 12:02 UTC",
+   "Favorite Story 1947-11-29 Vanity Fair (1947), archive, 1947, Nov 11, 09:03 UTC",
+   "Pura Vida FM (Santo Domingo, The Dominican Republic), internet radio, Nov 11, 19:03 UTC",
+   "DWD Pinneberg Met Fax, 3853.1 kHz USB via 0-30 MHz SDR, G8AOE | Yarm, NorthEast England, Nov 11, 11:02 UTC",
+   "Norrm (Bandung, West Java, Indonesia), internet radio, Nov 11, 16:59 UTC",
+   "Radio Estrella 93.1 FM (Cochabamba, Bolivia), 93.1 MHz FM, Nov 11, 06:05 UTC",
+   "FT8 data, 80 m, 3573.0 kHz USB via 0-30 MHz SDR | Niendorf a.d.St., Nov 11, 23:02 UTC",
+   "Sebkha-Chott - Nigla[h",
+   "WSPR beacons, 40 m, 7038.6 kHz USB via RVK HF 0.1 - 30 Mhz MHz 60m wire | Reykjavik Iceland, Nov 12, 03:02 UTC",
+   "The General Mill's Radio Adventure Theater 1977-04-23 Lewis and Clark (1977), archive, 1977, Nov 11, 05:04 UTC",
+   "The Pip (Kaplya) Rostov, 5448.0 kHz AM via 1.7-30 MHz SDR, HG5ACZ, Hungary, JN87pq, FD4 windom, Nov 11, 11:02 UTC",
+   "KBOO 90.7 Portland, OR (Oregon, The United States Of America), 90.7 MHz FM, Nov 11, 12:03 UTC",
+   "FT8 data, 20 m, 14074.0 kHz USB via 0-30 MHz SDR | Kralendijk, Bonaire BES, Nov 11, 21:02 UTC",
+   "Jazzkanalen (Fredensborg, Denmark), internet radio, Nov 11, 11:03 UTC",
+   "WSPR beacons, 20 m, 14095.6 kHz USB via 80m Dipole | Chichester UK, Nov 11, 10:02 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via 20 kHz - 30 MHz Roelof Bakker , pa0rdt [ACTIVE!",
+   "WSPR beacons, 20 m, 14095.6 kHz USB via 80m dipole | Chichester UK, Nov 11, 08:02 UTC",
+   "gair wood - 001, live microphone, Nov 11, 08:04 UTC",
+   "Kyoto - cyberforesthydro, live microphone, Nov 11, 13:04 UTC",
+   "The Wonderful Wizard of Oz  (Version 4) (L. Frank Baum, 2015), archive, 2015, Nov 11, 23:03 UTC",
+   "P7 Kristen Pop (Norway), internet radio, Nov 12, 02:04 UTC",
+   "FT8 data, 80 m, 3573.0 kHz USB via 0-30 MHz SDR, SM0JZT #1 | Sweden, Nov 11, 04:01 UTC",
+   "WOAO 88.1 FM (Bolivarian Republic Of Venezuela), 88.1 MHz FM, Nov 11, 18:03 UTC",
+   "China Radio Int. (M to Eu), 17650.0 kHz AM via 0-30 MHz SDR | Mishima, Japan, Nov 11, 08:03 UTC",
+   "Radio Cristo Viene Masaya Nicaragua (Nicaragua, Nicaragua), internet radio, Nov 12, 02:03 UTC",
+   "China Radio Int. (E to Eu), 9875.0 kHz AM via 0-30 MHz SDR | Jena Germany, Nov 11, 16:58 UTC",
+   "London - Greenwich Peninsula, live microphone, Nov 11, 09:04 UTC",
+   "FT8 data, 15 m, 21074.0 kHz USB via 0-30 MHz SDR, LA3WAA, TRONDHEIM, NORWAY, Nov 11, 10:01 UTC",
+   "RBU Time Signal, 66.7 kHz AM via 0-30 MHz SDR, G3XOU | Tavistock, Devon, UK, Nov 12, 03:03 UTC",
+   "CNR1 Jammer/Firedrake (M to FE), 11100.0 kHz AM via 0-30 MHz SDR, VU2CPL, Bangalore, India, Nov 11, 05:03 UTC",
+   "RAF Volmet Military 1 (E to Eu), 5450.0 kHz USB via 0-30 MHz SDR, OE3AKB,Oberwoelbling, AUSTRIA, Nov 11, 12:02 UTC",
+   "Xizang RTV (TB to CHN), 6110.0 kHz AM via GRMS KTM | Kathmandu, Nepal, Nov 11, 18:02 UTC",
+   "quran (Belgium), internet radio, Nov 11, 23:03 UTC",
+   "Radio Europa (NL to Eu), 18925.0 kHz AM via 0-32 MHz SDR, SWLJN49, Ludwigshafen Edigheim, Germany, Nov 11, 08:01 UTC",
+   "Jæren Misjonsradio (Rogaland, Norway), internet radio, Nov 12, 01:03 UTC",
+   "Olimpia Radio, 2728.5 kHz USB via Kiwi 2 DB0SLF (www.x26.de) | Saalfeld/Saale, Nov 11, 21:02 UTC",
+   "Noise Jihad - Ruined (2019) (Noise Jihad), archive, Nov 11, 17:00 UTC",
+   "SunDance Radio (NL to Eu), 9385.0 kHz AM via 0-30 MHz SDR, Welbrook ALA1530N Loop, SWL/JO02jh, United Kingdom | Ixworth, Suffolk, UK, Nov 11, 16:57 UTC"
+  ],
+  "heard_total": 46
  }
 ]

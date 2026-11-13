@@ -1754,5 +1754,143 @@
    "SunDance Radio (NL to Eu), 9385.0 kHz AM via 0-30 MHz SDR, Welbrook ALA1530N Loop, SWL/JO02jh, United Kingdom | Ixworth, Suffolk, UK, Nov 11, 16:57 UTC"
   ],
   "heard_total": 46
+ },
+ {
+  "catalog": "ISA016",
+  "number": 16,
+  "title": "ISA016 Varios Thue-Morse X0.83 R-urban",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-13",
+  "time_utc": "07:00",
+  "made_utc": "2026-11-13T04:02+00:00",
+  "listened_hours": 24,
+  "length": 2301.39,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Morley x0.83 nad r-urban",
+    "duration": 63.19
+   },
+   {
+    "n": 2,
+    "title": "IAR receirtwave Logistic",
+    "duration": 344.65
+   },
+   {
+    "n": 3,
+    "title": "103 BPM Freeze Room data pop",
+    "duration": 134.56
+   },
+   {
+    "n": 4,
+    "title": "Shannon 2018 HR2U",
+    "duration": 209.77
+   },
+   {
+    "n": 5,
+    "title": "7038.6 Francisco",
+    "duration": 757.29
+   },
+   {
+    "n": 6,
+    "title": "War Overflow (t*(18&(t>>10)))|(t>>12) salsa",
+    "duration": 79.38
+   },
+   {
+    "n": 7,
+    "title": "Indian Harbour Beach Canberra Logistic",
+    "duration": 124.97
+   },
+   {
+    "n": 8,
+    "title": "Philip 1945 Shercle",
+    "duration": 217.08
+   },
+   {
+    "n": 9,
+    "title": "Thue-Morse A11 waynesboro",
+    "duration": 160.92
+   },
+   {
+    "n": 10,
+    "title": "93.3 Rudin-Shapiro classic rock varios",
+    "duration": 209.58
+   }
+  ],
+  "cover": "archive/covers/ISA016.jpg",
+  "cover_png": "archive/covers/ISA016.png",
+  "palette": [
+   "#A528AF",
+   "#C73986",
+   "#6F3296",
+   "#411A43",
+   "#FAF6FB"
+  ],
+  "seed": "3530460714382980422",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Jow Radio - Jow Latino (Alger, Algeria), internet radio, Nov 12, 06:04 UTC",
+   "r-urban - poplar, live microphone, Nov 12, 18:03 UTC",
+   "amsterdam - hydrophile 5, live microphone, Nov 12, 18:03 UTC",
+   "Marseille - frioul, live microphone, Nov 12, 16:03 UTC",
+   "RDP Internacional - Main (Portugal), internet radio, Nov 12, 16:03 UTC",
+   "usti nad labem - duul, live microphone, Nov 12, 04:03 UTC",
+   "Artists2Radio - FRESCH (FRESCH), archive, Nov 13, 00:03 UTC",
+   "栗子的輕音樂 (Taiwan, Republic Of China), internet radio, Nov 12, 22:03 UTC",
+   "Radio 24 il sole 24 ore (Italy), internet radio, Nov 12, 05:03 UTC",
+   "WSPR beacons, 20 m, 14095.6 kHz USB via 0-30 MHz SDR, ZL2VH Branch 63 New Zealand | Mount Climie, Upper Hutt NZ, Nov 12, 08:02 UTC",
+   "ILoveMusicRadio (Spain), internet radio, Nov 12, 04:02 UTC",
+   "Akash Radio (Leeds) (West Yorkshire, The United Kingdom Of Great Britain And Northern Ireland), internet radio, Nov 13, 02:03 UTC",
+   "FT8 data, 80 m, 3573.0 kHz USB via Hamburg Metropol south | Germany, Nov 12, 19:02 UTC",
+   "shortwave, 14770.1 kHz USB via OpenWebRX sdr.federico.io | KK6QZG, Nov 12, 07:05 UTC",
+   "WW2 News and Sound Files from 1941 1941-12-08 Britain Declares War on Japan (1941), archive, 1941, Nov 12, 07:04 UTC",
+   "Al Toque Radio FM 101.9 (Córdoba(Argentina), Argentina), 101.9 MHz FM, Nov 12, 21:03 UTC",
+   "RTM Sabah V FM (DU to MLA), 11885.0 kHz AM via 0-30 MHz SDR, PI4AMF, Arkemheense Polder (Nijkerk GLD), Netherlands, Nov 12, 16:02 UTC",
+   "VLF receiver (Spring Brook Township, Pennsylvania, USA), natural radio via Jonathan Rizzo, Nov 12, 06:05 UTC",
+   "1.FM - Bombay Beats India Radio (Switzerland), internet radio, Nov 13, 01:02 UTC",
+   "WSPR beacons, 40 m, 7038.6 kHz USB via 0-30 MHz SDR | Brettnach F57320, Nov 12, 18:02 UTC",
+   "acra - wave farm, live microphone, Nov 12, 10:04 UTC",
+   "FT8 data, 20 m, 14074.0 kHz USB via 0-30 MHz SDR | Cortland, New York USA, Nov 12, 19:02 UTC",
+   "JXN Noviken Sub comms, 15.4 kHz USB via 0-30 MHz SDR Auxerre France, Nov 12, 07:02 UTC",
+   "london - stave hill, live microphone, Nov 12, 20:04 UTC",
+   "Resurrection Protocol (Mario Bastian, 2011), archive, 2011, Nov 12, 08:03 UTC",
+   "Children's Short Works, Vol. 038 (Various, 2020), archive, 2020, Nov 12, 22:03 UTC",
+   "ISARA Radio (France), internet radio, Nov 12, 05:03 UTC",
+   "Romaradio IAR (I to SEu), 1855.0 kHz AM via 0-30 MHz SDR | Korschenbroich, Germany, Nov 13, 00:02 UTC",
+   "NS-Rock (Almaty, Kazakhstan), internet radio, Nov 12, 11:03 UTC",
+   "Falmouth - Woodlane Campus, live microphone, Nov 12, 18:03 UTC",
+   "The Story of Holiday Wilde Mr. Fortune and the Court of Shanghai (), archive, Nov 12, 20:04 UTC",
+   "FT8 data, 20 m, 14074.0 kHz USB via 0-30 MHz SDR, KB5AVY, New Orleans, Louisiana, Nov 12, 19:02 UTC",
+   "Imelda FM (Indonesia), internet radio, Nov 13, 01:02 UTC",
+   "Radio Muzyczny Zakątek (Poland), internet radio, Nov 12, 06:04 UTC",
+   "Caricias FM (The Dominican Republic), internet radio, Nov 12, 14:03 UTC",
+   "Philip Marlowe - The Monkey's Uncle (1950), archive, 1950, Nov 12, 15:03 UTC",
+   "A11_T889_HR2U_CH28_01-42-10_10-12-10-2015-09-28Recording.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 12, 14:03 UTC",
+   "FT4 data, 40 m, 7047.5 kHz USB via 0-30 MHz SDR | Wildmountain (Wildberg), Switzerland, Nov 12, 15:01 UTC",
+   "Voice of America (K to FE), 12130.0 kHz AM via 0-30 MHz SDR, K1RA, Warrenton, VA, USA, Nov 12, 12:03 UTC",
+   "Radio Farda (FS to IRN), 7460.0 kHz AM via 0.1-30 MHz SDR#1 at HL3AMO - Daejeon, Rep. of KOREA, Nov 12, 23:02 UTC",
+   "IRIB Voice of I.R.Iran (TJ to CAs), 7280.0 kHz AM via 80m Dipole | Chichester UK, Nov 13, 02:03 UTC",
+   "WTWW Lebanon, TN (E to NAm), 5920.0 kHz AM via VE4ACE Listening Post | Winnipeg Manitoba Canada, Nov 13, 02:02 UTC",
+   "San Francisco Radio CWP (E to WOc), 5643.0 kHz AM via 2-30MHZ SDR #2, VK5ARG Remote Receiver Site | Near Tarlee, South Australia, Nov 12, 17:02 UTC",
+   "NAU US Navy, 11979.1 kHz USB via N1NTE-2 - MA/CT Border, USA, Nov 12, 19:02 UTC",
+   "WSPR beacons, 40 m, 7038.6 kHz USB via 0-30 MHz SDR, VK1CM Canberra Australia, Nov 12, 16:02 UTC",
+   "VMC Charleville Met Fax, 20467.1 kHz USB via 🗲 0-30MHz 8 x Kiwi Card SDR, VK3KHZ, Victoria, Australia 🗲, Nov 12, 23:01 UTC",
+   "GBZ Anthorn, 18.6 kHz USB via 0-30 MHz SDR, 14HAM01 / Daviken - Chantilly (60) North France, Nov 13, 02:02 UTC",
+   "VOJ Port aux Basques NL (E,F to ENA), 2514.0 kHz AM via 0-30 MHz SDR | Indian Harbour Beach, Florida, Nov 12, 13:01 UTC",
+   "WRMI Radio Miami Int. (E to CAm), 5050.0 kHz AM via 0-30 MHz SDR, W9AD Barrington Hills , Il, Nov 13, 03:02 UTC",
+   "Rogers of the Gazette 1945-11-29 Little Old Lady (1945), archive, 1945, Nov 12, 09:03 UTC",
+   "Sherlock Holmes 1947 05 26 The Submerged Nobleman (), archive, Nov 12, 10:04 UTC",
+   "181.FM - Classic Hits 181 (Virginia, The United States Of America), internet radio, Nov 13, 03:04 UTC",
+   "CMC Festival (Croatia), internet radio, Nov 12, 06:04 UTC",
+   "2 m amateur, 145.6006 MHz NFM via OpenWebRX 136.243.0.21:8073 | DB0NGR VHF/UHF, Nov 13, 02:07 UTC",
+   "The Chase 1952-10-12 The Cat's Meow (1952), archive, 1952, Nov 12, 05:04 UTC",
+   "Braes o' Gleniffer (Chorda, 1983), archive, 1983, Nov 12, 15:03 UTC",
+   "98.6 charivari chillout (Franken, Germany), 98.6 MHz FM, Nov 12, 21:03 UTC",
+   "Radio Rock (NO) (Oslo, Norway), internet radio, Nov 12, 22:03 UTC",
+   "Throwback 93.3 (North Palm Beach FL, The United States Of America), 93.3 MHz FM, Nov 12, 06:04 UTC"
+  ],
+  "heard_total": 59
  }
 ]

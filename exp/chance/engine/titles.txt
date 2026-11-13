@@ -160,3 +160,15 @@ ISA015 Flooto 5450
 6. Gate 5450 music UK
 7. Lowpass public radio Channel
 8. Backwash Sort Noise
+
+ISA016 Varios Thue-Morse X0.83 R-urban
+1. Morley x0.83 nad r-urban
+2. IAR receirtwave Logistic
+3. 103 BPM Freeze Room data pop
+4. Shannon 2018 HR2U
+5. 7038.6 Francisco
+6. War Overflow (t*(18&(t>>10)))|(t>>12) salsa
+7. Indian Harbour Beach Canberra Logistic
+8. Philip 1945 Shercle
+9. Thue-Morse A11 waynesboro
+10. 93.3 Rudin-Shapiro classic rock varios

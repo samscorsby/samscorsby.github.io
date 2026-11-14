@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!--
+  the gleamingfold.
+
+  where the glongingstons come from. it curves away from itself everywhere at once,
+  so there is always more room than you would think.
+
+  every scorsby here is a different one, and it goes on like that forever.
+  it is the same fold for everyone: the ones you meet were already here,
+  and they will be here for whoever comes next.
+
+  drag to wander. tap someone to say hi. your love does not stop at the edge. there is no edge.
+
+  (a hyperbolic plane, seven around each one. scorsby's face is made only of circles,
+  and here circles stay circles.)
+-->
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-F0TBFJSGJ9"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-F0TBFJSGJ9');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="the gleamingfold: an endless place full of scorsbys, every one of them different. there is room for everyone. drag to wander, tap someone to say hi.">
+  <link rel="canonical" href="https://scorsby.us/exp/gleamingfold/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://scorsby.us/exp/gleamingfold/">
+  <meta property="og:site_name" content="world of scorsby">
+  <meta property="og:title" content="the gleamingfold">
+  <meta property="og:description" content="an endless place full of scorsbys. there is room for everyone.">
+  <link rel="icon" href="../../favicon.webp" type="image/webp">
+  <title>the gleamingfold | scorsby</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    @font-face { font-family: 'Scheme'; src: url("../../fonts/Scheme.otf") format('opentype'); font-display: swap; }
+    @font-face { font-family: 'Plex'; src: url("../../fonts/IBMPlexMono-Regular.ttf") format('truetype'); font-display: swap; }
+    :root {
+      --paper: #ffffff; --ink: #1d1a5e; --dim: rgba(29, 26, 94, 0.62); --faint: rgba(29, 26, 94, 0.18);
+      --blue: #00b4ff; --pink: #ff3d8e;
+      --head: 'Scheme', 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+      --mono: 'Plex', ui-monospace, Menlo, Consolas, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --paper: #3e3478; --ink: #ffffff; --dim: rgba(255, 255, 255, 0.72); --faint: rgba(255, 255, 255, 0.22); }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper); color: var(--ink); }
+    body {
+      font-family: var(--mono); font-size: 13px; line-height: 1.5;
+      -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; overscroll-behavior: none;
+    }
+    #fold { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+    #fold.held { cursor: grabbing; }
+
+    #top {
+      position: fixed; left: 0; top: 0; display: flex; align-items: center; gap: 12px; pointer-events: none;
+      padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 0 calc(16px + env(safe-area-inset-left, 0px));
+    }
+    #top a { display: block; width: 40px; height: 40px; flex: none; pointer-events: auto; }
+    #top a img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    #top a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+    h1 { font-family: var(--head); font-weight: 400; font-size: 30px; line-height: 1; margin: 0; letter-spacing: .01em; }
+    #sub { margin: 3px 0 0; color: var(--dim); font-size: 12px; }
+
+    #far {
+      position: fixed; right: 0; top: 0; margin: 0; text-align: right; color: var(--dim); font-size: 12px;
+      padding: calc(18px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) 0 16px;
+    }
+    #far button { display: block; margin: 2px 0 0 auto; }
+    .link {
+      font: inherit; color: var(--ink); background: none; border: 0; padding: 0; cursor: pointer;
+      text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--faint);
+    }
+    .link:hover { text-decoration-color: var(--pink); }
+
+    #words {
+      position: fixed; left: 0; right: 0; bottom: 0; text-align: center; pointer-events: none;
+      padding: 0 64px calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+    #whisper, #count { margin: 0 auto; max-width: 46ch; min-height: 1.5em; opacity: 0; transition: opacity .9s; text-wrap: balance; }
+    #whisper { font-family: var(--head); font-size: 20px; line-height: 1.25; }
+    #count { color: var(--dim); font-size: 12px; font-variant-numeric: tabular-nums; margin-top: 4px; }
+    #whisper.on, #count.on { opacity: 1; }
+
+    #acts {
+      position: fixed; left: 0; bottom: 0; display: flex; gap: 8px;
+      padding: 0 0 calc(14px + env(safe-area-inset-bottom, 0px)) calc(14px + env(safe-area-inset-left, 0px));
+    }
+    #acts button, #share {
+      font: inherit; font-size: 11px; letter-spacing: .04em; color: var(--ink); background: var(--paper); cursor: pointer;
+      border: 1px solid var(--ink); border-radius: 3px; box-shadow: 2px 2px 0 var(--ink); padding: 3px 8px; min-height: 26px;
+      transition: transform .08s, box-shadow .08s;
+    }
+    #acts button:active, #share:active { transform: translate(2px, 2px); box-shadow: none; }
+
+    #bubble {
+      position: fixed; left: 0; top: 0; width: max-content; max-width: min(250px, 78vw); text-align: center; z-index: 3;
+      background: var(--paper); border: 1px solid var(--ink); border-radius: 3px; box-shadow: 4px 4px 0 var(--ink);
+      padding: 9px 13px 11px; opacity: 0; transition: opacity .25s; will-change: transform;
+    }
+    #bubble.on { opacity: 1; }
+    #bubble::after {
+      content: ''; position: absolute; left: 50%; bottom: -7px; width: 12px; height: 12px; margin-left: -6px;
+      background: var(--paper); border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); transform: rotate(45deg);
+    }
+    #bubble p { margin: 0; }
+    #bubble .nm { font-family: var(--head); font-size: 23px; line-height: 1.15; }
+    #bubble .ln { color: var(--dim); margin-top: 2px; }
+    #bubble .xt { color: var(--pink); margin-top: 5px; font-size: 12px; }
+    #share { margin-top: 9px; }
+
+    #about {
+      position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(420px, calc(100vw - 32px)); z-index: 5;
+      background: var(--paper); border: 1px solid var(--ink); border-radius: 3px; box-shadow: 4px 4px 0 var(--ink);
+      -webkit-user-select: text; user-select: text;
+    }
+    #about .bar {
+      display: flex; justify-content: space-between; align-items: center; background: var(--ink); color: var(--paper);
+      font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 4px 3px 8px;
+    }
+    #about .bar button { font: inherit; font-size: 15px; line-height: 1; color: inherit; background: none; border: 0; cursor: pointer; padding: 0 5px; }
+    #about .body { padding: 12px 15px 15px; }
+    #about p { margin: 0 0 9px; }
+    #about p:last-child { margin: 0; }
+    #about .small { color: var(--dim); font-size: 12px; }
+    [hidden] { display: none !important; }
+
+    @media (max-width: 560px) {
+      h1 { font-size: 25px; }
+      #top a { width: 34px; height: 34px; }
+      #far { top: auto; bottom: calc(46px + env(safe-area-inset-bottom, 0px)); left: 0; text-align: center; padding: 0 16px; }
+      #far button { display: inline; margin: 0 0 0 6px; }
+      #words { bottom: calc(70px + env(safe-area-inset-bottom, 0px)); padding: 0 16px; }
+      #whisper { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fold" aria-label="the gleamingfold: a round window onto an endless place packed with scorsby faces, each a different color, growing smaller and more numerous toward a gleaming edge they never reach."></canvas>
+
+  <header id="top">
+    <a href="../" aria-label="back to the experiments"><img src="../../images/scorsby_hearteyes_scale.png" alt=""></a>
+    <div>
+      <h1>the gleamingfold</h1>
+      <p id="sub">there is room for everyone.</p>
+    </div>
+  </header>
+
+  <p id="far"><span id="far-n"></span><button id="far-back" class="link" hidden>go back to the beginning</button></p>
+
+  <div id="words">
+    <p id="whisper" aria-live="polite"></p>
+    <p id="count"></p>
+  </div>
+
+  <div id="bubble" hidden>
+    <p class="nm"></p>
+    <p class="ln"></p>
+    <p class="xt" hidden></p>
+    <button id="share" type="button">show a friend the way here</button>
+  </div>
+
+  <nav id="acts">
+    <button id="snd" type="button" aria-pressed="true">sound on</button>
+    <button id="what" type="button" aria-expanded="false" aria-controls="about">what is this</button>
+  </nav>
+
+  <section id="about" hidden>
+    <div class="bar"><span>gleamingfold.exe</span><button class="x" aria-label="close">×</button></div>
+    <div class="body">
+      <p>this is the gleamingfold, where the glongingstons come from. it curves away from itself everywhere at once, so there is always more room than you would think.</p>
+      <p>every scorsby here is a different one, and it goes on like that forever. it is the same fold for everyone: the ones you meet were already here, and they will be here for whoever comes next.</p>
+      <p>drag to wander. tap someone to say hi.</p>
+      <p id="met" class="small"></p>
+      <p class="small">(a hyperbolic plane, seven around each one. scorsby's face is made only of circles, and here circles stay circles.)</p>
+    </div>
+  </section>
+
+  <script src="fold.js?v=1"></script>
+</body>
+</html>

@@ -1892,5 +1892,98 @@
    "Throwback 93.3 (North Palm Beach FL, The United States Of America), 93.3 MHz FM, Nov 12, 06:04 UTC"
   ],
   "heard_total": 59
+ },
+ {
+  "catalog": "ISA017",
+  "number": 17,
+  "title": "ISA017 Music Dance Overflow",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-14",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-14T04:02+00:00",
+  "listened_hours": 24,
+  "length": 1427.87,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Revelation Dance Bitcrush Hits",
+    "duration": 204.72
+   },
+   {
+    "n": 2,
+    "title": "classical music Bitplane",
+    "duration": 415.06
+   },
+   {
+    "n": 3,
+    "title": "Gal Overflow pop",
+    "duration": 201.09
+   },
+   {
+    "n": 4,
+    "title": "Roa XOR GUIwa Loop",
+    "duration": 104.57
+   },
+   {
+    "n": 5,
+    "title": "pop Bit Rotate Room IL",
+    "duration": 175.05
+   },
+   {
+    "n": 6,
+    "title": "Dutch 2624 Germany USB algo15",
+    "duration": 327.38
+   }
+  ],
+  "cover": "archive/covers/ISA017.jpg",
+  "cover_png": "archive/covers/ISA017.png",
+  "palette": [
+   "#B227AA",
+   "#C9385D",
+   "#733198",
+   "#441A42",
+   "#FBF6FA"
+  ],
+  "seed": "828971929728434165",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "FT8 data, 10 m, 28074.0 kHz USB via 2-30MHZ SDR #2, VK5ARG Remote Receiver Site | Near Tarlee, South Australia, Nov 13, 11:02 UTC",
+   "Dance Hits (NSW, Australia), internet radio, Nov 14, 02:04 UTC",
+   "Filarmonía (OCR-4V, 102.7 MHz FM, Lima) (IRTP) (Lima, Peru), 102.7 MHz FM, Nov 13, 23:02 UTC",
+   "PSK31, 20 m, 14070.0 kHz USB via 0-30 MHz SDR, EA2RCF Radioclub Foronda. | Vitoria-Gasteiz, Spain, Nov 13, 11:02 UTC",
+   "Radio Taiwan Int. (M to FE), 9900.0 kHz AM via 0-30 MHz SDR, HB9RYZ-1, JN47GA - Rigi Scheidegg, Nov 13, 23:02 UTC",
+   "FT8 data, 80 m, 3573.0 kHz USB via Henry W6REK ( 0 to 15MHz ) | San Jose, California, USA (south of San Francisco), Nov 13, 11:02 UTC",
+   "ERT ELAZIĞ (Türkiye), internet radio, Nov 13, 18:03 UTC",
+   "Radio FM Gold (Belgium), internet radio, Nov 14, 02:04 UTC",
+   "PBS Gannan (TB to CHN), 3990.0 kHz AM via 0-30 MHz SDR, VU2CPL, Bangalore, India, Nov 13, 05:02 UTC",
+   "OBS 라디오 (Gyeonggi, The Republic Of Korea), internet radio, Nov 14, 00:03 UTC",
+   "Corazon Andino (Arequipa, Peru), internet radio, Nov 13, 18:06 UTC",
+   "Orman Radio Jabal Alarab (Syrian Arab Republic), internet radio, Nov 13, 11:03 UTC",
+   "Radio CDBS (Indonesia), internet radio, Nov 13, 21:05 UTC",
+   "Romaradio IAR (I to SEu), 1876.0 kHz AM via 0-30 MHz SDR, Edinburgh, Scotland, United Kingdom, Nov 13, 22:02 UTC",
+   "FT4 data, 40 m, 7047.5 kHz USB via 1.8-30 MHz SDR | Milton ON, CANADA, Nov 13, 16:02 UTC",
+   "Nemzetiségi Rádió (HR to HNG), 873.0 kHz AM via 0-30 MHz, DL2BQA, Neustadt, Rheinland-Pfalz, Germany, Nov 13, 07:02 UTC",
+   "LGF TALK GUINEE (Guinea), internet radio, Nov 13, 15:01 UTC",
+   "RT1 Coffee (Bavaria, Germany), internet radio, Nov 13, 16:03 UTC",
+   "Atiawa Toa FM (South Africa), internet radio, Nov 13, 13:03 UTC",
+   "X1 Radio Electro (Argentina), internet radio, Nov 13, 04:03 UTC",
+   "Rádio KIKS - Big 80s (Slovakia), internet radio, Nov 13, 12:04 UTC",
+   "Littoral FM Guinee live (Guinea), internet radio, Nov 14, 01:03 UTC",
+   "Apollo radio (Germany), internet radio, Nov 13, 05:02 UTC",
+   "WRMI Radio Miami Int. (E to ENA), 5950.0 kHz AM via 1.8-29.7 MHz SDR, W9XA | Batavia, IL, USA, Nov 14, 03:02 UTC",
+   "FM 101 Khairpur (Sindh, Pakistan), internet radio, Nov 14, 03:03 UTC",
+   "Експрес Радио 101.1 Струмица, Македонија (Republic Of North Macedonia), 101.1 MHz FM, Nov 13, 15:01 UTC",
+   "Bangkok Meterolog.Radio (E,T to SEA), 8743.0 kHz AM via DO4GME | Winzeln, Nov 13, 19:02 UTC",
+   "Mohabbat Radio Punjabi (India), internet radio, Nov 13, 23:06 UTC",
+   "Romaradio IAR (I to SEu), 2624.0 kHz AM via 0-30 MHz SDR, DE1LON | Meerbusch, Germany, Nov 14, 00:01 UTC",
+   "aix-en-provence - ls-radio, live microphone, Nov 13, 17:03 UTC",
+   "幸福廣播電台TR Radio FM102.5 (Taiwan, Republic Of China), 102.5 MHz FM, Nov 13, 09:02 UTC",
+   "morceaux_de_machines",
+   "Dominic Gagnon - algoryt(h)mes [nta015",
+   "Radio Parkies - Meise, be (Brussels, Belgium), internet radio, Nov 13, 10:04 UTC"
+  ],
+  "heard_total": 34
  }
 ]

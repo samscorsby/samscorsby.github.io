@@ -876,7 +876,8 @@
   let loveWash = 0;
   let goldFlash = 0, flashGold = 0;
   let stormNow = 0;     // tap sunsby and everything flashes gold      // the paper blushes with color for a moment
-  let myColor = 0; // everyone arrives as classic blue
+  // everyone arrives as classic blue, unless they chose a color before (it's remembered, like their name)
+  let myColor = (() => { const v = store.get('scorsby-color') || ''; return /^#[0-9a-f]{6}$/.test(v) ? v : /^[0-8]$/.test(v) ? +v : 0; })();
   let myName = cleanName(store.get('scorsby-name') || '');
   let markMode = null, lastPlanted = '';
 
@@ -4380,7 +4381,7 @@
     b.type = 'button'; b.className = 'swatch'; b.title = name; b.setAttribute('aria-label', name);
     b.style.background = hex || 'conic-gradient(#ff5fae,#ffd23f,#62d64a,#00b4ff,#9b6bff,#ff5fae)';
     b.addEventListener('click', () => {
-      myColor = i; paintSwatch();
+      myColor = i; paintSwatch(); store.set('scorsby-color', String(i));
       if (me) { me.c = i; me.hearts = 900; }
       send({ t: 'color', c: i });
       whisper(i === 8 ? 'you are every color now.' : `you are a ${name} scorsby now.`, 2600);
@@ -4392,20 +4393,20 @@
   // or any color at all
   document.getElementById('swatches').appendChild(document.getElementById('custom'));
   const picker = document.getElementById('custom-color');
-  picker.value = typeof myColor === 'string' ? myColor : '#00b4ff';
+  picker.value = typeof myColor === 'string' ? myColor : '#00b4ff'; if (typeof myColor === 'string') document.getElementById('custom').style.background = myColor;
   let colorTimer = 0;
   picker.addEventListener('input', () => {
     // your scorsby changes as you drag through the colors; everyone else hears once you settle
     myColor = picker.value.toLowerCase(); paintSwatch();
     document.getElementById('custom').style.background = myColor;
     if (me) me.c = myColor;
-    clearTimeout(colorTimer); colorTimer = setTimeout(() => send({ t: 'color', c: myColor }), 250);
+    clearTimeout(colorTimer); colorTimer = setTimeout(() => { send({ t: 'color', c: myColor }); store.set('scorsby-color', myColor); }, 250);
   });
   picker.addEventListener('change', () => {
     myColor = picker.value.toLowerCase(); paintSwatch();
     document.getElementById('custom').style.background = myColor;
     if (me) { me.c = myColor; me.hearts = 900; }
-    send({ t: 'color', c: myColor });
+    send({ t: 'color', c: myColor }); store.set('scorsby-color', myColor);
     whisper('you are your very own color now.', 2600);
     tone.blink();
   });

@@ -1,60 +1,40 @@
 {
- "title": "ISA017 Music Dance Overflow",
+ "title": "ISA018 Maputo 69 Shuffle Acuarela Misc",
  "artist": "ScorsBT4",
- "released": "2026-11-14",
+ "released": "2026-11-15",
  "about": "All computer programming is basically question asking, rather than choice making.",
  "about_by": "John Cage, 1985",
  "about_link": "https://www.youtube.com/watch?v=9GqHikJSQhQ",
  "credits": [
-  "created November 14, 2026, 04:02 UTC",
-  "Impermanence Series A · ISA017",
+  "created November 15, 2026, 04:02 UTC",
+  "Impermanence Series A · ISA018",
   "",
   "questions by Samuel John Scorsby",
   "",
-  "Over the course of a day, ScorsBT4 listened to the world, gathering 365 moments of radio: shortwave from receivers around the world, radio amateurs and broadcasters above shortwave, FM and internet stations, open microphones on rooftops, in gardens and in canals, hydrophones in the sea, the earth's own natural radio, and old recordings from the Internet Archive. It kept only what had something in it. In the spirit of John Cage's aleatoric compositional methods, particularly inspired by his piece \"Fontana Mix\", it threw the dice: which sounds belong together, which patterns of data to fuse them with (cellular automata, bytebeat formulas, number sequences, sorting algorithms), how long each song should be, and where it should go. 34 of those moments are in these songs. Nothing was chosen by hand.",
+  "Over the course of a day, ScorsBT4 listened to the world, gathering 363 moments of radio: shortwave from receivers around the world, radio amateurs and broadcasters above shortwave, FM and internet stations, open microphones on rooftops, in gardens and in canals, hydrophones in the sea, the earth's own natural radio, and old recordings from the Internet Archive. It kept only what had something in it. In the spirit of John Cage's aleatoric compositional methods, particularly inspired by his piece \"Fontana Mix\", it threw the dice: which sounds belong together, which patterns of data to fuse them with (cellular automata, bytebeat formulas, number sequences, sorting algorithms), how long each song should be, and where it should go. 14 of those moments are in these songs. Nothing was chosen by hand.",
   "",
-  "This album is impermanent. The broadcasts collected are gone. The recordings it gathered were thrown away once it was made. Tomorrow it will be replaced by another, which will never be heard again either. Each day the chance that it is the last grows: today's was 1 in 349, tomorrow's is 1 in 348. It exists for a day. Listen while it's here. More info on the project.",
+  "This album is impermanent. The broadcasts collected are gone. The recordings it gathered were thrown away once it was made. Tomorrow it will be replaced by another, which will never be heard again either. Each day the chance that it is the last grows: today's was 1 in 348, tomorrow's is 1 in 347. It exists for a day. Listen while it's here. More info on the project.",
   "",
-  "open microphones: Locus Sonus Locustream (locusonus.org)"
+  "archive recordings: the Internet Archive (archive.org), openly licensed collections"
  ],
  "more": "https://scorsby.us/blog/2026-10-29_the_medium,_the_mirror,_and_the_music.html",
  "heard": [
-  "FT8 data, 10 m, 28074.0 kHz USB via 2-30MHZ SDR #2, VK5ARG Remote Receiver Site | Near Tarlee, South Australia, Nov 13, 11:02 UTC",
-  "Dance Hits (NSW, Australia), internet radio, Nov 14, 02:04 UTC",
-  "Filarmonía (OCR-4V, 102.7 MHz FM, Lima) (IRTP) (Lima, Peru), 102.7 MHz FM, Nov 13, 23:02 UTC",
-  "PSK31, 20 m, 14070.0 kHz USB via 0-30 MHz SDR, EA2RCF Radioclub Foronda. | Vitoria-Gasteiz, Spain, Nov 13, 11:02 UTC",
-  "Radio Taiwan Int. (M to FE), 9900.0 kHz AM via 0-30 MHz SDR, HB9RYZ-1, JN47GA - Rigi Scheidegg, Nov 13, 23:02 UTC",
-  "FT8 data, 80 m, 3573.0 kHz USB via Henry W6REK ( 0 to 15MHz ) | San Jose, California, USA (south of San Francisco), Nov 13, 11:02 UTC",
-  "ERT ELAZIĞ (Türkiye), internet radio, Nov 13, 18:03 UTC",
-  "Radio FM Gold (Belgium), internet radio, Nov 14, 02:04 UTC",
-  "PBS Gannan (TB to CHN), 3990.0 kHz AM via 0-30 MHz SDR, VU2CPL, Bangalore, India, Nov 13, 05:02 UTC",
-  "OBS 라디오 (Gyeonggi, The Republic Of Korea), internet radio, Nov 14, 00:03 UTC",
-  "Corazon Andino (Arequipa, Peru), internet radio, Nov 13, 18:06 UTC",
-  "Orman Radio Jabal Alarab (Syrian Arab Republic), internet radio, Nov 13, 11:03 UTC",
-  "Radio CDBS (Indonesia), internet radio, Nov 13, 21:05 UTC",
-  "Romaradio IAR (I to SEu), 1876.0 kHz AM via 0-30 MHz SDR, Edinburgh, Scotland, United Kingdom, Nov 13, 22:02 UTC",
-  "FT4 data, 40 m, 7047.5 kHz USB via 1.8-30 MHz SDR | Milton ON, CANADA, Nov 13, 16:02 UTC",
-  "Nemzetiségi Rádió (HR to HNG), 873.0 kHz AM via 0-30 MHz, DL2BQA, Neustadt, Rheinland-Pfalz, Germany, Nov 13, 07:02 UTC",
-  "LGF TALK GUINEE (Guinea), internet radio, Nov 13, 15:01 UTC",
-  "RT1 Coffee (Bavaria, Germany), internet radio, Nov 13, 16:03 UTC",
-  "Atiawa Toa FM (South Africa), internet radio, Nov 13, 13:03 UTC",
-  "X1 Radio Electro (Argentina), internet radio, Nov 13, 04:03 UTC",
-  "Rádio KIKS - Big 80s (Slovakia), internet radio, Nov 13, 12:04 UTC",
-  "Littoral FM Guinee live (Guinea), internet radio, Nov 14, 01:03 UTC",
-  "Apollo radio (Germany), internet radio, Nov 13, 05:02 UTC",
-  "WRMI Radio Miami Int. (E to ENA), 5950.0 kHz AM via 1.8-29.7 MHz SDR, W9XA | Batavia, IL, USA, Nov 14, 03:02 UTC",
-  "FM 101 Khairpur (Sindh, Pakistan), internet radio, Nov 14, 03:03 UTC",
-  "Експрес Радио 101.1 Струмица, Македонија (Republic Of North Macedonia), 101.1 MHz FM, Nov 13, 15:01 UTC",
-  "Bangkok Meterolog.Radio (E,T to SEA), 8743.0 kHz AM via DO4GME | Winzeln, Nov 13, 19:02 UTC",
-  "Mohabbat Radio Punjabi (India), internet radio, Nov 13, 23:06 UTC",
-  "Romaradio IAR (I to SEu), 2624.0 kHz AM via 0-30 MHz SDR, DE1LON | Meerbusch, Germany, Nov 14, 00:01 UTC",
-  "aix-en-provence - ls-radio, live microphone, Nov 13, 17:03 UTC",
-  "幸福廣播電台TR Radio FM102.5 (Taiwan, Republic Of China), 102.5 MHz FM, Nov 13, 09:02 UTC",
-  "morceaux_de_machines",
-  "Dominic Gagnon - algoryt(h)mes [nta015",
-  "Radio Parkies - Meise, be (Brussels, Belgium), internet radio, Nov 13, 10:04 UTC"
+  "Rádio Miramar (Maputo, Mozambique), internet radio, Nov 14, 09:03 UTC",
+  "MEGASITE (Türkiye), internet radio, Nov 15, 00:03 UTC",
+  "freefm.lk (Sri Lanka), internet radio, Nov 15, 02:02 UTC",
+  "VFF Iqaluit Radio (E to NAm), 4363.0 kHz AM via 0.5-30 MHz SDR (KiwiSDR 3 of 3), Marahau, Tasman District, New Zealand, Nov 14, 08:02 UTC",
+  "FT8 data, 15 m, 21074.0 kHz USB via 0-30 MHz DL0MZ DARC OV-MAINZ | JN49AV @ DF7PN, Nov 14, 09:01 UTC",
+  "OK0EU Beacon D, 7038.5 kHz CW via 0-30 MHz SDR, HB9CWK Heimiswil, Switzerland, Nov 14, 22:01 UTC",
+  "Radio Romania Int. (RO to SEu), 7205.0 kHz AM via 80m dipole | Chichester UK, Nov 14, 19:01 UTC",
+  "PSK31, 20 m, 14070.0 kHz USB via DE2HJW SDR JO53CN DL nr Hamburg, Nov 14, 21:02 UTC",
+  "WRMI Radio Miami Int. (E to ENA), 15770.0 kHz AM via W3HFU - Westminster, MD, USA - 120 ft T2FD Antenna, Nov 14, 22:02 UTC",
+  "Classical Radio  -  Chicago Symphony Orchestra (The United Arab Emirates), internet radio, Nov 14, 08:03 UTC",
+  "Mrs. Skagg's Husbands and Other Stories (Bret Harte, 2013), archive, 2013, Nov 14, 23:03 UTC",
+  "A Speck in the Universe (SLiVeR), archive, Nov 14, 20:03 UTC",
+  "Radio Acuarela (Cerro Largo, Uruguay), internet radio, Nov 14, 20:03 UTC",
+  "Female FM (Indonesia), internet radio, Nov 14, 08:03 UTC"
  ],
- "heard_total": 34,
+ "heard_total": 14,
  "tags": [
   "chance",
   "radio",
@@ -65,84 +45,78 @@
  "tracks": [
   {
    "n": 1,
-   "title": "Revelation Dance Bitcrush Hits",
-   "duration": 204.72,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/01.mp3"
+   "title": "freefm.lk Maputo Gray Code",
+   "duration": 105.68,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/01.mp3"
   },
   {
    "n": 2,
-   "title": "classical music Bitplane",
-   "duration": 415.06,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/02.mp3"
+   "title": "PSK31 Locator JO53CN 14070",
+   "duration": 281.56,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/02.mp3"
   },
   {
    "n": 3,
-   "title": "Gal Overflow pop",
-   "duration": 201.09,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/03.mp3"
+   "title": "Bret Harte Loop Sort Shuffle English",
+   "duration": 131.49,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/03.mp3"
   },
   {
    "n": 4,
-   "title": "Roa XOR GUIwa Loop",
-   "duration": 104.57,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/04.mp3"
+   "title": "Acuarela 69 Overflow Uruguay",
+   "duration": 89.42,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/04.mp3"
   },
   {
    "n": 5,
-   "title": "pop Bit Rotate Room IL",
-   "duration": 175.05,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/05.mp3"
-  },
-  {
-   "n": 6,
-   "title": "Dutch 2624 Germany USB algo15",
-   "duration": 327.38,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/06.mp3"
+   "title": "7205 Chichester UK misc",
+   "duration": 213.37,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/05.mp3"
   }
  ],
- "cover": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/cover.jpg",
- "cover_small": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/cover_small.jpg",
- "banner": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/banner.jpg",
- "cover_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/cover.png",
- "cover_small_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/cover_small.png",
+ "cover": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/cover.jpg",
+ "cover_small": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/cover_small.jpg",
+ "banner": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/banner.jpg",
+ "cover_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/cover.png",
+ "cover_small_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/cover_small.png",
  "downloads": [
   {
    "format": "MP3",
    "note": "320 kbps",
-   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/SBT4-ISA017-2026-11-14-mp3.zip",
-   "bytes": 59816941
+   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/SBT4-ISA018-2026-11-15-mp3.zip",
+   "bytes": 35563781
   },
   {
    "format": "WAV",
    "note": "24-bit/48kHz",
-   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-14/SBT4-ISA017-2026-11-14-wav.zip",
-   "bytes": 413272884
+   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-15/SBT4-ISA018-2026-11-15-wav.zip",
+   "bytes": 238788192
   }
  ],
  "mood": {
-  "brightness": 0.333,
-  "energy": 0.653,
-  "noise": 0.183,
-  "motion": 0.204
+  "brightness": 0.436,
+  "energy": 0.776,
+  "noise": 0.382,
+  "motion": 0.0
  },
  "palette": [
-  "#B227AA",
-  "#C9385D",
-  "#733198",
-  "#441A42",
-  "#FBF6FA"
+  "#BA2970",
+  "#CB4162",
+  "#A03479",
+  "#461B30",
+  "#FAF6F8"
  ],
- "number": 17,
+ "number": 18,
  "series": "Impermanence Series A",
- "catalog": "ISA017",
- "day": "2026-11-14",
+ "catalog": "ISA018",
+ "day": "2026-11-15",
  "time_utc": "07:01",
- "made_utc": "2026-11-14T04:02+00:00",
+ "made_utc": "2026-11-15T04:02+00:00",
  "listened_hours": 24,
- "odds": 349,
+ "odds": 348,
  "last": false,
  "pure": false,
- "seed": "828971929728434165",
- "generated_from": "album_2026-11-14_040207_fontana",
- "published": "2026-11-14T07:01:42"
+ "seed": "3952474565086039924",
+ "generated_from": "album_2026-11-15_040220_fontana",
+ "published": "2026-11-15T07:01:21"
 }

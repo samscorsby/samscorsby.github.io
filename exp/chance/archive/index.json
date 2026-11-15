@@ -1985,5 +1985,73 @@
    "Radio Parkies - Meise, be (Brussels, Belgium), internet radio, Nov 13, 10:04 UTC"
   ],
   "heard_total": 34
+ },
+ {
+  "catalog": "ISA018",
+  "number": 18,
+  "title": "ISA018 Maputo 69 Shuffle Acuarela Misc",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-15",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-15T04:02+00:00",
+  "listened_hours": 24,
+  "length": 821.52,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "freefm.lk Maputo Gray Code",
+    "duration": 105.68
+   },
+   {
+    "n": 2,
+    "title": "PSK31 Locator JO53CN 14070",
+    "duration": 281.56
+   },
+   {
+    "n": 3,
+    "title": "Bret Harte Loop Sort Shuffle English",
+    "duration": 131.49
+   },
+   {
+    "n": 4,
+    "title": "Acuarela 69 Overflow Uruguay",
+    "duration": 89.42
+   },
+   {
+    "n": 5,
+    "title": "7205 Chichester UK misc",
+    "duration": 213.37
+   }
+  ],
+  "cover": "archive/covers/ISA018.jpg",
+  "cover_png": "archive/covers/ISA018.png",
+  "palette": [
+   "#BA2970",
+   "#CB4162",
+   "#A03479",
+   "#461B30",
+   "#FAF6F8"
+  ],
+  "seed": "3952474565086039924",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Rádio Miramar (Maputo, Mozambique), internet radio, Nov 14, 09:03 UTC",
+   "MEGASITE (Türkiye), internet radio, Nov 15, 00:03 UTC",
+   "freefm.lk (Sri Lanka), internet radio, Nov 15, 02:02 UTC",
+   "VFF Iqaluit Radio (E to NAm), 4363.0 kHz AM via 0.5-30 MHz SDR (KiwiSDR 3 of 3), Marahau, Tasman District, New Zealand, Nov 14, 08:02 UTC",
+   "FT8 data, 15 m, 21074.0 kHz USB via 0-30 MHz DL0MZ DARC OV-MAINZ | JN49AV @ DF7PN, Nov 14, 09:01 UTC",
+   "OK0EU Beacon D, 7038.5 kHz CW via 0-30 MHz SDR, HB9CWK Heimiswil, Switzerland, Nov 14, 22:01 UTC",
+   "Radio Romania Int. (RO to SEu), 7205.0 kHz AM via 80m dipole | Chichester UK, Nov 14, 19:01 UTC",
+   "PSK31, 20 m, 14070.0 kHz USB via DE2HJW SDR JO53CN DL nr Hamburg, Nov 14, 21:02 UTC",
+   "WRMI Radio Miami Int. (E to ENA), 15770.0 kHz AM via W3HFU - Westminster, MD, USA - 120 ft T2FD Antenna, Nov 14, 22:02 UTC",
+   "Classical Radio  -  Chicago Symphony Orchestra (The United Arab Emirates), internet radio, Nov 14, 08:03 UTC",
+   "Mrs. Skagg's Husbands and Other Stories (Bret Harte, 2013), archive, 2013, Nov 14, 23:03 UTC",
+   "A Speck in the Universe (SLiVeR), archive, Nov 14, 20:03 UTC",
+   "Radio Acuarela (Cerro Largo, Uruguay), internet radio, Nov 14, 20:03 UTC",
+   "Female FM (Indonesia), internet radio, Nov 14, 08:03 UTC"
+  ],
+  "heard_total": 14
  }
 ]

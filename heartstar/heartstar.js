@@ -578,7 +578,11 @@
       }
       case 'flower': {
         c.beginPath(); wobbleLine(x, y + s * 0.5, x, y, seed, 0.3); c.stroke();
-        for (let k = 0; k < 5; k++) { const a = (k / 5) * TAU + seed; c.beginPath(); c.arc(x + Math.cos(a) * s * 0.15, y + Math.sin(a) * s * 0.15, s * 0.11, 0, TAU); c.fillStyle = '#7fc8ff'; c.fill(); c.stroke(); }
+        // (like the rainbow flower's: each petal overlaps the next all the way round, the first tucked over the last)
+        const petal = (k, grow = 0) => { const a = (k / 5) * TAU + seed; c.beginPath(); c.arc(x + Math.cos(a) * s * 0.15, y + Math.sin(a) * s * 0.15, s * 0.11 + grow, 0, TAU); };
+        c.fillStyle = '#7fc8ff';
+        for (let k = 0; k < 5; k++) { petal(k); c.fill(); c.stroke(); }
+        c.save(); petal(4, c.lineWidth); c.clip(); petal(0); c.fill(); c.stroke(); c.restore();
         c.beginPath(); c.arc(x, y, s * 0.07, 0, TAU); c.fillStyle = '#ffd23f'; c.fill(); c.stroke();
         break;
       }
@@ -2170,7 +2174,7 @@
   function combos(used) {
     const free = (k) => marks.filter((m) => m.k === k && !used.has(m));
     const out = [], faces = [];
-    const take = (a, b, k) => { used.add(a); used.add(b); out.push({ k, v: midOf([a, b]), seed: a.seed + b.seed, t: Math.max(a.t, b.t) }); };
+    const take = (a, b, k) => { used.add(a); used.add(b); out.push({ k, v: midOf([a, b]), seed: a.seed + b.seed, t: Math.max(a.t, b.t), parts: [a, b] }); };
     for (const h of free('house')) {
       let best = null, kind = null, bd = COMBO_NEAR;
       for (const [k, as] of [['tree', 'treehouse'], ['mushroom', 'cottage'], ['heart', 'hearthouse']]) {
@@ -2194,7 +2198,7 @@
       if (!l) continue;
       [a, b, l].forEach((o) => inFace.add(o));
       [a, b, l].forEach((o) => used.add(o));
-      out.push({ k: 'groundface', v: midOf([a, b, l]), seed: a.seed, t: Math.max(a.t, b.t, l.t) });
+      out.push({ k: 'groundface', v: midOf([a, b, l]), seed: a.seed, t: Math.max(a.t, b.t, l.t), parts: [a, b, l] });
     }
     return { out, faces };
   }
@@ -2259,7 +2263,11 @@
       c.globalAlpha = show * fade * Math.min(1, pz * 3) * (0.55 + 0.45 * meadow);
       doodleCached(m.k === 'head' ? 'scorsby' : m.k, px, py - ds * 0.3 * big, ds * big, m.seed, now, 1.32);
       m.sx = px; m.sy = py - ds * 0.3 * big; m.ss = ds * big;
-      if (m.say) { const a = c.globalAlpha; drawLast.push(() => { c.globalAlpha = a; drawNoteOf(m, now); }); } // (its note, if it's open, in front of everything: scorsbys never cover it)
+      // (a combined one is tapped, and its notes opened, through the plants it's made of)
+      for (const p of m.parts || [m]) {
+        p.sx = m.sx; p.sy = m.sy; p.ss = m.ss;
+        if (p.say) { const a = c.globalAlpha; drawLast.push(() => { c.globalAlpha = a; drawNoteOf(p, now); }); } // (its note, if it's open, in front of everything: scorsbys never cover it)
+      }
     }
     for (const g of found) {
       const [px, py, pz] = project(...g.v);
@@ -2267,7 +2275,8 @@
       const gs = ds * (1.6 + Math.min(1, (g.members.length - GROVE_TREES) * 0.1));
       c.globalAlpha = show * clamp((life - (t - g.t)) / 600000, 0.25, 1) * Math.min(1, pz * 3);
       doodleCached('smiletree', px, py - gs * 0.45, gs, g.members[0].seed, now, 1.32);
-      g.members.forEach((m) => { m.sx = px; m.sy = py - gs * 0.45; m.ss = gs; });
+      const a = c.globalAlpha;
+      g.members.forEach((m) => { m.sx = px; m.sy = py - gs * 0.45; m.ss = gs; if (m.say) drawLast.push(() => { c.globalAlpha = a; drawNoteOf(m, now); }); });
     }
     c.globalAlpha = show;
     const T0 = Date.now();
@@ -2281,6 +2290,7 @@
   let noteHits = [], hoverNote = null;
   function openNote(mk, ms = 9000) {
     const now = performance.now();
+    for (const o of marks) if (o !== mk && o.say && o.sx === mk.sx && o.sy === mk.sy && o !== editing) o.say = null; // (one note at a time on a combined plant)
     if (mk.say && now < mk.say.until) { mk.say.until = Math.max(mk.say.until, now + ms); return; }
     mk.say = { text: mk.note, born: now, until: now + ms + mk.note.length * 60, open: true };
   }
@@ -3770,7 +3780,12 @@
   }
   const hitSky = (x, y) => skyFade() > 0.3 && sky.find((d) => Math.hypot(d.x - x, (d.cy ?? d.y) - y) < d.s * 0.7 * skyK());
   const hitMoon = (x, y) => moon.r && Math.hypot(moon.x - x, moon.y - y) < moon.r * 1.2;
-  const hitMark = (x, y) => marks.find((m) => Math.hypot(m.sx - x, m.sy - y) < Math.max(m.ss * 0.5, m.note ? 20 : 0)); // (a plant with a note is easy to tap)
+  const hitMark = (x, y) => {
+    const hits = marks.filter((m) => Math.hypot(m.sx - x, m.sy - y) < Math.max(m.ss * 0.5, m.note ? 20 : 0)); // (a plant with a note is easy to tap)
+    // (plants combined into one share a place: yours first, so you can write on it, then any with a note)
+    const mine = (m) => m.id && myPlants && m.o === myPlants;
+    return hits.find((m) => mine(m) && m.note) || hits.find(mine) || hits.find((m) => m.note) || hits[0];
+  };
   function localTime(tz) {
     const d = new Date(Date.now() + (tz + new Date().getTimezoneOffset()) * 60000);
     return d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }).toLowerCase();

@@ -1010,6 +1010,7 @@ export class Hearth extends DurableObject {
         if (raw && /[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(raw) && !raw.split(' ').some((w) => ELSEWHERE.test(w)) && !(PHONE.lastIndex = 0, PHONE.test(raw))) {
           const note = await boinked(this.env, raw);
           if (note) mark.note = note;
+          if (note && note === raw) this.ctx.waitUntil(keepSweet(this.env, note, me.n || '').catch(() => {})); // (a memorable note goes in the keepsake box too)
         }
         this.broadcast({ t: 'mark', id: mark.id, o: mark.o, lat: mark.lat, lon: mark.lon, k: mark.k, n: mark.n, at: mark.t, note: mark.note });
         await this.remember('marks', mark, MARK_LIFE, MAX_MARKS);
@@ -1026,6 +1027,7 @@ export class Hearth extends DurableObject {
           if (!/[\p{L}\p{N}\p{Extended_Pictographic}]/u.test(raw) || raw.split(' ').some((w) => ELSEWHERE.test(w)) || (PHONE.lastIndex = 0, PHONE.test(raw))) return this.send(ws, { t: 'renoted', ok: false, why: "that note can't go on a plant." });
           note = await boinked(this.env, raw);
           if (!note) return this.send(ws, { t: 'renoted', ok: false, why: "the hearth couldn't check that one just now. try again soon." });
+          if (note === raw) this.ctx.waitUntil(keepSweet(this.env, note, me.n || '').catch(() => {}));
         }
         if (note) mark.note = note; else delete mark.note;
         await this.ctx.storage.put('marks', marks);

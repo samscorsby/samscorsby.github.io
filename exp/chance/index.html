@@ -606,7 +606,19 @@
   audio.addEventListener('play', hearing);
   fetch('score.json', { cache: 'no-cache' }).then(r => r.json()).then(sc => readScore(sc.songs || [])).catch(() => {});
 
+  // a link to a song (#3, each song's title is one) queues it: ready under the needle, waiting for play
+  function queueFromLink() {
+    const m = location.hash.match(/^#(\d+)$/);
+    const k = m ? +m[1] - 1 : -1;
+    if (!album || k < 0 || k >= album.tracks.length || k === cur && audio.src) return;
+    load(k, false);
+    spin(album.tracks.slice(0, k).reduce((n, t) => n + t.duration, 0));
+    const row = document.querySelectorAll('#tracks tr')[k];
+    if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest' });
+  }
+  addEventListener('hashchange', queueFromLink);
   function load(i, play) {
+    if (album && history.replaceState) history.replaceState(null, '', '#' + (((i + album.tracks.length) % album.tracks.length) + 1));
     cur = (i + album.tracks.length) % album.tracks.length;
     const t = album.tracks[cur];
     audio.src = (wholes.get(cur) && wholes.get(cur).url) || stream(t.src);
@@ -950,7 +962,7 @@
     a.tracks.forEach((t, k) => {
       const tr = document.createElement('tr');
       tr.innerHTML = '<td class="playcol"><button class="smallplay" aria-label="Play track ' + t.n + '"><i></i></button></td>' +
-        '<td class="num">' + t.n + '.</td><td class="title"><a href="#"></a><span class="time">' + fmt(t.duration) + '</span></td>';
+        '<td class="num">' + t.n + '.</td><td class="title"><a href="#' + t.n + '"></a><span class="time">' + fmt(t.duration) + '</span></td>';
       tr.querySelector('.title a').textContent = t.title;
       tr.querySelector('.smallplay').onclick = () => (k === cur && audio.src) ? (audio.paused ? audio.play() : audio.pause()) : load(k, true);
       tr.querySelector('.title a').onclick = e => { e.preventDefault(); load(k, true); };
@@ -962,6 +974,7 @@
     spin(0);                                            // the needle at the start of the groove
     $('stickyTrack').textContent = a.tracks[0].n + '. ' + a.tracks[0].title;
     $('nowTime').textContent = '00:00 / ' + fmt(a.tracks[0].duration);
+    queueFromLink();
   }).catch(() => {
     $('albumTitle').textContent = 'no album yet';
   });

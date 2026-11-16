@@ -48,9 +48,26 @@
   document.addEventListener('visibilitychange', () => {
     if (!/^\/(index\.html)?$/.test(location.pathname)) return; // (scorsby only sleeps at home)
     clearTimeout(backT);
-    if (document.hidden) { if (!/scorsby is sleeping|welcome back/.test(document.title)) title = document.title; if (SLEEP) set(SLEEP); document.title = 'scorsby is sleeping...'; return; }
+    if (document.hidden) { if (!/scorsby is sleeping|welcome back|you are loved/.test(document.title)) title = document.title; if (SLEEP) set(SLEEP); document.title = 'scorsby is sleeping...'; return; }
     wake(); document.title = 'welcome back :-)';
     backT = setTimeout(() => { document.title = title; }, 2200);
   });
   winkSoon();
+
+  // love everyone (yours, or someone else's reaching you): heart eyes in the tab, and a title that says so, for a few
+  // seconds; then the tab goes back to whatever it was
+  const LOVED = '/images/scorsby_hearteyes_icon.png', LOVED_TITLE = 'you are loved! <3';
+  new Image().src = LOVED; // (ready before the first press)
+  let lovedT = 0, lovedFrom = null;
+  window.tabLoved = (ms = 3500) => {
+    if (lovedFrom === null) lovedFrom = { title: document.title, href: link.href, type: link.type };
+    link.type = 'image/png'; link.href = LOVED; document.title = LOVED_TITLE;
+    clearTimeout(lovedT);
+    lovedT = setTimeout(() => {
+      const was = lovedFrom; lovedFrom = null;
+      // (if the tab went to sleep or woke meanwhile, that's what it goes back to)
+      if (document.title === LOVED_TITLE) document.title = was.title;
+      if (link.href.endsWith(LOVED)) { link.type = was.type; link.href = was.href; }
+    }, ms);
+  };
 })();

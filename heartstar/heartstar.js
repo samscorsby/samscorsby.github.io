@@ -2678,6 +2678,7 @@
   // together merges into one moment every few seconds, and the whispers come only now and then. every bit of it still counts.
   let lastOthersLove = -1e9, lastLoveWhisper = -1e9;
   function othersLove(v, from, kind, now, name) {
+    window.tabLoved?.();
     if (peers.size + 1 <= 12) {
       capPush(waves, { v, born: now, radius: 0, seen: new Set() }, 3);
       loveBurst(kind, from && from.sz > 0 ? [from.sx, from.sy] : null, now);
@@ -4192,6 +4193,7 @@
     send({ t: 'all', v, h: me.hands || 0 }); // one point of love, and one more for every hand you are holding
     if (!net.live) trails.push({ a: [me.lat, me.lon], t: Date.now(), k: 'all' });
     whisper(peers.size ? 'you loved everyone. everyone felt it.' : 'you loved everyone, even the ones not here yet.');
+    window.tabLoved?.(); // (heart eyes in the tab, for a moment)
     tone.swell();
   }
   document.getElementById('act-all').addEventListener('click', () => { tone.wake(); loveEveryone(); });

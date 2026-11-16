@@ -917,6 +917,7 @@
   function startOmen(k, seed = Math.random() * 1e6) {
     if (calmMood) return;
     if (!OMEN_DUR[k] || performance.now() < intro.ui) return;
+    if (document.hidden && k !== 'turn') return; // (one that happens while you're away is missed, not saved up: otherwise all its rain falls at once when you come back)
     omen = { k, seed, born: performance.now(), dur: OMEN_DUR[k] };
     whisper(typeof OMEN_WORDS[k] === 'function' ? OMEN_WORDS[k](seed) : OMEN_WORDS[k], 5200, true, null, true);
     if (k === 'heartstar') { for (const s of everyone()) s.hearts = 6000; setMood('hearts', 6000); }

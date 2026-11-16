@@ -2053,5 +2053,77 @@
    "Female FM (Indonesia), internet radio, Nov 14, 08:03 UTC"
   ],
   "heard_total": 14
+ },
+ {
+  "catalog": "ISA019",
+  "number": 19,
+  "title": "ISA019 ZZRoRF2 X25,x50 Fold Overflow",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-16",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-16T04:02+00:00",
+  "listened_hours": 23,
+  "length": 833.77,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Collatz FT8 Overflow",
+    "duration": 149.73
+   },
+   {
+    "n": 2,
+    "title": "Replicator mobile ZZRoRF2 Fold",
+    "duration": 104.81
+   },
+   {
+    "n": 3,
+    "title": "Gray Code x25,x50 music",
+    "duration": 133.13
+   },
+   {
+    "n": 4,
+    "title": "BPM Explanation",
+    "duration": 118.06
+   },
+   {
+    "n": 5,
+    "title": "Playhead pop 00s",
+    "duration": 328.04
+   }
+  ],
+  "cover": "archive/covers/ISA019.jpg",
+  "cover_png": "archive/covers/ISA019.png",
+  "palette": [
+   "#4418BD",
+   "#8227D7",
+   "#3426A0",
+   "#231743",
+   "#F7F6FA"
+  ],
+  "seed": "1121167634332330393",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "WSPR beacons, 20 m, 14095.6 kHz USB via Beverage - North | Chichester UK, Nov 15, 12:02 UTC",
+   "FT8 data, 10 m, 28074.0 kHz USB via 0-30 MHz SDR, HB9CWK Heimiswil, Switzerland, Nov 15, 12:02 UTC",
+   "FT8 data, 20 m, 14074.0 kHz USB via 0.5-30 MHz SDR (KiwiSDR 2 of 3), Marahau, Tasman District, New Zealand, Nov 16, 02:02 UTC",
+   "FT8 data, 10 m, 28074.0 kHz USB via linkz - kiwi 2 | Isere, France, Nov 15, 11:02 UTC",
+   "ZZRock (Belgium), internet radio, Nov 16, 00:02 UTC",
+   "KIMOA Radio Network (Los Angeles, California, The United States Of America), internet radio, Nov 16, 02:05 UTC",
+   "mobile - jakarta sigisora, live microphone, Nov 15, 11:03 UTC",
+   "BRF2 Radio (Belgium), internet radio, Nov 15, 19:06 UTC",
+   "Antanan.Volmet x25,x50 (E to EAf), 5499.0 kHz USB via 0-30 MHz SDR, ZL2VH Branch 63 New Zealand | Mount Climie, Upper Hutt NZ, Nov 15, 07:01 UTC",
+   "97.9 Home Radio Manila - DWQZ (Pasig City, The Philippines), 97.9 MHz FM, Nov 15, 15:03 UTC",
+   "CNR1 Jammer/Firedrake (M to CHN), 7280.0 kHz AM via 0-30 MHz Funkamateure e.V. | Baunatal, Germany, Nov 16, 02:02 UTC",
+   "WSPR beacons, 20 m, 14095.6 kHz USB via AutreRadioAutreCulture 1 | TREMOLAT (24), FRANCE, Nov 15, 05:03 UTC",
+   "CNR1 Jammer/Firedrake (M to FE), 9985.0 kHz AM via 0-30 MHz SDR, K1HTV-4, Amissville, VA, Nov 15, 04:02 UTC",
+   "amsterdam - hydrophile 5, live microphone, Nov 15, 20:03 UTC",
+   "Explanation of Catholic Morals (Rev. John H. Stapleton, 2019), archive, 2019, Nov 15, 18:04 UTC",
+   "MWV Radio Feda (A to NAf), 11610.0 kHz AM via 0,5-30 MHz SDR, Bad Münstereifel, Nov 15, 22:01 UTC",
+   "FluxFM 2000er | 320k MP3 (Germany), internet radio, Nov 15, 18:04 UTC",
+   "Air Buttons - Richard Sanderson (Richard Sanderson), archive, Nov 15, 13:03 UTC"
+  ],
+  "heard_total": 18
  }
 ]

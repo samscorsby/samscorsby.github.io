@@ -187,3 +187,10 @@ ISA018 Maputo 69 Shuffle Acuarela Misc
 3. Bret Harte Loop Sort Shuffle English
 4. Acuarela 69 Overflow Uruguay
 5. 7205 Chichester UK misc
+
+ISA019 ZZRoRF2 X25,x50 Fold Overflow
+1. Collatz FT8 Overflow
+2. Replicator mobile ZZRoRF2 Fold
+3. Gray Code x25,x50 music
+4. BPM Explanation
+5. Playhead pop 00s

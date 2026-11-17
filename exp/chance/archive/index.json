@@ -2125,5 +2125,84 @@
    "Air Buttons - Richard Sanderson (Richard Sanderson), archive, Nov 15, 13:03 UTC"
   ],
   "heard_total": 18
+ },
+ {
+  "catalog": "ISA020",
+  "number": 20,
+  "title": "ISA020 2015 Basboro Salish Code",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-17",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-17T04:03+00:00",
+  "listened_hours": 24,
+  "length": 1549.06,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "E(2,4) HR2U Salish Rule Rule 150",
+    "duration": 468.14
+   },
+   {
+    "n": 2,
+    "title": "bauri & erik levander Code",
+    "duration": 238.62
+   },
+   {
+    "n": 3,
+    "title": "1953 Spanish a->bc Arch Metro",
+    "duration": 537.97
+   },
+   {
+    "n": 4,
+    "title": "literature Weather waynesboro Bitcrush",
+    "duration": 148.65
+   },
+   {
+    "n": 5,
+    "title": "Islands 2015",
+    "duration": 155.68
+   }
+  ],
+  "cover": "archive/covers/ISA020.jpg",
+  "cover_png": "archive/covers/ISA020.png",
+  "palette": [
+   "#3826A9",
+   "#C3358C",
+   "#2F6B91",
+   "#1E1940",
+   "#F7F6FA"
+  ],
+  "seed": "4210482250487701434",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "A11_T649_HR2U_CH28_19-38-11_03-52-40_-_2015-10-05_Recording.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 17, 00:05 UTC",
+   "[GV-562",
+   "Beyond (John Galsworthy, 2015), archive, 2015, Nov 16, 20:02 UTC",
+   "Fully Catholic Radio (Trinidad And Tobago), internet radio, Nov 17, 00:06 UTC",
+   "drigg - dunes, live microphone, Nov 16, 17:04 UTC",
+   "Country Music (Uganda), internet radio, Nov 16, 18:06 UTC",
+   "bauri - rwb004 (bauri & erik levander, 2004), archive, 2004, Nov 16, 22:04 UTC",
+   "Eve Ward - On The Carpet (), archive, Nov 16, 11:03 UTC",
+   "BARS RADIO (Thessaloniki, Greece), internet radio, Nov 16, 09:03 UTC",
+   "Radio Nova Metro (Brazil), internet radio, Nov 16, 15:02 UTC",
+   "REBEL 105.2 (Greece), 105.2 MHz FM, Nov 16, 18:04 UTC",
+   "Lectures On Painting Delivered To The Students Of The Royal Academy (Edward Armitage, 2017), archive, 2017, Nov 16, 07:06 UTC",
+   "La Mejor Tijuana - 90.7 FM - XHTIM-FM - MVS Radio - Tijuana, BC (Baja California, Mexico), 90.7 MHz FM, Nov 17, 03:03 UTC",
+   "All Star Parade of Bands 1953-09-12 Eddie Sauter and Bill Finnegan (1953), archive, 1953, Nov 16, 13:04 UTC",
+   "181.FM - Christmas Classics (Virginia, The United States Of America), internet radio, Nov 16, 12:04 UTC",
+   "MBG Neuwied-Gladbach (Rheinland-Pfalz, Germany), internet radio, Nov 16, 19:03 UTC",
+   "合肥故事广播 (Anhwei, China), internet radio, Nov 16, 13:03 UTC",
+   "enteradio (India), internet radio, Nov 16, 09:02 UTC",
+   "Wet Magic (E. Nesbit, 2015), archive, 2015, Nov 16, 15:03 UTC",
+   "Радіо Перше (Ukraine), internet radio, Nov 16, 11:02 UTC",
+   "Port Townsend hydrophone (the Salish Sea), live hydrophone, Nov 16, 04:05 UTC",
+   "Infinity Radio GH (Ghana), internet radio, Nov 16, 20:02 UTC",
+   "Radio Neumarkt (D to ROU), 1593.0 kHz AM via 0-30 MHz SDR, ZL1ROT, Rotorua, Nov 16, 19:02 UTC",
+   "Bay Islands Radio (E to AUS), 5045.0 kHz AM via 0.5-30 MHz SDR (KiwiSDR 2 of 3), Marahau, Tasman District, New Zealand, Nov 16, 21:02 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz SDR, HEPPEN, Heppen, Limburg, Belgium, Nov 16, 04:03 UTC"
+  ],
+  "heard_total": 25
  }
 ]

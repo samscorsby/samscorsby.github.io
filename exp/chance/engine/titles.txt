@@ -194,3 +194,10 @@ ISA019 ZZRoRF2 X25,x50 Fold Overflow
 3. Gray Code x25,x50 music
 4. BPM Explanation
 5. Playhead pop 00s
+
+ISA020 2015 Basboro Salish Code
+1. E(2,4) HR2U Salish Rule Rule 150
+2. bauri & erik levander Code
+3. 1953 Spanish a->bc Arch Metro
+4. literature Weather waynesboro Bitcrush
+5. Islands 2015

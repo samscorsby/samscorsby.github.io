@@ -2204,5 +2204,79 @@
    "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz SDR, HEPPEN, Heppen, Limburg, Belgium, Nov 16, 04:03 UTC"
   ],
   "heard_total": 25
+ },
+ {
+  "catalog": "ISA021",
+  "number": 21,
+  "title": "ISA021 Logos ID7",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-18",
+  "time_utc": "07:00",
+  "made_utc": "2026-11-18T04:02+00:00",
+  "listened_hours": 24,
+  "length": 1772.37,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "24-bit t>>10 San",
+    "duration": 106.46
+   },
+   {
+    "n": 2,
+    "title": "ID7 Morph Sekret Odd-Even",
+    "duration": 594.09
+   },
+   {
+    "n": 3,
+    "title": "news Logos world Arch Freeze Pattern",
+    "duration": 280.55
+   },
+   {
+    "n": 4,
+    "title": "signed 103.1 Vibe 5EBI",
+    "duration": 612.61
+   },
+   {
+    "n": 5,
+    "title": "Ukrainian Bitcrush",
+    "duration": 178.66
+   }
+  ],
+  "cover": "archive/covers/ISA021.jpg",
+  "cover_png": "archive/covers/ISA021.png",
+  "palette": [
+   "#661DB4",
+   "#C02CCF",
+   "#432999",
+   "#2D1843",
+   "#F8F5FB"
+  ],
+  "seed": "3453740504445414648",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "San Francisco Radio CWP (E to WOc), 2998.0 kHz AM via 0-30 MHz SDR, KK6PR Crooked River Ranch, OR - USA, Nov 18, 01:01 UTC",
+   "Radio Sekret (Poland), internet radio, Nov 18, 02:03 UTC",
+   "WSPR beacons, 20 m, 14095.6 kHz USB via 0-30 MHz SDR - AE6RQ | San Jose, CA USA, Nov 17, 22:02 UTC",
+   "Shannon HFDL (ID7), 6530.5 kHz USB via 0-30 MHz SDR, DL7APJ, Germany, Teltow, Nov 17, 13:01 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via ███ 0-30 MHz SDR #2, VK5PH, Ironstone Range, South Australia ███, Nov 17, 16:02 UTC",
+   "SLBC -Swadeshiya Sewaya (Sri Lanka), internet radio, Nov 17, 23:04 UTC",
+   "Radio Poland (Poland), internet radio, Nov 17, 13:02 UTC",
+   "Pure Radio Holland - The Underground Channel (The Netherlands), internet radio, Nov 17, 14:03 UTC",
+   "Radio Logos MK (Pogradec, Albania), internet radio, Nov 17, 12:03 UTC",
+   "RMC Cool (Italy), internet radio, Nov 17, 15:04 UTC",
+   "Love Radio Moldova (The Republic Of Moldova), internet radio, Nov 18, 00:02 UTC",
+   "Luzibo Radio (Harare, Zimbabwe), internet radio, Nov 17, 13:02 UTC",
+   "Easy 90s (Dubai, The United Arab Emirates), internet radio, Nov 17, 11:02 UTC",
+   "5EBI 103.1 FM (South Australia, Australia), 103.1 MHz FM, Nov 18, 01:03 UTC",
+   "SoundAds (The Republic Of Moldova), internet radio, Nov 18, 02:03 UTC",
+   "Radio Kawkaba (Kawkaba, Lebanon), internet radio, Nov 17, 12:03 UTC",
+   "INOLVIDABLE FM (Uruguay), internet radio, Nov 17, 20:02 UTC",
+   "The Vibe Radio Network (The United Kingdom Of Great Britain And Northern Ireland), internet radio, Nov 18, 02:04 UTC",
+   "Radio Mariia (Kyiv, Ukraine), internet radio, Nov 18, 03:10 UTC",
+   "Radio City - Vercelli, Biella e Novara (Piemonte, Italy), internet radio, Nov 17, 19:04 UTC"
+  ],
+  "heard_total": 20
  }
 ]

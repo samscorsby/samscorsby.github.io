@@ -1,53 +1,44 @@
 {
- "title": "ISA020 2015 Basboro Salish Code",
+ "title": "ISA021 Logos ID7",
  "artist": "ScorsBT4",
- "released": "2026-11-17",
+ "released": "2026-11-18",
  "about": "All computer programming is basically question asking, rather than choice making.",
  "about_by": "John Cage, 1985",
  "about_link": "https://www.youtube.com/watch?v=9GqHikJSQhQ",
  "credits": [
-  "created November 17, 2026, 04:03 UTC",
-  "Impermanence Series A · ISA020",
+  "created November 18, 2026, 04:02 UTC",
+  "Impermanence Series A · ISA021",
   "",
   "questions by Samuel John Scorsby",
   "",
-  "Over the course of a day, ScorsBT4 listened to the world, gathering 364 moments of radio: shortwave from receivers around the world, radio amateurs and broadcasters above shortwave, FM and internet stations, open microphones on rooftops, in gardens and in canals, hydrophones in the sea, the earth's own natural radio, and old recordings from the Internet Archive. It kept only what had something in it. In the spirit of John Cage's aleatoric compositional methods, particularly inspired by his piece \"Fontana Mix\", it threw the dice: which sounds belong together, which patterns of data to fuse them with (cellular automata, bytebeat formulas, number sequences, sorting algorithms), how long each song should be, and where it should go. 25 of those moments are in these songs. Nothing was chosen by hand.",
+  "Over the course of a day, ScorsBT4 listened to the world, gathering 364 moments of radio: shortwave from receivers around the world, radio amateurs and broadcasters above shortwave, FM and internet stations, open microphones on rooftops, in gardens and in canals, hydrophones in the sea, the earth's own natural radio, and old recordings from the Internet Archive. It kept only what had something in it. In the spirit of John Cage's aleatoric compositional methods, particularly inspired by his piece \"Fontana Mix\", it threw the dice: which sounds belong together, which patterns of data to fuse them with (cellular automata, bytebeat formulas, number sequences, sorting algorithms), how long each song should be, and where it should go. 20 of those moments are in these songs. Nothing was chosen by hand.",
   "",
-  "This album is impermanent. The broadcasts collected are gone. The recordings it gathered were thrown away once it was made. Tomorrow it will be replaced by another, which will never be heard again either. Each day the chance that it is the last grows: today's was 1 in 346, tomorrow's is 1 in 345. It exists for a day. Listen while it's here. More info on the project.",
-  "",
-  "open microphones: Locus Sonus Locustream (locusonus.org)",
-  "archive recordings: the Internet Archive (archive.org), openly licensed collections",
-  "hydrophones: Orcasound (orcasound.net), live from the Salish Sea, CC BY-NC-SA 4.0; songs 1, 5 use it and are shared under the same licence"
+  "This album is impermanent. The broadcasts collected are gone. The recordings it gathered were thrown away once it was made. Tomorrow it will be replaced by another, which will never be heard again either. Each day the chance that it is the last grows: today's was 1 in 345, tomorrow's is 1 in 344. It exists for a day. Listen while it's here. More info on the project."
  ],
  "more": "https://scorsby.us/blog/2026-10-29_the_medium,_the_mirror,_and_the_music.html",
  "heard": [
-  "A11_T649_HR2U_CH28_19-38-11_03-52-40_-_2015-10-05_Recording.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 17, 00:05 UTC",
-  "[GV-562",
-  "Beyond (John Galsworthy, 2015), archive, 2015, Nov 16, 20:02 UTC",
-  "Fully Catholic Radio (Trinidad And Tobago), internet radio, Nov 17, 00:06 UTC",
-  "drigg - dunes, live microphone, Nov 16, 17:04 UTC",
-  "Country Music (Uganda), internet radio, Nov 16, 18:06 UTC",
-  "bauri - rwb004 (bauri & erik levander, 2004), archive, 2004, Nov 16, 22:04 UTC",
-  "Eve Ward - On The Carpet (), archive, Nov 16, 11:03 UTC",
-  "BARS RADIO (Thessaloniki, Greece), internet radio, Nov 16, 09:03 UTC",
-  "Radio Nova Metro (Brazil), internet radio, Nov 16, 15:02 UTC",
-  "REBEL 105.2 (Greece), 105.2 MHz FM, Nov 16, 18:04 UTC",
-  "Lectures On Painting Delivered To The Students Of The Royal Academy (Edward Armitage, 2017), archive, 2017, Nov 16, 07:06 UTC",
-  "La Mejor Tijuana - 90.7 FM - XHTIM-FM - MVS Radio - Tijuana, BC (Baja California, Mexico), 90.7 MHz FM, Nov 17, 03:03 UTC",
-  "All Star Parade of Bands 1953-09-12 Eddie Sauter and Bill Finnegan (1953), archive, 1953, Nov 16, 13:04 UTC",
-  "181.FM - Christmas Classics (Virginia, The United States Of America), internet radio, Nov 16, 12:04 UTC",
-  "MBG Neuwied-Gladbach (Rheinland-Pfalz, Germany), internet radio, Nov 16, 19:03 UTC",
-  "合肥故事广播 (Anhwei, China), internet radio, Nov 16, 13:03 UTC",
-  "enteradio (India), internet radio, Nov 16, 09:02 UTC",
-  "Wet Magic (E. Nesbit, 2015), archive, 2015, Nov 16, 15:03 UTC",
-  "Радіо Перше (Ukraine), internet radio, Nov 16, 11:02 UTC",
-  "Port Townsend hydrophone (the Salish Sea), live hydrophone, Nov 16, 04:05 UTC",
-  "Infinity Radio GH (Ghana), internet radio, Nov 16, 20:02 UTC",
-  "Radio Neumarkt (D to ROU), 1593.0 kHz AM via 0-30 MHz SDR, ZL1ROT, Rotorua, Nov 16, 19:02 UTC",
-  "Bay Islands Radio (E to AUS), 5045.0 kHz AM via 0.5-30 MHz SDR (KiwiSDR 2 of 3), Marahau, Tasman District, New Zealand, Nov 16, 21:02 UTC",
-  "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz SDR, HEPPEN, Heppen, Limburg, Belgium, Nov 16, 04:03 UTC"
+  "San Francisco Radio CWP (E to WOc), 2998.0 kHz AM via 0-30 MHz SDR, KK6PR Crooked River Ranch, OR - USA, Nov 18, 01:01 UTC",
+  "Radio Sekret (Poland), internet radio, Nov 18, 02:03 UTC",
+  "WSPR beacons, 20 m, 14095.6 kHz USB via 0-30 MHz SDR - AE6RQ | San Jose, CA USA, Nov 17, 22:02 UTC",
+  "Shannon HFDL (ID7), 6530.5 kHz USB via 0-30 MHz SDR, DL7APJ, Germany, Teltow, Nov 17, 13:01 UTC",
+  "FT8 data, 40 m, 7074.0 kHz USB via ███ 0-30 MHz SDR #2, VK5PH, Ironstone Range, South Australia ███, Nov 17, 16:02 UTC",
+  "SLBC -Swadeshiya Sewaya (Sri Lanka), internet radio, Nov 17, 23:04 UTC",
+  "Radio Poland (Poland), internet radio, Nov 17, 13:02 UTC",
+  "Pure Radio Holland - The Underground Channel (The Netherlands), internet radio, Nov 17, 14:03 UTC",
+  "Radio Logos MK (Pogradec, Albania), internet radio, Nov 17, 12:03 UTC",
+  "RMC Cool (Italy), internet radio, Nov 17, 15:04 UTC",
+  "Love Radio Moldova (The Republic Of Moldova), internet radio, Nov 18, 00:02 UTC",
+  "Luzibo Radio (Harare, Zimbabwe), internet radio, Nov 17, 13:02 UTC",
+  "Easy 90s (Dubai, The United Arab Emirates), internet radio, Nov 17, 11:02 UTC",
+  "5EBI 103.1 FM (South Australia, Australia), 103.1 MHz FM, Nov 18, 01:03 UTC",
+  "SoundAds (The Republic Of Moldova), internet radio, Nov 18, 02:03 UTC",
+  "Radio Kawkaba (Kawkaba, Lebanon), internet radio, Nov 17, 12:03 UTC",
+  "INOLVIDABLE FM (Uruguay), internet radio, Nov 17, 20:02 UTC",
+  "The Vibe Radio Network (The United Kingdom Of Great Britain And Northern Ireland), internet radio, Nov 18, 02:04 UTC",
+  "Radio Mariia (Kyiv, Ukraine), internet radio, Nov 18, 03:10 UTC",
+  "Radio City - Vercelli, Biella e Novara (Piemonte, Italy), internet radio, Nov 17, 19:04 UTC"
  ],
- "heard_total": 25,
+ "heard_total": 20,
  "tags": [
   "chance",
   "radio",
@@ -58,78 +49,78 @@
  "tracks": [
   {
    "n": 1,
-   "title": "E(2,4) HR2U Salish Rule Rule 150",
-   "duration": 468.14,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/01.mp3"
+   "title": "24-bit t>>10 San",
+   "duration": 106.46,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/01.mp3"
   },
   {
    "n": 2,
-   "title": "bauri & erik levander Code",
-   "duration": 238.62,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/02.mp3"
+   "title": "ID7 Morph Sekret Odd-Even",
+   "duration": 594.09,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/02.mp3"
   },
   {
    "n": 3,
-   "title": "1953 Spanish a->bc Arch Metro",
-   "duration": 537.97,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/03.mp3"
+   "title": "news Logos world Arch Freeze Pattern",
+   "duration": 280.55,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/03.mp3"
   },
   {
    "n": 4,
-   "title": "literature Weather waynesboro Bitcrush",
-   "duration": 148.65,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/04.mp3"
+   "title": "signed 103.1 Vibe 5EBI",
+   "duration": 612.61,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/04.mp3"
   },
   {
    "n": 5,
-   "title": "Islands 2015",
-   "duration": 155.68,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/05.mp3"
+   "title": "Ukrainian Bitcrush",
+   "duration": 178.66,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/05.mp3"
   }
  ],
- "cover": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/cover.jpg",
- "cover_small": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/cover_small.jpg",
- "banner": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/banner.jpg",
- "cover_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/cover.png",
- "cover_small_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/cover_small.png",
+ "cover": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/cover.jpg",
+ "cover_small": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/cover_small.jpg",
+ "banner": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/banner.jpg",
+ "cover_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/cover.png",
+ "cover_small_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/cover_small.png",
  "downloads": [
   {
    "format": "MP3",
    "note": "320 kbps",
-   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/SBT4-ISA020-2026-11-17-mp3.zip",
-   "bytes": 64548754
+   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/SBT4-ISA021-2026-11-18-mp3.zip",
+   "bytes": 73770932
   },
   {
    "format": "WAV",
    "note": "24-bit/48kHz",
-   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-17/SBT4-ISA020-2026-11-17-wav.zip",
-   "bytes": 448206625
+   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-18/SBT4-ISA021-2026-11-18-wav.zip",
+   "bytes": 512739413
   }
  ],
  "mood": {
-  "brightness": 0.125,
-  "energy": 0.842,
-  "noise": 0.47,
-  "motion": 0.463
+  "brightness": 0.204,
+  "energy": 0.731,
+  "noise": 0.091,
+  "motion": 0.081
  },
  "palette": [
-  "#3826A9",
-  "#C3358C",
-  "#2F6B91",
-  "#1E1940",
-  "#F7F6FA"
+  "#661DB4",
+  "#C02CCF",
+  "#432999",
+  "#2D1843",
+  "#F8F5FB"
  ],
- "number": 20,
+ "number": 21,
  "series": "Impermanence Series A",
- "catalog": "ISA020",
- "day": "2026-11-17",
- "time_utc": "07:01",
- "made_utc": "2026-11-17T04:03+00:00",
+ "catalog": "ISA021",
+ "day": "2026-11-18",
+ "time_utc": "07:00",
+ "made_utc": "2026-11-18T04:02+00:00",
  "listened_hours": 24,
- "odds": 346,
+ "odds": 345,
  "last": false,
  "pure": false,
- "seed": "4210482250487701434",
- "generated_from": "album_2026-11-17_040351_fontana",
- "published": "2026-11-17T07:01:44"
+ "seed": "3453740504445414648",
+ "generated_from": "album_2026-11-18_040240_fontana",
+ "published": "2026-11-18T07:00:32"
 }

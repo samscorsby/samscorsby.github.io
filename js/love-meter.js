@@ -65,6 +65,8 @@
   const BEAR_INK = { B: '#00B4FF', W: '#FFFFFF', K: '#000000', R: '#FF0000' };
   const PINK_INK = { B: '#FF80FF', W: '#FFFFFF', K: '#000000', R: '#FF0000' };
   // a loop-de-loop the line ties in itself
+  // infinity, which the line runs into on the left and out of on the right (its middle row sits on the line)
+  const INFINITY = pic('..###.....###../.#...#...#...#./#.....#.#.....#/#......#......#/#.....#.#.....#/.#...#...#...#./..###.....###..');
   const LOOP = pic('.....###.../....#...#../...#.....#./...#.....#./....#...#../.....#.#.../......#..../.....#.#.../#####...###');
 
   // two screens: day (white, like the site, and the one you get first) and night (the glowing green one)
@@ -124,7 +126,16 @@
   function shape(kind, t) {
     const p = 0.12 * gs(t, 0.1, 0.025), tw = 0.3 * gs(t, 0.45, 0.05);
     if (kind === 'heart' || kind === 'xo') return p + tw;
-    if (kind === 'hi' || kind === 'loop') return 0;
+    if (kind === 'hi' || kind === 'loop' || kind === 'infinity') return 0;
+    // up to infinity (off the top), back from minus infinity (off the bottom), and home again
+    if (kind === 'asymptote') {
+      if (t <= 0.15 || t >= 0.65) return 0;
+      const y = 0.035 / (0.4 - t) * Math.sin(Math.PI * (t - 0.15) / 0.5);
+      return Math.max(-2.6, Math.min(2.6, y));
+    }
+    if (kind === 'boing') return t > 0.1 && t < 0.8 ? 0.65 * Math.exp(-4 * (t - 0.1)) * Math.abs(Math.sin(Math.PI * 5 * (t - 0.1) / 0.7)) : 0;
+    if (kind === 'sine') return t > 0.05 && t < 0.95 ? 0.32 * Math.sin(2 * Math.PI * 3 * (t - 0.05) / 0.9) : 0;
+    if (kind === 'achoo') return 0.1 * gs(t, 0.12, 0.03) + 0.16 * gs(t, 0.2, 0.03) - 0.1 * gs(t, 0.27, 0.01) + 2.6 * gs(t, 0.3, 0.008);
     if (kind === 'hiccup') return 0.45 * (gs(t, 0.2, 0.012) + gs(t, 0.3, 0.012) + gs(t, 0.4, 0.012));
     if (kind === 'stairs') return t > 0.1 && t < 0.6 ? 0.12 * Math.ceil((t - 0.1) / 0.1) : 0;
     if (kind === 'dance') return t > 0.08 && t < 0.78 ? 0.32 * Math.sin((t - 0.08) * 2 * Math.PI * 7) * Math.sin((t - 0.08) / 0.7 * Math.PI) : 0;
@@ -133,6 +144,11 @@
   }
 
   let phase = 0.6, bpm = 70, amp = 1, pink = 0, kind = 'normal', pending = 0, w = worldAt(Date.now());
+  // the jk: waits for the line to start again at the left, flatlines all the way across, then says jk at the end
+  // (it says jk 80% of the way across, then stays flat a little past the jk, so no beat is drawn over it)
+  let jkWaiting = false, flat = false, filling = false, jkEnd = null;
+  // the wander: for a while the line forgets it's a heartbeat and goes wherever it likes, then ambles back home
+  let wander = null;
   let loving = 0, thumpUntil = 0, thumpPink = false, extra = 0, todaySeen = null, plus = '', plusUntil = 0;
   function nextBeat() {
     w = worldAt(Date.now());
@@ -141,6 +157,7 @@
     loving = Math.round(w.loving + extra + (Math.random() - 0.5) * 40000);
     const last = kind, r = Math.random(), quiet = w.up <= DAY_MIN + 0.03;
     amp = 1; pink = 0; kind = 'normal';
+    if (flat || jkWaiting || wander) return; // (nothing else while a flatline or a wander is coming or going on)
     if (pending > 0) { pending--; pink = 1; kind = 'heart'; } // love from the planet comes in as pink hearts
     else if (last === 'normal') {
       if (r < (quiet ? 0.2 : 0.012)) kind = 'smile';
@@ -151,6 +168,13 @@
       else if (r < 0.21) kind = 'xo';
       else if (r < 0.24) kind = 'hiccup';
       else if (r < 0.265) kind = 'stairs';
+      else if (r < 0.285) kind = 'asymptote';
+      else if (r < 0.3) kind = 'infinity';
+      else if (r < 0.32) kind = 'boing';
+      else if (r < 0.335 && !filling) jkWaiting = true;
+      else if (r < 0.35) kind = 'achoo';
+      else if (r < 0.37) kind = 'sine';
+      else if (r < 0.38 && !filling) wander = { left: 0, total: Math.round(TW * (0.5 + Math.random() * 0.5)), y: 0, v: 0 };
     }
   }
   // a little picture drawn into the line; hide: the line itself goes quiet underneath, so the picture is the line
@@ -166,17 +190,34 @@
       phase += bpm / 60 / SPEED;
       if (phase >= 1) { phase -= 1; before = 0; nextBeat(); }
       const at = (c) => before < c && phase >= c;
-      if (!quiet && at(0.225)) { thumpUntil = performance.now() + 130; thumpPink = !!pink; }
+      if (!quiet && !flat && !wander && at(0.225)) { thumpUntil = performance.now() + 130; thumpPink = !!pink; }
       if (kind === 'heart' && at(0.12)) stamp(HEART_BEAT);
       if (kind === 'hi' && at(0.1)) stamp(HI, 0, true);
       if (kind === 'loop' && at(0.15)) stamp(LOOP, 0, true);
       if (kind === 'xo' && at(0.22)) stamp(words('xo'), 3);
+      if (kind === 'infinity' && at(0.15)) stamp(INFINITY, -3, true);
+      // the asymptote itself: a dashed line top to bottom, like in a maths book
+      if (kind === 'asymptote' && at(0.4)) stamp(Array.from({ length: H - 7 }, (_, i) => (i % 3 === 2 ? '.' : '#')), BASE - H + 1);
       if (kind === 'smile' && at(0.36)) stamp(eyes(), 6);
       // the strongest point in this column, so thin spikes never fall between pixels
       let v = 0;
       for (let s = 1; s <= 4; s++) { const y = shape(kind, before + (phase - before) * s / 4); if (Math.abs(y) > Math.abs(v)) v = y; }
       head = (head + 1) % TW;
-      ys[head] = v * amp;
+      if (jkWaiting && head === 0) { jkWaiting = false; flat = true; jkEnd = null; }
+      if (flat && jkEnd === null && head === Math.round(TW * 0.8)) { stamp(words('jk'), 3); jkEnd = Math.min(TW - 1, head + 13); }
+      // and then a fresh beat straight away, so the heart comes back up just after the jk
+      if (flat && jkEnd !== null && head >= jkEnd) { flat = false; jkEnd = null; phase = 0.05; kind = 'normal'; pink = 0; amp = 1; }
+      if (wander) {
+        // a wobbly drift with a bit of momentum, kept on the screen; for its last stretch it heads home to the line
+        const wd = wander;
+        wd.v = (wd.v + (Math.random() - 0.5) * 0.012) * 0.985;
+        wd.y += wd.v;
+        if (wd.y > 1.05 || wd.y < -0.4) { wd.y = Math.max(-0.4, Math.min(1.05, wd.y)); wd.v *= -0.6; }
+        if (++wd.left > wd.total * 0.7) { wd.y *= 0.94; wd.v *= 0.9; }
+        if ((wd.left >= wd.total && Math.abs(wd.y) < 0.02) || wd.left > wd.total * 1.5) wander = null;
+        v = wd.y; amp = 1;
+      }
+      ys[head] = flat ? 0 : v * amp;
       pinks[head] = pink;
       hidden[head] = 0;
       for (const s of stamps) { s.age++; if (s.hide && s.age <= s.rows[0].length) hidden[head] = 1; }
@@ -197,7 +238,7 @@
     cv.style.width = (W * dev / dpr) + 'px'; cv.style.height = (H * dev / dpr) + 'px';
     SPEED = 115 * dpr / dev; // about 115 screen pixels a second, however big ours are
     ys = new Float32Array(TW); pinks = new Uint8Array(TW); hidden = new Uint8Array(TW); head = 0; stamps = []; walkers = []; hearts = [];
-    write(TW, true); // the screen starts full, as if it had been beating all along
+    filling = true; write(TW, true); filling = false; // the screen starts full, as if it had been beating all along
   }
 
   // ---- alarms, units, and little walkers ----
@@ -268,6 +309,7 @@
       const ahead = (x - head + TW) % TW;
       if ((ahead > 0 && ahead <= GAP) || hidden[x]) { prev = null; continue; }
       const y = Math.round(BASE - ys[x] * K);
+      if (prev !== null && Math.abs(y - prev) > H) prev = null; // (infinity to minus infinity isn't joined up)
       const top = prev === null ? y : Math.min(prev, y), bot = prev === null ? y : Math.max(prev, y);
       cx.fillStyle = pinks[x] ? PINK : lineInk(x, now);
       px(TX + x, top, 1, bot - top + 1);
@@ -308,7 +350,7 @@
     }
 
     // the readout
-    const R = W - 3, b = String(bpm), bw = textW(b, 2);
+    const R = W - 3, b = flat ? '--' : wander ? '??' : String(bpm), bw = textW(b, 2);
     text(b, R - bw, 6, GREEN, 2);
     const big = now < thumpUntil, hs = big ? HEART_L : HEART_S;
     sprite(hs, R - bw - 3 - hs[0].length, big ? 7 : 8, big && thumpPink ? PINK : GREEN);

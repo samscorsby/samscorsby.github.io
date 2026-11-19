@@ -861,8 +861,9 @@ export class Hearth extends DurableObject {
   }
   // scorsbys in the other hearths
   elsewhere() { return this.shared ? Math.max(0, this.shared.total - this.open()) : 0; }
-  // how many are here (not counting anyone on their way out, or moving to another hearth)
-  open() { return this.ctx.getWebSockets().filter((w) => w.readyState === 1 && !w.deserializeAttachment()?.going).length; }
+  // how many are here (not counting anyone on their way out, or moving to another hearth, or anyone already said
+  // goodbye to: a phone that went quiet can leave its old connection open for a long while after it's let go)
+  open() { return this.ctx.getWebSockets().filter((w) => { const p = w.readyState === 1 && w.deserializeAttachment(); return p && !p.going; }).length; }
 
   // how much love was shared, day by day (albuquerque days). counted by the lobby for all the hearths together;
   // what's shared here is told to it every couple of seconds.
@@ -912,7 +913,7 @@ export class Hearth extends DurableObject {
   }
 
   async fetch(request) {
-    if (this.ctx.getWebSockets().length >= MAX_HERE) return new Response('the hearth is full. try again soon.', { status: 503 });
+    if (this.open() >= MAX_HERE) return new Response('the hearth is full. try again soon.', { status: 503 });
     const url = new URL(request.url);
     const [lat, lon] = (request.headers.get('x-heart-at') || '0,0').split(',').map(Number);
     const tz = clamp(parseInt(url.searchParams.get('tz'), 10) || 0, -840, 840);
@@ -971,7 +972,7 @@ export class Hearth extends DurableObject {
         const v = clamp(Math.round(num(m.v) ? m.v : 0), 0, 3);
         const trail = { a: [me.lat, me.lon], t: Date.now(), k: 'all' };
         // one point of love, plus one for every hand the sender is holding
-        const hands = clamp(Math.round(num(m.h) ? m.h : 0), 0, Math.max(0, this.ctx.getWebSockets().length - 1));
+        const hands = clamp(Math.round(num(m.h) ? m.h : 0), 0, Math.max(0, this.open() - 1));
         const tally = await this.love(1 + hands);
         this.broadcast({ t: 'all', from: me.id, a: trail.a, at: trail.t, v, tally });
         await this.remember('trails', trail, DAY, MAX_TRAILS);
@@ -1148,7 +1149,7 @@ export class Hearth extends DurableObject {
 
   // when only one or two scorsbys are here, sometimes a kind message from earlier is heard again
   async echo() {
-    if (this.ctx.getWebSockets().length > QUIET || Math.random() < 0.5) return;
+    if (this.open() > QUIET || Math.random() < 0.5) return;
     const said = await this.load('said', SAID_LIFE);
     const fresh = said.filter((m) => (m.r || 0) < MAX_ECHOES);
     if (!fresh.length) return;

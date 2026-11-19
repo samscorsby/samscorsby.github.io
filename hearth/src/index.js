@@ -527,16 +527,24 @@ let statusSeen = null; // and the last numbers it gave the other pages
 // anything anyone says), and it's kept. visitors hear today's more often than the rest, and the rest stay in the mix.
 // written the first time anyone asks on a new day (denver time), or by the daily cron if nobody has yet.
 const SAYING_MODEL = JUDGE_MODEL, SAYINGS_A_DAY = 5;
+// (the examples are all samuel's own lines: the planet's sayings and news, and odd ones from the blog)
 const SAYING_WAYS = ['maybe u should sit under a tree :-)', 'once you scorb, you can never unscorb.', 'dare to combine.',
-  'in this dream, you are a revolutionary peacemaker.', 'scorsby never left. scorsby only played.', 'we beglong.',
-  'a puddle is just the sky practicing.', 'the glongingstons say hi. they always say hi.', 'the moon asked about you today.',
-  'the planet is round so nobody is ever at the edge.', 'a scorsby once ate a cloud. it tasted like tuesday.'];
+  'in this dream, you are a revolutionary peacemaker.', 'scorsby never left. scorsby only played.', 'we beglong.', 'just scorsbin.',
+  'joy, joy, joy. ever-new joy!', 'experience all from the center.', "i may be a child but i'm not lost. i am found in you.",
+  'breaking: sunsby and moonsby seen hugging.', 'this just in: local planet smiles for no reason.', 'the future is now. embrace your lil freak :-)',
+  'this just in: a scrillion scorsbys, all scorsbin.', 'the spark in the air, the wiggly feeling in your toes?',
+  'welcome, welcome, welcome, to the glongingston experience.', 'we sat inside a flying star and really gave everything a good look over.',
+  'nonetheless, everything seemed a bit more blue than usual.', 'little scorsby: i keep eating the fruit.',
+  'maybe impermanence is love trying on all its outfits.', 'and to wake is to dream between seas, sweet be.',
+  'the scent of dancing peppermints, the jingling of interdimensional sleighbells.', 'he was the cashier, hidden in plain sight.',
+  'my dear, if me you wish to be, then leave you all behind, stay carefully carefree.', 'all of life is seeking beglonging.'];
 const SAYING_ASK = 'You write for planet scorsby, a gentle, silly, cosmic little world of peace, love and joy for everyone everywhere. ' +
   'Everyone there is a scorsby: a small round blue face with round ears, a red nose and a smile. Its sun is sunsby, its moon is moonsby; ' +
   'the glongingstons are a joyful, silly alien crew from the gleamingfold, a place full of scorsbys. ' +
-  'Now and then the planet whispers a saying to whoever is visiting. Write ONE new saying: strange, whimsical, warm, a little mysterious or absurd, ' +
-  'the kind of thing that makes someone smile and wonder. All lowercase. At most 14 words, one or two short sentences. ' +
-  'No quotation marks, no emoji, no hashtags, no dashes. Never mean, scary, sad or preachy. Reply with only the saying.';
+  'Now and then the planet whispers a saying to whoever is visiting. Write new sayings: strange, whimsical, warm, a little mysterious or absurd, ' +
+  'the kind of thing that makes someone smile and wonder. Each one all lowercase, at most 14 words, one or two short sentences, ' +
+  'and each different from the others in subject and shape. No quotation marks, no emoji, no hashtags, no dashes. ' +
+  'Never mean, scary, sad or preachy. Reply with only the sayings, one per line, numbered.';
 let sayingBusy = 0;
 async function sayingsTable(env) {
   await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS sayings (id INTEGER PRIMARY KEY AUTOINCREMENT, day TEXT, text TEXT NOT NULL, same TEXT UNIQUE, said TEXT)').run();
@@ -552,18 +560,24 @@ async function dailySaying(env) {
     if (have >= SAYINGS_A_DAY) return have;
     const recent = (await env.LETTERS.prepare('SELECT text, same FROM sayings ORDER BY id DESC LIMIT 60').all()).results || [];
     const seen = new Set([...recent.map((r) => r.same), ...SAYING_WAYS.map(sameKey)]);
-    for (let tries = 0; tries < (SAYINGS_A_DAY - have) * 2 + 2 && have < SAYINGS_A_DAY; tries++) {
-      const ask = `some things it has said:\n${SAYING_WAYS.concat(recent.slice(0, 25).map((r) => r.text)).map((t) => `- ${t}`).join('\n')}\n\nwrite a new one, not like any of these.`;
-      const out = await env.AI.run(SAYING_MODEL, { messages: [{ role: 'system', content: SAYING_ASK }, { role: 'user', content: ask }], max_tokens: 50, temperature: 1.05 });
+    // (one request writes the day's sayings together; each is checked on its own, and any that don't pass are
+    // asked for again, a few times at most)
+    for (let round = 0; round < 3 && have < SAYINGS_A_DAY; round++) {
+      const need = SAYINGS_A_DAY - have;
+      const ask = `some things it has said (this is its voice):\n${SAYING_WAYS.map((t) => `- ${t}`).join('\n')}\n\n${recent.length ? `said lately (don't repeat these, or their words and ideas):\n${recent.slice(0, 15).map((r) => `- ${r.text}`).join('\n')}\n\n` : ''}write ${need} new ${need === 1 ? 'one' : 'ones'}.`;
+      const out = await env.AI.run(SAYING_MODEL, { messages: [{ role: 'system', content: SAYING_ASK }, { role: 'user', content: ask }], max_tokens: 60 * need, temperature: 1.05 });
       spend(env, SAYING_MODEL, out, SAYING_ASK + ask);
-      let t = String(out?.response ?? '').split('\n').map((l) => l.trim()).find(Boolean) || '';
-      t = t.replace(/^[-*\s]+/, '').replace(/["“”]/g, '').replace(/\s*[—–]\s*/g, ', ').replace(/\s+/g, ' ').trim().toLowerCase();
-      const words = t.split(' ').length;
-      if (words < 3 || words > 18 || t.length > 110 || /https?:|www\.|#|@/.test(t) || seen.has(sameKey(t))) continue;
-      const checked = await boinked(env, t);
-      if (!checked || checked !== t) continue; // (only one the kindness judge leaves as it is)
-      await env.LETTERS.prepare('INSERT OR IGNORE INTO sayings (day, text, same, said) VALUES (?1, ?2, ?3, ?4)').bind(day, t, sameKey(t), new Date().toISOString()).run();
-      seen.add(sameKey(t)); recent.unshift({ text: t, same: sameKey(t) }); have++;
+      const lines = String(out?.response ?? '').split('\n').map((l) => l.trim()).filter((l) => l && !/:$/.test(l)).slice(0, need + 2); // (not a line like "here are five:")
+      for (let t of lines) {
+        if (have >= SAYINGS_A_DAY) break;
+        t = t.replace(/^\s*(\d+[.):]|[-*\u2022])\s*/, '').replace(/["\u201c\u201d]/g, '').replace(/\s*[\u2014\u2013]\s*/g, ', ').replace(/\s+/g, ' ').trim().toLowerCase();
+        const words = t.split(' ').length;
+        if (words < 3 || words > 18 || t.length > 110 || /https?:|www\.|#|@/.test(t) || seen.has(sameKey(t))) continue;
+        const checked = await boinked(env, t);
+        if (!checked || checked !== t) continue; // (only one the kindness judge leaves as it is)
+        await env.LETTERS.prepare('INSERT OR IGNORE INTO sayings (day, text, same, said) VALUES (?1, ?2, ?3, ?4)').bind(day, t, sameKey(t), new Date().toISOString()).run();
+        seen.add(sameKey(t)); recent.unshift({ text: t, same: sameKey(t) }); have++;
+      }
     }
     return have;
   } catch (e) { console.warn('saying:', e?.message); return null; }

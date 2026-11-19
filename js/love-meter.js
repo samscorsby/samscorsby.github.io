@@ -28,7 +28,7 @@
   const DAY_MIN = (() => { let m = 1; const t = Date.now(); for (let i = 0; i < 144; i++) m = Math.min(m, worldAt(t + i * 6e5).up); return m; })();
 
   // ---- the silliness ----
-  const ALARMS = ['love levels elevated', '4 grandmas waving', 'someone hugged a tree', 'dog very happy (ohio)',
+  const ALARMS = ['love levels elevated', '4 grandmas waving', 'someone sat under a tree', 'dog very happy (ohio)',
     'cat on a lap in finland', 'surplus of sweetness', 'a stranger smiled back', '12 dandelions wished on',
     'too many hugs to count', 'glimbo detected', 'love overflow. its ok', 'somebodys mom called',
     'birds singing in sync', 'tea made for someone', 'check for butterflies', 'moon looked at fondly',

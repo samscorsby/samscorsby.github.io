@@ -2278,5 +2278,151 @@
    "Radio City - Vercelli, Biella e Novara (Piemonte, Italy), internet radio, Nov 17, 19:04 UTC"
   ],
   "heard_total": 20
+ },
+ {
+  "catalog": "ISA022",
+  "number": 22,
+  "title": "ISA022 Italy Exterior Delta Chance",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-19",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-19T04:02+00:00",
+  "listened_hours": 22,
+  "length": 2669.78,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Novosibir Circle Map music Merge Sort",
+    "duration": 156.51
+   },
+   {
+    "n": 2,
+    "title": "Delta MUZFM 22376",
+    "duration": 291.34
+   },
+   {
+    "n": 3,
+    "title": "Delta clásico Pattern Villarrica",
+    "duration": 293.26
+   },
+   {
+    "n": 4,
+    "title": "Hoogeveen LFSR 0xdf8e Nashville Lowpass",
+    "duration": 360.68
+   },
+   {
+    "n": 5,
+    "title": "top 40 Morley LFSR 0x1ed0b6",
+    "duration": 188.6
+   },
+   {
+    "n": 6,
+    "title": "LFSR 0x5380",
+    "duration": 273.02
+   },
+   {
+    "n": 7,
+    "title": "Granulate r-urban Rule 57 Science",
+    "duration": 86.35
+   },
+   {
+    "n": 8,
+    "title": "Chance Sort Youth Brads XOR",
+    "duration": 205.7
+   },
+   {
+    "n": 9,
+    "title": "Exterior Italy 446.1",
+    "duration": 258.51
+   },
+   {
+    "n": 10,
+    "title": "pop Arch French",
+    "duration": 110.57
+   },
+   {
+    "n": 11,
+    "title": "Akroama Revelation Bitplane german",
+    "duration": 101.22
+   },
+   {
+    "n": 12,
+    "title": "17600 China Ifrita USB",
+    "duration": 344.02
+   }
+  ],
+  "cover": "archive/covers/ISA022.jpg",
+  "cover_png": "archive/covers/ISA022.png",
+  "palette": [
+   "#C019C5",
+   "#D92DA9",
+   "#8C27A7",
+   "#441846",
+   "#FBF6FB"
+  ],
+  "seed": "1860431566287534948",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Jano FM (Ethiopia), internet radio, Nov 18, 21:03 UTC",
+   "WWCR 2 Nashville, TN (E to NAm), 5935.0 kHz AM via Northern Utah Kiwisdr #1 (0-30 MHz, TCI-530 Omni), Nov 18, 11:02 UTC",
+   "S-Radio (Bangladesh), internet radio, Nov 19, 00:03 UTC",
+   "Andrews Bay hydrophone (the Salish Sea), live hydrophone, Nov 18, 18:05 UTC",
+   "FT8 data, 30 m, 10136.0 kHz USB via ZTL e.V. HF SDR (0-30 MHz), GPA-50 vertical (80,20,15,10m) | Landau i.d. Pfalz, Germany, Nov 18, 11:01 UTC",
+   "FT8 data, 12 m, 24915.0 kHz USB via 0-30 MHz SDR, KK6PR Crooked River Ranch, OR - USA, Nov 18, 23:01 UTC",
+   "RADIO MUZFM (The Republic Of Moldova), internet radio, Nov 18, 23:03 UTC",
+   "Kalofiama 'O E 'Amanaki (Nuku'alofa, Tonga), internet radio, Nov 18, 05:04 UTC",
+   "NRV NAVTEX Guam (E to WOc), 22376.0 kHz AM via Web-SDR Friesland MW | Fryslan, the Netherlands, Nov 18, 15:01 UTC",
+   "镇江文艺广播 (Kiangsu, China), internet radio, Nov 18, 20:03 UTC",
+   "Hits Show Radio - EST (Tallinn, Estonia), internet radio, Nov 18, 07:03 UTC",
+   "Radio Universal Villarrica (Chile), internet radio, Nov 18, 21:04 UTC",
+   "Comunion 101.1 Fm Santa Elena (Bolivarian Republic Of Venezuela), 101.1 MHz FM, Nov 18, 14:03 UTC",
+   "אקו eco 99fm (Israel), internet radio, Nov 18, 12:03 UTC",
+   "Studio (Ciudad Juárez) - 105.1 FM - XHIM-FM - Radiorama - Ciudad Juárez, Chihuahua (Chihuahua, Mexico), 105.1 MHz FM, Nov 19, 01:04 UTC",
+   "WWCR 2 Nashville, TN (E to NAm), 7490.0 kHz AM via 0-30 MHz SDR, K2ZN, USA | Rochester, NY, Nov 18, 15:02 UTC",
+   "DCF77 Mainflingen, 77.5 kHz AM via Beilen Drenthe, The Netherlands, Nov 18, 21:02 UTC",
+   "Radio Marti (S to CUB), 15160.0 kHz AM via 0-30 MHz SDR, AB9MQ, Carlock Illinois USA, Nov 18, 18:02 UTC",
+   "Unity FM 905 (Castries, Saint Lucia), internet radio, Nov 19, 02:03 UTC",
+   "Arta Radio (Damascus, Syrian Arab Republic), internet radio, Nov 18, 16:03 UTC",
+   "P7 Kristen Pop (Norway), internet radio, Nov 19, 03:03 UTC",
+   "Jeju - georo, live microphone, Nov 18, 18:04 UTC",
+   "STS-124 (NASA), archive, Nov 18, 09:04 UTC",
+   "Next Radio Lebanon (Beirut, Lebanon), internet radio, Nov 18, 21:03 UTC",
+   "PBS Xinjiang (M to CHN), 5960.0 kHz AM via 0-30 MHz SDR | DL3ZID Schwerin, Nov 18, 23:01 UTC",
+   "Shannon Volmet (E to Eu), 13264.0 kHz USB via 0-30 MHz SDR, OK1DEK, Sedlcany, Czech Republic, Nov 18, 15:01 UTC",
+   "[SR064",
+   "Sunday Down South 1945-03-11 Swinging Down the Lane (1945), archive, 1945, Nov 18, 22:24 UTC",
+   "Ep321_WhereToLandOnTheMoon.mp3 (john.l.stoll@nasa.gov, 2024), archive, 2024, Nov 18, 20:03 UTC",
+   "r-urban - poplar, live microphone, Nov 18, 10:02 UTC",
+   "03-02-17_EXP50_Inflight-Event_with_U-S-Chamber-of-Commerce_2017-Aviation-Summi.wav (john.l.stoll@nasa.gov, 2023), archive, 2023, Nov 19, 01:05 UTC",
+   "Magick (The Peach Tree, 2009), archive, 2009, Nov 18, 11:02 UTC",
+   "Science in Short Chapters (W. Mattieu Williams, 2020), archive, 2020, Nov 19, 01:05 UTC",
+   "This Is My Story Mrs. Laura Graham (), archive, Nov 18, 16:04 UTC",
+   "German / Deutsche Hip-Hop / Rap - Caprice Radio (The Russian Federation), internet radio, Nov 18, 22:23 UTC",
+   "Leave It to the Girls 1946-05-11 William Bradford Huie (1946), archive, 1946, Nov 18, 15:03 UTC",
+   "RCS75 (Italy), internet radio, Nov 18, 16:03 UTC",
+   "Makhetha Youth Achievers Radio (Blantyre, Malawi), internet radio, Nov 18, 18:03 UTC",
+   "Jesus is LORD Radio (Kenya), internet radio, Nov 18, 11:02 UTC",
+   "Thomas Park- Blechno 5: A Land Of Spinning Stripes [treetrunk 435",
+   "Ράδιο Απτάλικο (Athens, Greece), internet radio, Nov 18, 16:03 UTC",
+   "70 cm amateur, 446.1000 MHz NFM via OpenWebRX hirrkhq05e1w02ak.myfritz.net:8073 | WebSDR Berlin - DO9MAD, Nov 18, 13:15 UTC",
+   "Shannon Volmet (E to Eu), 3413.0 kHz USB via 0-30 MHz FlyDog-SDR, IW3HBX - Noale 🇮🇹 Italy 🇮🇹, Nov 19, 01:02 UTC",
+   "Radyo 45'lik (Türkiye), internet radio, Nov 18, 20:02 UTC",
+   "Radio Karolina (Serbia), internet radio, Nov 18, 09:03 UTC",
+   "营口综合广播 (China), internet radio, Nov 18, 05:05 UTC",
+   "Radio Ambience (FI to NEu), 6095.0 kHz AM via 0-30 MHz SDR, Hurricane (Northern Germany), Nov 19, 00:02 UTC",
+   "CNR1 Jammer/Firedrake (M to CHN), 13870.0 kHz AM via 0-30 MHz SDR | JQ3JPN Minoh, Osaka, Japan, Nov 19, 01:02 UTC",
+   "Griechenland - Akroama (Greece), internet radio, Nov 19, 00:03 UTC",
+   "RADYO D (Türkiye), internet radio, Nov 18, 18:06 UTC",
+   "Radio Vallée (Provence-Alpes-Côte d'Azur, France), internet radio, Nov 18, 15:03 UTC",
+   "Barrow HFDL (ID9), 5536.5 kHz USB via 🗲 0-30MHz 8 x Kiwi Card SDR, VK3KHZ, Victoria, Australia 🗲, Nov 18, 07:03 UTC",
+   "Kapsai (Lithuania), internet radio, Nov 18, 23:03 UTC",
+   "Classical Radio - Debussy (The United Arab Emirates), internet radio, Nov 18, 19:02 UTC",
+   "Radio Marija Hrvatska (Croatia), internet radio, Nov 19, 03:03 UTC",
+   "China Radio Int. (F to SEu), 7360.0 kHz AM via DC8YZ ROTH, BAVARIA, GERMANY, JN59MF, 0-30 MHz SDR, Nov 18, 18:02 UTC",
+   "FT8 data, 160 m, 1840.0 kHz USB via 0-30 MHz SDR, HB9RYZ-1, JN47GA - Rigi Scheidegg, Nov 18, 19:01 UTC"
+  ],
+  "heard_total": 57
  }
 ]

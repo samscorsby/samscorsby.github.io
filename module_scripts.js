@@ -65,13 +65,25 @@ function rainbowCursor() {
 }
 
 
-import renderMathInElement from 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.mjs';
-
-// This will scan the entire body for LaTeX delimiters
-renderMathInElement(document.body, {
-    delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$', right: '$', display: false}
-    ],
-    throwOnError : false
-});
+// maths ($...$ and $$...$$), drawn by katex. it's fetched in the background and only on pages that have a $ in
+// them, so the navbar and the rest of the page never wait for it (a plain import up here made every page wait)
+function pageHasDollar() { // (only the page's own words, not the code in its <script>s)
+  if (!document.body) return false;
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode: (n) => (/^(SCRIPT|STYLE|NOSCRIPT)$/.test(n.parentNode.nodeName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+  });
+  for (let n; (n = walk.nextNode());) if (n.nodeValue.includes('$')) return true;
+  return false;
+}
+if (pageHasDollar()) {
+  import('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.mjs').then(({ default: renderMathInElement }) => {
+    // This will scan the entire body for LaTeX delimiters
+    renderMathInElement(document.body, {
+        delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+        ],
+        throwOnError : false
+    });
+  }).catch(() => {});
+}

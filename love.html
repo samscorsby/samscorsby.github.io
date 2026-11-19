@@ -131,9 +131,12 @@
       <a href="https://www.gita-society.com/wp-content/uploads/PDF/Patanjali-yogasutra.IGS.pdf" target="_blank">yoga sūtras of patañjali</a> <i>text</i>
     </div>
 
-    <!-- the love meter, down here like a footer: it waits for the page, and only runs while it's in view -->
+    <!-- the love meter, down here like a footer. its script is only fetched once the whole page has loaded, so the
+         navbar and everything else never wait for it (and then it only runs while it's in view) -->
     <div id="love-meter"></div>
-    <script src="./js/love-meter.js?v=32" defer></script>
+    <script>
+      addEventListener('load', () => { const s = document.createElement('script'); s.src = './js/love-meter.js?v=33'; document.body.appendChild(s); }, { once: true });
+    </script>
   </main>
 
   <footer>ⓢ 2620 Scorsby Smileworks — All Smiles Unreserved</footer>

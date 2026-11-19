@@ -146,7 +146,7 @@
   let phase = 0.6, bpm = 70, amp = 1, pink = 0, kind = 'normal', pending = 0, w = worldAt(Date.now());
   // the jk: waits for the line to start again at the left, flatlines all the way across, then says jk at the end
   // (it says jk 80% of the way across, then stays flat a little past the jk, so no beat is drawn over it)
-  let jkWaiting = false, flat = false, filling = false, jkEnd = null;
+  let jkWaiting = false, flat = false, filling = false, jkEnd = null, lastSpecial = '', jkDone = -Infinity;
   // the wander: for a while the line forgets it's a heartbeat and goes wherever it likes, then ambles back home
   let wander = null;
   let loving = 0, thumpUntil = 0, thumpPink = false, extra = 0, todaySeen = null, plus = '', plusUntil = 0;
@@ -171,11 +171,15 @@
       else if (r < 0.285) kind = 'asymptote';
       else if (r < 0.3) kind = 'infinity';
       else if (r < 0.32) kind = 'boing';
-      else if (r < 0.335 && !filling) jkWaiting = true;
+      else if (r < 0.335) { if (!filling && lastSpecial !== 'jk' && performance.now() - jkDone > 30000) jkWaiting = true; } // (never two jks in a row, nor close together)
       else if (r < 0.35) kind = 'achoo';
       else if (r < 0.37) kind = 'sine';
       else if (r < 0.38 && !filling) wander = { left: 0, total: Math.round(TW * (0.5 + Math.random() * 0.5)), y: 0, v: 0 };
     }
+    // remember the last special one (so a jk can't follow a jk)
+    if (jkWaiting) lastSpecial = 'jk';
+    else if (wander) lastSpecial = 'wander';
+    else if (kind !== 'normal') lastSpecial = kind;
   }
   // a little picture drawn into the line; hide: the line itself goes quiet underneath, so the picture is the line
   function stamp(rows, lift = 0, hide = false) { stamps.push({ rows, x: (head + 1) % TW, age: 0, lift, pink, hide }); }
@@ -206,7 +210,7 @@
       if (jkWaiting && head === 0) { jkWaiting = false; flat = true; jkEnd = null; }
       if (flat && jkEnd === null && head === Math.round(TW * 0.8)) { stamp(words('jk'), 3); jkEnd = Math.min(TW - 1, head + 13); }
       // and then a fresh beat straight away, so the heart comes back up just after the jk
-      if (flat && jkEnd !== null && head >= jkEnd) { flat = false; jkEnd = null; phase = 0.05; kind = 'normal'; pink = 0; amp = 1; }
+      if (flat && jkEnd !== null && head >= jkEnd) { flat = false; jkEnd = null; jkDone = performance.now(); phase = 0.05; kind = 'normal'; pink = 0; amp = 1; }
       if (wander) {
         // a wobbly drift with a bit of momentum, kept on the screen; for its last stretch it heads home to the line
         const wd = wander;

@@ -88,7 +88,7 @@
   // framed like the site's buttons: a thin dark line, barely rounded corners, a hard little shadow
   const css = document.createElement('style');
   css.textContent = `
-#love-meter { max-width: 760px; box-sizing: border-box; margin: 0 auto; border: 1px solid #05060a; border-radius: 3px; box-shadow: 3px 3px 0 #05060a;
+#love-meter { max-width: 760px; box-sizing: border-box; margin: 56px auto 0; border: 1px solid #05060a; border-radius: 3px; box-shadow: 3px 3px 0 #05060a;
   line-height: 0; user-select: none; overflow: hidden; }
 #love-meter canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }`;
   document.head.appendChild(css);
@@ -110,7 +110,9 @@
       px(x + c, y + r);
     }
   }
-  const glyph = (ch) => pic(FONT[ch] || FONT['?']);
+  // (each letter is unpacked once and kept, not every time it's drawn)
+  const GLYPHS = {};
+  const glyph = (ch) => GLYPHS[ch] || (GLYPHS[ch] = pic(FONT[ch] || FONT['?']));
   const textW = (s, k = 1) => [...s].reduce((n, ch) => n + (glyph(ch)[0].length + 1) * k, -k);
   function text(s, x, y, ink, k = 1) {
     cx.fillStyle = ink;
@@ -225,8 +227,8 @@
       pinks[head] = pink;
       hidden[head] = 0;
       for (const s of stamps) { s.age++; if (s.hide && s.age <= s.rows[0].length) hidden[head] = 1; }
-      stamps = stamps.filter((s) => s.age - s.rows[0].length < TW - GAP);
     }
+    if (stamps.length) stamps = stamps.filter((s) => s.age - s.rows[0].length < TW - GAP);
   }
 
   // ---- the size: whole device pixels only, so every pixel is the same size ----
@@ -242,7 +244,19 @@
     cv.style.width = (W * dev / dpr) + 'px'; cv.style.height = (H * dev / dpr) + 'px';
     SPEED = 115 * dpr / dev; // about 115 screen pixels a second, however big ours are
     ys = new Float32Array(TW); pinks = new Uint8Array(TW); hidden = new Uint8Array(TW); head = 0; stamps = []; walkers = []; hearts = [];
-    filling = true; write(TW, true); filling = false; // the screen starts full, as if it had been beating all along
+    backdrop();
+    if (started) fill();
+  }
+  function fill() { filling = true; write(TW, true); filling = false; } // the screen starts full, as if it had been beating all along
+
+  // the plain screen and its grid of dots, drawn once (per size and per screen) and then just copied in
+  const bg = document.createElement('canvas'), bgx = bg.getContext('2d');
+  function backdrop() {
+    if (!W) return;
+    bg.width = W; bg.height = H;
+    bgx.fillStyle = BG; bgx.fillRect(0, 0, W, H);
+    bgx.fillStyle = DOTS;
+    for (let x = TX + 2; x < TX + TW; x += 6) for (let y = 3; y < H; y += 6) bgx.fillRect(x, y, 1, 1);
   }
 
   // ---- alarms, units, and little walkers ----
@@ -304,9 +318,7 @@
   }
 
   function draw(now) {
-    cx.fillStyle = BG; px(0, 0, W, H);
-    cx.fillStyle = DOTS;
-    for (let x = TX + 2; x < TX + TW; x += 6) for (let y = 3; y < H; y += 6) px(x, y);
+    cx.drawImage(bg, 0, 0);
     // the trace: each column joined to the one before it with a straight up-and-down run, like old screens did
     let prev = null;
     for (let x = 0; x < TW; x++) {
@@ -368,22 +380,47 @@
   box.style.cursor = 'pointer';
   box.addEventListener('click', () => {
     theme(THEME === 'day' ? 'night' : 'day');
+    backdrop();
     try { localStorage.setItem('love-meter-theme', THEME); } catch {}
-    if (still) draw(performance.now());
+    if (started) draw(performance.now());
   });
 
-  // ---- go ----
-  let seen = true, last = performance.now(), carry = 0;
-  new IntersectionObserver((es) => { seen = es[0].isIntersecting; }).observe(box);
+  // ---- go: the page first ----
+  // the meter takes its space straight away (so nothing below it jumps), but it only wakes up once the page has
+  // finished loading and the browser has a quiet moment, and it only runs while it's on screen. it draws at most
+  // 30 times a second, which is plenty for chunky pixels.
   const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  new ResizeObserver(() => { size(); if (still) draw(performance.now()); }).observe(box);
+  let started = false, ready = false, seen = false, running = false, last = 0, lastDraw = 0, carry = 0;
+  new ResizeObserver(() => { size(); if (started) draw(performance.now()); }).observe(box);
   size();
-  if (still) draw(performance.now());
-  else (function frame(now) {
-    const dt = Math.min(0.5, (now - last) / 1000); last = now;
-    if (TW) { carry += dt * SPEED; const n = Math.floor(carry); carry -= n; write(n, false); tick(now, dt); if (seen) draw(now); }
+  function frame(now) {
+    if (!seen || !started) { running = false; return; }
+    if (now - lastDraw >= 33) {
+      const dt = Math.min(0.5, (now - last) / 1000); last = now; lastDraw = now;
+      carry += dt * SPEED; const n = Math.floor(carry); carry -= n;
+      write(n, false); tick(now, dt); draw(now);
+    }
     requestAnimationFrame(frame);
-  })(last);
+  }
+  function wake() {
+    if (!ready || !seen) return;
+    if (!started) {
+      started = true; fill();
+      // (its little routine counts from when it wakes: ready first, then the alarms and walkers in their time)
+      const t = performance.now();
+      alarm = { text: 'ready', ink: 'AMBER', t0: t + 400, until: t + 5000 };
+      nextAlarm = t + 9000 + Math.random() * 12000;
+      nextWalk = t + 12000 + Math.random() * 14000;
+      listen(); setInterval(() => { if (!document.hidden && seen) listen(); }, 20000);
+    }
+    if (still) { draw(performance.now()); return; }
+    if (!running) { running = true; last = lastDraw = performance.now(); requestAnimationFrame(frame); }
+  }
+  // (it starts a little before it scrolls into view, so it's already beating when you get there)
+  new IntersectionObserver((es) => { seen = es[0].isIntersecting; wake(); }, { rootMargin: '200px 0px' }).observe(box);
+  const idle = window.requestIdleCallback ? (f) => requestIdleCallback(f, { timeout: 2000 }) : (f) => setTimeout(f, 300);
+  const loaded = () => idle(() => { ready = true; wake(); });
+  if (document.readyState === 'complete') loaded(); else window.addEventListener('load', loaded, { once: true });
 
   // ---- love shared on the planet, read from the hearth (never joined; just the day's count) ----
   const STATUS = typeof HEARTH_STATUS === 'string' ? HEARTH_STATUS
@@ -403,6 +440,4 @@
       }
     } catch {}
   }
-  listen();
-  setInterval(() => { if (!document.hidden) listen(); }, 20000);
 })();

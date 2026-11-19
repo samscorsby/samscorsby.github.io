@@ -208,3 +208,17 @@ ISA021 Logos ID7
 3. news Logos world Arch Freeze Pattern
 4. signed 103.1 Vibe 5EBI
 5. Ukrainian Bitcrush
+
+ISA022 Italy Exterior Delta Chance
+1. Novosibir Circle Map music Merge Sort
+2. Delta MUZFM 22376
+3. Delta clásico Pattern Villarrica
+4. Hoogeveen LFSR 0xdf8e Nashville Lowpass
+5. top 40 Morley LFSR 0x1ed0b6
+6. LFSR 0x5380
+7. Granulate r-urban Rule 57 Science
+8. Chance Sort Youth Brads XOR
+9. Exterior Italy 446.1
+10. pop Arch French
+11. Akroama Revelation Bitplane german
+12. 17600 China Ifrita USB

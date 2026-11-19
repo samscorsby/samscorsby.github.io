@@ -523,11 +523,77 @@ const lobby = (env) => env.LOBBY.get(env.LOBBY.idFromName('lobby'));
 let picked = null; // this worker's last answer from the lobby
 let statusSeen = null; // and the last numbers it gave the other pages
 
+// new sayings every day: the planet writes itself five strange little lines (the same kindness judge checks it, like
+// anything anyone says), and it's kept. visitors hear today's more often than the rest, and the rest stay in the mix.
+// written the first time anyone asks on a new day (denver time), or by the daily cron if nobody has yet.
+const SAYING_MODEL = JUDGE_MODEL, SAYINGS_A_DAY = 5;
+const SAYING_WAYS = ['maybe u should sit under a tree :-)', 'once you scorb, you can never unscorb.', 'dare to combine.',
+  'in this dream, you are a revolutionary peacemaker.', 'scorsby never left. scorsby only played.', 'we beglong.',
+  'a puddle is just the sky practicing.', 'the glongingstons say hi. they always say hi.', 'the moon asked about you today.',
+  'the planet is round so nobody is ever at the edge.', 'a scorsby once ate a cloud. it tasted like tuesday.'];
+const SAYING_ASK = 'You write for planet scorsby, a gentle, silly, cosmic little world of peace, love and joy for everyone everywhere. ' +
+  'Everyone there is a scorsby: a small round blue face with round ears, a red nose and a smile. Its sun is sunsby, its moon is moonsby; ' +
+  'the glongingstons are a joyful, silly alien crew from the gleamingfold, a place full of scorsbys. ' +
+  'Now and then the planet whispers a saying to whoever is visiting. Write ONE new saying: strange, whimsical, warm, a little mysterious or absurd, ' +
+  'the kind of thing that makes someone smile and wonder. All lowercase. At most 14 words, one or two short sentences. ' +
+  'No quotation marks, no emoji, no hashtags, no dashes. Never mean, scary, sad or preachy. Reply with only the saying.';
+let sayingBusy = 0;
+async function sayingsTable(env) {
+  await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS sayings (id INTEGER PRIMARY KEY AUTOINCREMENT, day TEXT, text TEXT NOT NULL, same TEXT UNIQUE, said TEXT)').run();
+  await env.LETTERS.prepare('CREATE INDEX IF NOT EXISTS sayings_day ON sayings (day)').run();
+}
+async function dailySaying(env) {
+  if (!env.LETTERS || !env.AI || Date.now() - sayingBusy < 60000) return null;
+  sayingBusy = Date.now();
+  try {
+    await sayingsTable(env);
+    const day = today();
+    let have = (await env.LETTERS.prepare('SELECT COUNT(*) AS n FROM sayings WHERE day = ?1').bind(day).first())?.n || 0;
+    if (have >= SAYINGS_A_DAY) return have;
+    const recent = (await env.LETTERS.prepare('SELECT text, same FROM sayings ORDER BY id DESC LIMIT 60').all()).results || [];
+    const seen = new Set([...recent.map((r) => r.same), ...SAYING_WAYS.map(sameKey)]);
+    for (let tries = 0; tries < (SAYINGS_A_DAY - have) * 2 + 2 && have < SAYINGS_A_DAY; tries++) {
+      const ask = `some things it has said:\n${SAYING_WAYS.concat(recent.slice(0, 25).map((r) => r.text)).map((t) => `- ${t}`).join('\n')}\n\nwrite a new one, not like any of these.`;
+      const out = await env.AI.run(SAYING_MODEL, { messages: [{ role: 'system', content: SAYING_ASK }, { role: 'user', content: ask }], max_tokens: 50, temperature: 1.05 });
+      spend(env, SAYING_MODEL, out, SAYING_ASK + ask);
+      let t = String(out?.response ?? '').split('\n').map((l) => l.trim()).find(Boolean) || '';
+      t = t.replace(/^[-*\s]+/, '').replace(/["“”]/g, '').replace(/\s*[—–]\s*/g, ', ').replace(/\s+/g, ' ').trim().toLowerCase();
+      const words = t.split(' ').length;
+      if (words < 3 || words > 18 || t.length > 110 || /https?:|www\.|#|@/.test(t) || seen.has(sameKey(t))) continue;
+      const checked = await boinked(env, t);
+      if (!checked || checked !== t) continue; // (only one the kindness judge leaves as it is)
+      await env.LETTERS.prepare('INSERT OR IGNORE INTO sayings (day, text, same, said) VALUES (?1, ?2, ?3, ?4)').bind(day, t, sameKey(t), new Date().toISOString()).run();
+      seen.add(sameKey(t)); recent.unshift({ text: t, same: sameKey(t) }); have++;
+    }
+    return have;
+  } catch (e) { console.warn('saying:', e?.message); return null; }
+  finally { sayingBusy = 0; }
+}
+// what the page asks for: today's sayings (as many as there are yet), and some of the ones before
+async function sayings(env, ctx) {
+  let todays = [], some = [];
+  if (env.LETTERS) {
+    try {
+      await sayingsTable(env);
+      todays = ((await env.LETTERS.prepare('SELECT text FROM sayings WHERE day = ?1 ORDER BY id').bind(today()).all()).results || []).map((r) => r.text);
+      some = ((await env.LETTERS.prepare('SELECT text FROM sayings WHERE day != ?1 ORDER BY RANDOM() LIMIT 30').bind(today()).all()).results || []).map((r) => r.text);
+    } catch {}
+    if (todays.length < SAYINGS_A_DAY) ctx.waitUntil(dailySaying(env)); // (the first visitor of the day wakes it; they hear them next time)
+  }
+  return new Response(JSON.stringify({ today: todays, some }), {
+    headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'cache-control': todays.length >= SAYINGS_A_DAY ? 'public, max-age=600' : 'no-store' },
+  });
+}
+
 export default {
-  async scheduled(event, env, ctx) { ctx.waitUntil(weeklyNotes(env)); }, // (monday mornings: the week's notes, to samuel)
-  async fetch(request, env) {
+  async scheduled(event, env, ctx) {
+    if (event.cron === '0 15 * * 1') ctx.waitUntil(weeklyNotes(env)); // (monday mornings: the week's notes, to samuel)
+    else ctx.waitUntil(dailySaying(env)); // (just after midnight in denver: today's saying)
+  },
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/subscribe') return subscribe(request, env);
+    if (url.pathname === '/sayings') return sayings(env, ctx);
     if (url.pathname === '/comments' || url.pathname.startsWith('/comments/')) return comments(request, env);
     // just the numbers, for the other pages' corners: how many scorsbys are here, and today's love. nobody joins.
     if (url.pathname === '/status') {
@@ -862,7 +928,7 @@ export class Hearth extends DurableObject {
     const sweet = Math.random() < 0.2 ? await oneSweet(this.env) : null; // (now and then, something someone once said, to remember)
     this.send(server, { t: 'hello', you: me, here: others, trails, marks, tally, garden: this.garden(), elsewhere: this.elsewhere(), sweet: sweet || undefined });
     this.broadcast({ t: 'join', p: me, moved: request.headers.has('x-moved') || undefined }, server);
-    if ((await this.ctx.storage.getAlarm()) == null) await this.ctx.storage.setAlarm(Date.now() + 30000 + Math.random() * 45000);
+    if ((await this.ctx.storage.getAlarm()) == null) await this.ctx.storage.setAlarm(Date.now() + 60000 + Math.random() * 60000);
     return new Response(null, { status: 101, webSocket: client });
   }
 
@@ -1049,7 +1115,7 @@ export class Hearth extends DurableObject {
     }
   }
 
-  // every minute or two, while anyone is here, something strange happens
+  // every few minutes, while anyone is here, something strange happens
   async alarm() {
     await this.sync();
     if (!this.open()) return; // nobody here. no omens. no alarm.
@@ -1061,7 +1127,7 @@ export class Hearth extends DurableObject {
     await this.ctx.storage.put('lastOmen', k);
     this.broadcast({ t: 'omen', k, seed: Math.floor(Math.random() * 1e6) });
     await this.echo();
-    const at = Date.now() + 60000 + Math.random() * 90000;
+    const at = Date.now() + 180000 + Math.random() * 180000;
     await this.ctx.storage.put('nextOmen', at);
     await this.ctx.storage.setAlarm(at);
   }

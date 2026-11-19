@@ -3304,7 +3304,7 @@
 
   // ------------------------------------------------------------------ words, softly, above the world
   const whisperEl = document.getElementById('whisper');
-  let whisperTimer = 0, whisperUntil = 0, nextQuote = performance.now() + 25000;
+  let whisperTimer = 0, whisperUntil = 0, nextQuote = performance.now() + 40000;
   let typer = 0;
   // whispers that come from everyone (messages, love, omens) queue up and take turns
   const waiting = [];
@@ -3422,16 +3422,23 @@
     '>>> THIS JUST IN: local planet smiles for no reason.', '>>> THE FUTURE IS NOW. embrace your lil freak :-)',
     '>>> THIS JUST IN: a scrillion scorsbys, all scorsbin.', '>>> BREAKING: sunsby and moonsby seen hugging.',
   ];
+  // and the planet's own sayings: it writes itself five new ones every day (the hearth keeps them all). today's are
+  // heard more often; some from the days before join the rest
+  let daily = { today: [], some: [] };
+  function aSaying() {
+    if (daily.today.length && Math.random() < 0.35) return pick(daily.today);
+    return pick(SAYINGS.concat(daily.some, daily.today));
+  }
   setInterval(() => {
     const now = performance.now();
     if (now < nextQuote || now < whisperUntil) return;
-    nextQuote = now + rand(35000, 70000);
+    nextQuote = now + rand(90000, 180000); // (now and then, not all the time)
     const r = Math.random();
     if (r < 0.5 && window.QUOTES?.length) {
       const [q, pi] = pick(window.QUOTES);
       const [t, u] = window.POSTS[pi];
       whisper(q, 9000, false, { t, u });
-    } else whisper(r < 0.78 ? pick(SAYINGS) : pick(NEWS), 5000, false);
+    } else whisper(r < 0.82 ? aSaying() : pick(NEWS), 5000, false);
   }, 3000);
   const side = (v) => { const l = light(v); return l > 0.1 ? 'day' : l < -0.1 ? 'night' : 'twilight'; };
 
@@ -3492,6 +3499,8 @@
   // where the hearth is: named in the page, or local development, or (served by the hearth worker itself) right here
   net.url = params.get('hearth') || meta || (local && location.port !== '8787' ? `ws://${location.hostname}:8787/hearth`
     : `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/hearth`);
+  // (the planet's daily sayings, from the hearth)
+  if (net.url) fetch(net.url.replace(/^ws/, 'http').replace(/\/hearth.*$/, '/sayings')).then((r) => r.json()).then((d) => { if (d && Array.isArray(d.some) && Array.isArray(d.today)) daily = d; }).catch(() => {});
   let dreaming = false;
 
   function connect() {
@@ -3576,7 +3585,7 @@
     updatePresence();
     welcome();
   }
-  setInterval(() => { if (!net.live && !omen && Math.random() < 0.5) startOmen(pick(Object.keys(OMEN_DUR).filter((k) => k !== 'turn'))); }, 70000); // (the year's turns come only when they come)
+  setInterval(() => { if (!net.live && !omen && Math.random() < 0.5) startOmen(pick(Object.keys(OMEN_DUR).filter((k) => k !== 'turn'))); }, 150000); // (the year's turns come only when they come)
 
   const MARK_LIFE = 24 * 3600 * 1000; // (a plant lasts a day)
   const addMark = (m) => marks.push({ v: vec(m.lat, m.lon), k: m.k, n: m.n || '', t: m.at || m.t || Date.now(), seed: rand(0, 99), sx: -1e4, note: m.note ? String(m.note).slice(0, 100) : '', id: m.id || '', o: m.o || '' });

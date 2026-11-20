@@ -222,3 +222,12 @@ ISA022 Italy Exterior Delta Chance
 10. pop Arch French
 11. Akroama Revelation Bitplane german
 12. 17600 China Ifrita USB
+
+ISA023 Playhead FT4 HANOI LFSR
+1. Carleton Place Lowpass
+2. LFSR LFSR 0x26 Romaradio
+3. beacons Opening Lowpass
+4. signed 24-bit 445.5 1970s
+5. Playhead cultural Backwards Tianjin
+6. webbrowser.py Overflow Ibaraki
+7. configparser.py HANOI FT4 Morph

@@ -1771,7 +1771,8 @@
   // across it (straight across is where grey and brown live). each colour pulls by its count squared, so the biggest
   // groups lead; one with under a fifth of the leader's pull drops out, fading as it goes, so one more person never
   // flips the whole world. when two colours sit almost opposite, it keeps going round the way it was already going.
-  // and it moves to a new mix over a second or two instead of jumping.
+  // it is as light or as dark as the top colours are (so a crowd mostly in brown is brown), and it moves to a new mix
+  // over a second or two instead of jumping.
   const worldMix = { L: 0, C: 0, h: null, t: 0 };
   const wrapAng = (d) => ((d % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
   function mixTop(cols, now) {
@@ -1788,7 +1789,7 @@
       if (Math.abs(d) > Math.PI - 0.5 && worldMix.h !== null) { const side = Math.sign(wrapAng(worldMix.h - hue)) || 1; if (Math.sign(d) !== side) d -= Math.sign(d) * Math.PI * 2; }
       hue += d * hp / (hw + hp); hw += hp;
     });
-    const tL = clamp(L / W, 0.66, 0.86), tC = C / W, tH = hue === null ? (worldMix.h ?? 0) : hue;
+    const tL = L / W, tC = C / W, tH = hue === null ? (worldMix.h ?? 0) : hue;
     const k = worldMix.h === null ? 1 : 1 - Math.exp(-Math.min(0.1, (now - worldMix.t) / 1000) * 2.5);
     worldMix.t = now;
     if (worldMix.h === null) Object.assign(worldMix, { L: tL, C: tC, h: tH });

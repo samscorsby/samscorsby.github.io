@@ -1755,18 +1755,55 @@
       glows.push([s, col]);
     }
     const n = glows.length;
-    if (!n) { worldCol = T.ocean; worldGlows = null; return; }
+    if (!n) { worldCol = T.ocean; worldMix.h = null; worldGlows = null; return; }
     const cols = [...counts.entries()].sort((a, b) => b[1] - a[1]);
-    if (cols.length < 2) { worldCol = cols[0][0]; worldGlows = null; return; }
-    // two or more colours: the world keeps one colour (the one most people wear, if it's most of them; otherwise scorsby blue)
-    // and each scorsby's colour glows softly on the globe around where they are, so colours meet in places, never all mashed together.
-    worldCol = cols[0][1] * 2 > n ? cols[0][0] : T.ocean;
+    if (cols.length < 2) { worldCol = cols[0][0]; worldMix.h = null; worldGlows = null; return; }
+    // two or more colours: the world is the top colours mixed (see mixTop), and each scorsby's colour still glows softly
+    // on the globe around where they are.
+    worldCol = mixTop(cols, now);
     // it builds slowly with the crowd: each doubling adds about the same, and only around 500 people are the glows big and bright
     // enough to cover the world. holding hands adds a little more on top.
     worldRain = clamp(Math.pow(Math.log(Math.max(1, n / 2)) / Math.log(250), 1.5) * 0.9 + Math.min(1, handCount * 2 / n) * 0.1, 0, 1);
     worldGlows = glows.filter(([, col]) => col !== worldCol);
   }
   let worldGlows = null, worldRain = 0, handCount = 0;
+  // the top colours, mixed the way eyes see color, going round the color wheel between them instead of straight
+  // across it (straight across is where grey and brown live). each colour pulls by its count squared, so the biggest
+  // groups lead; one with under a fifth of the leader's pull drops out, fading as it goes, so one more person never
+  // flips the whole world. when two colours sit almost opposite, it keeps going round the way it was already going.
+  // and it moves to a new mix over a second or two instead of jumping.
+  const worldMix = { L: 0, C: 0, h: null, t: 0 };
+  const wrapAng = (d) => ((d % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
+  function mixTop(cols, now) {
+    const g = cols.map(([col, k]) => { const [l, a, b] = toLab(col), C = Math.hypot(a, b); return { l, C, h: Math.atan2(b, a), w: k * k }; });
+    const lead = g[0].w, kept = g.filter((x) => x.w >= lead * 0.2).slice(0, 3);
+    let hue = null, hw = 0, L = 0, C = 0, W = 0;
+    kept.forEach((x, i) => {
+      const w = x.w * (i ? Math.min(1, (x.w / lead - 0.2) / 0.3) : 1);
+      L += x.l * w; C += x.C * w; W += w;
+      const hp = w * Math.min(1, x.C / 0.08); // (a pale ghost has hardly any hue to give)
+      if (hp <= 0) return;
+      if (hue === null) { hue = x.h; hw = hp; return; }
+      let d = wrapAng(x.h - hue);
+      if (Math.abs(d) > Math.PI - 0.5 && worldMix.h !== null) { const side = Math.sign(wrapAng(worldMix.h - hue)) || 1; if (Math.sign(d) !== side) d -= Math.sign(d) * Math.PI * 2; }
+      hue += d * hp / (hw + hp); hw += hp;
+    });
+    const tL = clamp(L / W, 0.66, 0.86), tC = C / W, tH = hue === null ? (worldMix.h ?? 0) : hue;
+    const k = worldMix.h === null ? 1 : 1 - Math.exp(-Math.min(0.1, (now - worldMix.t) / 1000) * 2.5);
+    worldMix.t = now;
+    if (worldMix.h === null) Object.assign(worldMix, { L: tL, C: tC, h: tH });
+    else { worldMix.L += (tL - worldMix.L) * k; worldMix.C += (tC - worldMix.C) * k; worldMix.h += wrapAng(tH - worldMix.h) * k; }
+    return labColor(worldMix.L, worldMix.C, worldMix.h);
+  }
+  // a color from lightness, colorfulness and hue (in oklab), as colorful as it can be on a screen without clipping
+  function labColor(L, C, h) {
+    const rgbAt = (c) => { const A = c * Math.cos(h), B = c * Math.sin(h);
+      const l = (L + 0.3963377774 * A + 0.2158037573 * B) ** 3, m = (L - 0.1055613458 * A - 0.0638541728 * B) ** 3, q = (L - 0.0894841775 * A - 1.291485548 * B) ** 3;
+      return [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * q, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * q, -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * q]; };
+    let lo = 0, hi = C;
+    for (let i = 0; i < 14; i++) { const mid = (lo + hi) / 2; if (rgbAt(mid).every((v) => v >= -0.001 && v <= 1.001)) lo = mid; else hi = mid; }
+    return `rgb(${rgbAt(lo).map((v) => Math.round(255 * clamp(v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055, 0, 1))).join(',')})`;
+  }
   // the world turning gold is mixed the way eyes see color, so it never passes through green
   // (after sunsby is tapped, the world's gold follows the sky's exactly, so they fade back to blue together)
   const worldGold = () => (goldFlash > performance.now() - 30 ? flashGold : pf.cur.gold);

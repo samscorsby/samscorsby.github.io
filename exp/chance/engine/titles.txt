@@ -231,3 +231,14 @@ ISA023 Playhead FT4 HANOI LFSR
 5. Playhead cultural Backwards Tianjin
 6. webbrowser.py Overflow Ibaraki
 7. configparser.py HANOI FT4 Morph
+
+ISA024 Byteswap Greek Varispeed
+1. cerve Revelation music Byteswap
+2. Varispeed 1840 Sompa National Circle Map
+3. Freeze Cayena
+4. 13590 21985 Germany Hope Sound
+5. 93.3 Thue-Morse Greek
+6. Loop Phase Muurame x07,37
+7. oldies Bitplane Andrew Cauthen
+8. Shuffle TN
+9. rap 24915 Spanish

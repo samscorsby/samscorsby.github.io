@@ -227,7 +227,8 @@ async function loadScorsbyJournal(filePath,div_tag) {
 (function() {
 
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-  if (isMobile) return;
+  // (a page can ask for the sky on phones too: <html data-sky="always">, like the unsubscribe page)
+  if (isMobile && document.documentElement.dataset.sky !== 'always') return;
   // peace, love and joy (and every post on peace), contact, the old home page and the 404 are plain white
   if (/^\/(peace|love|joy|blog|works|about|contact|home_org|404)(\.html)?$|^\/blog\//.test(location.pathname) || document.title === '404sby') return;
 

@@ -305,6 +305,53 @@ async function subscribe(request, env) {
   return reply(200, { ok: true });
 }
 
+// letting go: an email is taken off the list of letters (from scorsby.us/unsubscribe). the answer is the same whether or
+// not it was ever on the list, so nobody can use this page to find out who gets letters.
+async function unsubscribe(request, env) {
+  const origin = request.headers.get('Origin');
+  const cors = {
+    'access-control-allow-origin': origin || '*', 'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-allow-headers': 'content-type', vary: 'Origin', 'content-type': 'application/json',
+  };
+  const reply = (status, body) => new Response(JSON.stringify(body), { status, headers: cors });
+  if (!allowed(origin, env, new URL(request.url).origin)) return reply(403, { ok: false, why: "not from here." });
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  if (request.method !== 'POST') return reply(405, { ok: false, why: "post only." });
+  if (!env.LETTERS) return reply(503, { ok: false, why: "the mailbox isn't open just now." });
+  if (tooOften(request.headers.get('cf-connecting-ip') || '')) return reply(429, { ok: false, why: "that's a lot of tries. come back in a few minutes." });
+  let m;
+  try { m = await request.json(); } catch { return reply(400, { ok: false, why: "that didn't arrive right." }); }
+  const email = String(m.email || '').trim().toLowerCase();
+  if (email.length > 254 || !EMAIL_RE.test(email)) return reply(400, { ok: false, why: "that email doesn't look quite right." });
+  try { await env.LETTERS.prepare('DELETE FROM letters WHERE email = ?1').bind(email).run(); } catch {} // (no list yet: nothing to take off)
+  return reply(200, { ok: true });
+}
+
+// and, if they like, why: one of a few reasons and a few words, asked after they've gone. kept with only the day it
+// was said: never the email, so nothing ties it to anyone. for samuel, to know whether the letters come too often.
+const GOODBYE_WHYS = new Set(['often', 'expected', 'tidying', 'other']);
+async function goodbyeWhy(request, env) {
+  const origin = request.headers.get('Origin');
+  const cors = {
+    'access-control-allow-origin': origin || '*', 'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-allow-headers': 'content-type', vary: 'Origin', 'content-type': 'application/json',
+  };
+  const reply = (status, body) => new Response(JSON.stringify(body), { status, headers: cors });
+  if (!allowed(origin, env, new URL(request.url).origin)) return reply(403, { ok: false, why: "not from here." });
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  if (request.method !== 'POST') return reply(405, { ok: false, why: "post only." });
+  if (!env.LETTERS) return reply(503, { ok: false, why: "the mailbox isn't open just now." });
+  if (tooOften(request.headers.get('cf-connecting-ip') || '')) return reply(429, { ok: false, why: "that's a lot of tries. come back in a few minutes." });
+  let m;
+  try { m = await request.json(); } catch { return reply(400, { ok: false, why: "that didn't arrive right." }); }
+  const why = GOODBYE_WHYS.has(m.why) ? m.why : null;
+  const words = String(m.words || '').trim().replace(/\s+/g, ' ').slice(0, 400);
+  if (!why && !words) return reply(400, { ok: false, why: "pick one, or say a few words?" });
+  await env.LETTERS.prepare('CREATE TABLE IF NOT EXISTS goodbyes (id INTEGER PRIMARY KEY AUTOINCREMENT, why TEXT, words TEXT, day TEXT NOT NULL)').run();
+  await env.LETTERS.prepare('INSERT INTO goodbyes (why, words, day) VALUES (?1, ?2, ?3)').bind(why, words || null, new Date().toISOString().slice(0, 10)).run();
+  return reply(200, { ok: true });
+}
+
 // ------------------------------------------------------------------ comments (on the blog's posts)
 // little notes left under a post, and replies to them (three levels deep at most: a reply to a reply to a reply joins
 // the third). kept in the letters database with only what's shown: the post, a name if given, the words, when. no
@@ -607,6 +654,8 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/subscribe') return subscribe(request, env);
+    if (url.pathname === '/letters/goodbye') return unsubscribe(request, env); // (the page itself lives at /unsubscribe)
+    if (url.pathname === '/letters/why') return goodbyeWhy(request, env);
     if (url.pathname === '/sayings') return sayings(env, ctx);
     if (url.pathname === '/comments' || url.pathname.startsWith('/comments/')) return comments(request, env);
     // just the numbers, for the other pages' corners: how many scorsbys are here, and today's love. nobody joins.

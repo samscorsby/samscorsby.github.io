@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-sky="always">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>letting go · world of scorsby</title>
+    <meta name="description" content="stop getting letters from scorsby">
+    <link rel="canonical" href="https://scorsby.us/unsubscribe">
+    <link rel="stylesheet" href="./style.css?v=4">
+    <link rel="icon" href="./favicon.webp" type="image/x-icon">
+    <style>
+      /* letting go: the same little letters.exe window as signing up, sitting still in the middle of the page */
+      /* no white page behind it: just the window, floating on the planet's sky */
+      /* and in the middle of the page: the space between the navbar and the footer, with the window centered in it */
+      article { text-align: center; background: transparent; flex: 1; display: flex; align-items: center; justify-content: center;
+        width: 100%; box-sizing: border-box; margin: 0; padding: 24px 16px; }
+      /* (the sky's canvas comes wrapped in its own <main>, which would otherwise take half the room: it's fixed behind
+         everything anyway, so its wrapper takes none) */
+      body > main { flex: 0 0 0; min-height: 0; }
+      #goodbye { width: min(380px, 100%); margin: 0; box-sizing: border-box; text-align: left; background: #fff; color: #1d1a5e;
+        border: 1px solid #1d1a5e; border-radius: 3px; box-shadow: 4px 4px 0 #1d1a5e; }
+      #goodbye .bar { border-radius: 2px 2px 0 0; display: flex; justify-content: space-between; align-items: center; background: #1d1a5e; color: #fff;
+        font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 4px 3px 8px; }
+      #goodbye .bar span.dot { width: 16px; height: 16px; border: 1px solid #fff; border-radius: 3px; box-sizing: border-box; }
+      #goodbye form, #goodbye .done { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 9px; }
+      #goodbye [hidden] { display: none !important; }
+      #goodbye p { margin: 0; font-size: 13px; line-height: 1.5; }
+      #goodbye label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+      #goodbye input { font: inherit; font-size: 15px; color: #1d1a5e; background: #fff; border: 1px solid #1d1a5e; padding: 7px 9px; border-radius: 2px; width: 100%; box-sizing: border-box; }
+      #goodbye input:focus { outline: 2px solid #00b4ff; outline-offset: 1px; }
+      #goodbye button { align-self: flex-start; font: inherit; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #1d1a5e;
+        background: #fff; border: 1px solid #1d1a5e; border-radius: 3px; box-shadow: 3px 3px 0 #1d1a5e; padding: 7px 14px; cursor: pointer; margin-top: 2px; }
+      #goodbye button:hover { background: #1d1a5e; color: #fff; }
+      #goodbye button:active { transform: translate(3px, 3px); box-shadow: none; }
+      #goodbye button[disabled] { opacity: .5; pointer-events: none; }
+      #goodbye .why { font-size: 12px; color: #d4145a; }
+      #goodbye .why:empty { display: none; }
+      #goodbye .small { font-size: 11px; opacity: .7; }
+      #goodbye .big { font-size: 16px; }
+      #goodbye a { color: inherit; }
+      /* the goodbye: scorsby blinks, one tear rolls down, then a smile and a little wave (the head rocking side to side) */
+      #goodbye .bye { position: relative; width: 112px; margin: 6px auto 4px; transform-origin: 50% 90%; }
+      #goodbye .bye img { display: block; width: 100%; height: auto; }
+      #goodbye .tear { position: absolute; left: 31%; top: 60%; width: 9%; aspect-ratio: 1; box-sizing: border-box; background: #bfeaff;
+        border: 3px solid #05060a; border-radius: 0 50% 50% 50%; transform: rotate(45deg); opacity: 0; }
+      #goodbye .done.go .tear { animation: tear 1.9s ease-in .9s forwards; }
+      #goodbye .done.go .bye { animation: wave 1.4s ease-in-out 3s 1; }
+      @keyframes tear {
+        0% { opacity: 0; transform: translateY(-4px) rotate(45deg) scale(.4); }
+        15% { opacity: 1; transform: translateY(0) rotate(45deg) scale(1); }
+        35% { transform: translateY(2px) rotate(45deg) scale(1); }
+        85% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(30px) rotate(45deg) scale(.9); }
+      }
+      @keyframes wave {
+        0%, 100% { transform: rotate(0); }
+        20% { transform: rotate(-9deg); } 40% { transform: rotate(8deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(4deg); }
+      }
+      /* the optional why: small chips to pick one, and a box for a few words */
+      #goodbye .why-form { padding: 10px 0 0; margin-top: 4px; border-top: 1px dashed rgba(29, 26, 94, .35); gap: 8px; }
+      #goodbye .whys { display: flex; flex-wrap: wrap; gap: 6px; }
+      #goodbye .whys label { font-size: 12px; letter-spacing: 0; text-transform: none; opacity: 1; cursor: pointer; }
+      #goodbye .whys input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+      #goodbye .whys span { display: inline-block; padding: 4px 9px; border: 1px solid #1d1a5e; border-radius: 999px; background: #fff; }
+      #goodbye .whys input:checked + span { background: #1d1a5e; color: #fff; }
+      #goodbye .whys input:focus-visible + span { outline: 2px solid #00b4ff; outline-offset: 1px; }
+      #goodbye textarea { font: inherit; font-size: 13px; color: #1d1a5e; background: #fff; border: 1px solid #1d1a5e; padding: 7px 9px; border-radius: 2px; width: 100%; box-sizing: border-box; resize: vertical; }
+      #goodbye textarea:focus { outline: 2px solid #00b4ff; outline-offset: 1px; }
+      #goodbye .thanks { font-size: 13px; padding-top: 6px; }
+      @media (prefers-reduced-motion: reduce) { #goodbye .done.go .tear, #goodbye .done.go .bye { animation: none; } }
+    </style>
+  </head>
+  <body>
+
+    <nav></nav>
+
+    <script type="module" src="/module_scripts.js" defer></script>
+    <script src="./functional_scripts.js?v=19" defer></script>
+    <script>document.addEventListener('DOMContentLoaded', () => loadNavbar());</script>
+
+    <article>
+      <section id="goodbye" aria-label="stop getting letters">
+        <div class="bar"><span>letters.exe</span><span class="dot" aria-hidden="true"></span></div>
+        <form novalidate>
+          <p>if the letters have been too many, or just not for you right now, that's alright. type the email they come to and they'll stop.</p>
+          <label for="goodbye-email">email</label>
+          <input id="goodbye-email" name="email" type="email" maxlength="254" autocomplete="email" placeholder="glonk@example.com" required>
+          <p class="why" aria-live="polite"></p>
+          <button type="submit">stop my letters</button>
+          <p class="small">or just reply to any letter and say so. a person reads every one.</p>
+        </form>
+        <div class="done" hidden>
+          <div class="bye" aria-hidden="true"><img src="/images/scorsbyface_big.png" alt=""><span class="tear"></span></div>
+          <p class="big">done. no more letters ♥</p>
+          <p>thank you for reading for a while. the planet is still here whenever you'd like to visit, and you can always <a href="#subscribe" data-subscribe>come back</a>.</p>
+          <form class="why-form" novalidate>
+            <p class="small">if you'd like to say why (optional, and it's never tied to your email):</p>
+            <div class="whys" role="radiogroup" aria-label="why">
+              <label><input type="radio" name="why" value="often"><span>too many letters</span></label>
+              <label><input type="radio" name="why" value="expected"><span>not what i expected</span></label>
+              <label><input type="radio" name="why" value="tidying"><span>just tidying my inbox</span></label>
+              <label><input type="radio" name="why" value="other"><span>something else</span></label>
+            </div>
+            <textarea name="words" maxlength="400" rows="3" placeholder="anything you'd like to say (optional)" aria-label="anything you'd like to say"></textarea>
+            <p class="why-why why" aria-live="polite"></p>
+            <button type="submit">send</button>
+          </form>
+          <p class="thanks" hidden>thank you for telling us ♥</p>
+        </div>
+      </section>
+    </article>
+
+    <script>
+      (() => {
+        // (on this computer it only pretends, so the page can be tried without touching the real list. ?live uses the hearth)
+        const q = new URLSearchParams(location.search);
+        const PREVIEW = ['localhost', '127.0.0.1'].includes(location.hostname) && !q.has('live');
+        const meta = document.querySelector('meta[name="hearth"]')?.content;
+        const ENDPOINT = meta ? meta.replace(/^ws/, 'http').replace(/\/hearth$/, '/letters/goodbye')
+          : 'https://scorsby-hearth.samrobertsbaca.workers.dev/letters/goodbye';
+        const box = document.getElementById('goodbye'), form = box.querySelector('form'), why = form.querySelector('.why');
+        const send = form.querySelector('button'), done = box.querySelector('.done');
+        const WHY_AT = ENDPOINT.replace(/\/goodbye$/, '/why');
+        // scorsby's goodbye: a blink just before the tear, then the usual blinking (the same two faces as on the joy page)
+        const face = done.querySelector('.bye img'), OPEN = '/images/scorsbyface_big.png', SHUT = '/images/scorsbyface_big_blink.png';
+        new Image().src = SHUT;
+        const blink = () => { face.src = SHUT; setTimeout(() => { face.src = OPEN; }, 200); };
+        function goodbye() {
+          done.classList.add('go');
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          setTimeout(blink, 450);
+          setTimeout(function again() { blink(); setTimeout(again, 2000 + Math.random() * 4000); }, 5200);
+        }
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = form.email.value.trim();
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { why.textContent = "that email doesn't look quite right."; return; }
+          send.disabled = true; why.textContent = '';
+          try {
+            const out = PREVIEW ? { ok: true } : await fetch(ENDPOINT, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email }) })
+              .then((r) => r.json()).catch(() => ({}));
+            if (out.ok) { form.hidden = true; done.hidden = false; goodbye(); }
+            else why.textContent = out.why || 'something went wrong. try again soon?';
+          } catch {
+            why.textContent = "couldn't reach scorsby just now. try again soon?";
+          }
+          send.disabled = false;
+        });
+
+        // the optional why, after they've gone: sent on its own, with no email
+        const whyForm = done.querySelector('.why-form'), whyMsg = whyForm.querySelector('.why'), whySend = whyForm.querySelector('button');
+        whyForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const pick = whyForm.querySelector('input[name=why]:checked')?.value || '', words = whyForm.words.value.trim();
+          if (!pick && !words) { whyMsg.textContent = 'pick one, or say a few words?'; return; }
+          whySend.disabled = true; whyMsg.textContent = '';
+          try {
+            const out = PREVIEW ? { ok: true } : await fetch(WHY_AT, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ why: pick, words }) })
+              .then((r) => r.json()).catch(() => ({}));
+            if (out.ok) { whyForm.hidden = true; done.querySelector('.thanks').hidden = false; }
+            else whyMsg.textContent = out.why || 'something went wrong. try again soon?';
+          } catch {
+            whyMsg.textContent = "couldn't reach scorsby just now. try again soon?";
+          }
+          whySend.disabled = false;
+        });
+      })();
+    </script>
+
+    <footer>
+      ⓢ 2620 Scorsby Smileworks — All Smiles Unreserved
+    </footer>
+
+  </body>
+</html>

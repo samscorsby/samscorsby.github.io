@@ -1,3 +1,3 @@
-### the kernel's crooked smile
+### the void-nail's glimmer
 
-scorsby and companions dressed a beggar. "rrombo dombo di di dai! his gold is yours!" they declared, claiming goods. poof, they vanished. the 'lord,' a bitter shell, felt a crab's nudge: "walk straight first." scorsby spun new, gleefully elastic schemes.
+glimmer, last sparkle gone, 'hung' his smile on the void-nail, *rrombo dombo di di dai!* it tore, spilling a new spectrum. scorsby then served glow-soup in a thimble. glimmer beamed, scattering sky-peas. "i am not doing anything," scorsby pulsed. "i am helping him," glimmer hummed, bathed in the beguiling light.

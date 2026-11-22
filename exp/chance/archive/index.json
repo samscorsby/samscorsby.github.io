@@ -2784,5 +2784,114 @@
    "IRRS Milano (E to Eu), 7290.0 kHz AM via Lippis-KiWi-SDR-2 | FREITAL, GERMANY, Nov 20, 19:02 UTC"
   ],
   "heard_total": 149
+ },
+ {
+  "catalog": "ISA025",
+  "number": 25,
+  "title": "ISA025 Nemzecal 1938 Integrate",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-22",
+  "time_utc": "07:02",
+  "made_utc": "2026-11-22T04:02+00:00",
+  "listened_hours": 24,
+  "length": 1866.14,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Nemzetiségi 1938 local",
+    "duration": 408.18
+   },
+   {
+    "n": 2,
+    "title": "amateur ant + rose sobchak",
+    "duration": 713.34
+   },
+   {
+    "n": 3,
+    "title": "Kolakoski Loop data",
+    "duration": 316.53
+   },
+   {
+    "n": 4,
+    "title": "DIENSTbar 256kbps Rudin-Shapiro",
+    "duration": 237.92
+   },
+   {
+    "n": 5,
+    "title": "Integrate Overflow Lowpass Bitplane",
+    "duration": 190.17
+   }
+  ],
+  "cover": "archive/covers/ISA025.jpg",
+  "cover_png": "archive/covers/ISA025.png",
+  "palette": [
+   "#4526A3",
+   "#B636BC",
+   "#2F3F8B",
+   "#231940",
+   "#F7F5FB"
+  ],
+  "seed": "1780970236730452845",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Famous Escapes 1938-03-06 Mary Queen of Scots Escapes (1938), archive, 1938, Nov 21, 06:04 UTC",
+   "A11_T878_HR2U_CH14_00-02-57_08-48-25-2015-09-09Recording.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 22, 03:03 UTC",
+   "Femme Pawa FM (Port Vila, sef, Vanuatu, Vanuatu), internet radio, Nov 21, 09:03 UTC",
+   "Radio Ndeke Luka (The Central African Republic), internet radio, Nov 21, 06:03 UTC",
+   "FT4 data, 20 m, 14080.0 kHz USB via kiwiSDR Receiver of 0-30 MHz | | Rome Italy UE | IZ0INA, Nov 21, 12:02 UTC",
+   "Channel Marker P, 3593.8 kHz CW via G3SDR, 0-32 MHz Kiwi 8077. Weston-super-Mare. Parallel dipoles for 160m, 80m, 60m & 40m. 5/8th Vertical for 28MHz. Wellbrook Loop for VLF & MW 🕬, Nov 22, 01:03 UTC",
+   ". القارئ محمد أيوب (Iraq), internet radio, Nov 21, 10:03 UTC",
+   "Radio Romania Int. (F to SEu), 7220.0 kHz AM via EI6IZ SDR #1 KiwiSDR V2 | Castlebar, Co Mayo, Ireland, Nov 21, 06:03 UTC",
+   "Radio Karicia (San Martín, Peru), internet radio, Nov 21, 10:03 UTC",
+   "Rádio Itaueira Gospel (Brazil), internet radio, Nov 21, 04:03 UTC",
+   "MandalayFM (Myanmar), internet radio, Nov 21, 22:04 UTC",
+   "mobile - jakarta sigisora, live microphone, Nov 21, 08:04 UTC",
+   "Zalufebu (Asaguare, 2010), archive, 2010, Nov 22, 03:03 UTC",
+   "RTM Sabah V FM (BAJ to MLA), 11885.0 kHz AM via 0-30 MHz SDR, VU24DX, Kozhikode ,Kerala,India, Nov 21, 20:03 UTC",
+   "Short Poetry Collection 109 (Various, 2012), archive, 2012, Nov 21, 17:03 UTC",
+   "Beat Life Panama (Panama), internet radio, Nov 21, 05:04 UTC",
+   "Mutual War News 1940-07-23 Berlin Declares the Die Is Cast (1940), archive, 1940, Nov 21, 14:03 UTC",
+   "Falmouth - Woodlane Campus, live microphone, Nov 21, 06:04 UTC",
+   "The Black Museum 1952-01-15 The .22 Caliber Pistol (1952), archive, 1952, Nov 21, 09:04 UTC",
+   "Body Failure (Exferno, 2021), archive, 2021, Nov 21, 14:03 UTC",
+   "Tales of the Diamond K The Golden Chimney (), archive, Nov 21, 18:03 UTC",
+   "122-AAB_Skylab_2_Mission_Audio.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 21, 05:04 UTC",
+   "usti nad labem - duul, live microphone, Nov 21, 22:04 UTC",
+   "flucc - wien, live microphone, Nov 21, 07:03 UTC",
+   "A11_T890_HR1L_CH2_18-41-16_02-53-05-2015-09-29Recording.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 21, 07:03 UTC",
+   "2 m amateur, 144.5781 MHz NFM via OpenWebRX home.gettoweb.de:8073 | DL1RMT, Nov 21, 21:03 UTC",
+   "The Jimmy Durante Show (), archive, Nov 21, 13:03 UTC",
+   "TFR200 - VA - Torn Flesh Records Presents It's All Your Fault - Listener's Discretion (Various Artists), archive, Nov 21, 13:03 UTC",
+   "Stairway to the Stars 1947-08-29 Sea Fever (Series Finale) (1947), archive, 1947, Nov 21, 19:02 UTC",
+   "amateur ant",
+   "rose sobchak - split (2020) (amateur ant",
+   "rose sobchak), archive, Nov 21, 16:03 UTC",
+   "70 cm amateur, 433.0006 MHz NFM via OpenWebRX 201.217.131.123:8073 | CX4AE Fernando Uruguay Link, Nov 21, 19:03 UTC",
+   "Let George Do It 1950-08-14 The High Price of a Penny (1950), archive, 1950, Nov 21, 10:04 UTC",
+   "2 m amateur, 145.8692 MHz NFM via OpenWebRX sdr.22dx.ru:8073 | 22dx.ru, Nov 21, 19:06 UTC",
+   "stream - 083, live microphone, Nov 21, 18:04 UTC",
+   "Pat O'Daniel and the Hillbilly Boys 1939-05-15 Hell on the Wabash (1939), archive, 1939, Nov 21, 06:04 UTC",
+   "2 m amateur, 145.0005 MHz NFM via OpenWebRX 146.158.106.247:8073 | RX9UK, Nov 21, 14:04 UTC",
+   "Bible (YLT) NT 17: Epistle to Titus (Young's Literal Translation, 2020), archive, 2020, Nov 21, 04:04 UTC",
+   "The Mysterious Traveler 1945-03-10 The Case of Charles Foster (1945), archive, 1945, Nov 21, 21:03 UTC",
+   "[inoquo039",
+   "A Day in the Life of Dennis Day 1949-01-29 The Black Mark (1949), archive, 1949, Nov 21, 21:03 UTC",
+   "Pop Radio. FM 101.5. Ciudad de Bs. As. Version 3 (Argentina), internet radio, Nov 21, 07:02 UTC",
+   "Plagiarism Perversions (Motown Junkie, 2007), archive, 2007, Nov 21, 23:03 UTC",
+   "FT8 data, 20 m, 14074.0 kHz USB via Kiwi 2 DB0SLF (www.x26.de) | Saalfeld/Saale, Nov 21, 04:02 UTC",
+   "CNR 2 China Business R. (M to CHN), 6065.0 kHz AM via 0-30 MHz SDR, DX6RAN, Negros Occidental, Philippines, Nov 21, 22:01 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via N1NTE-3 - MA/CT Border, USA, Nov 21, 13:02 UTC",
+   "FT8 data, 15 m, 21074.0 kHz USB via 0-30 MHz KIWI SDR form DL0HGN/DQ1V | Germany, Hagenow, Nov 21, 15:01 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz SDR, DF3AF | Lippstadt -Bad Waldliesborn, Nov 21, 12:02 UTC",
+   "DIENSTbar Radio Transmission No. 324 Special Theme: Prelude DIENSTbar (DIENSTbar, 2026), archive, 2026, Nov 22, 01:04 UTC",
+   "Leo Is on the Air Snow White and the Seven Dwarfs (), archive, Nov 21, 16:03 UTC",
+   "Радио Орфей - Симфоническая музыка 256kbps (The Russian Federation), internet radio, Nov 21, 21:02 UTC",
+   "FT8 data, 12 m, 24915.0 kHz USB via 0-30 MHz SDR | Roseburg, Oregon USA, Nov 21, 22:02 UTC",
+   "Radio Canada Ici Première (Alberta) Edmonton (Alberta, Canada), internet radio, Nov 22, 01:03 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via NA5B 0 - 30 MHz Washington DC Area USA, Nov 21, 10:02 UTC"
+  ],
+  "heard_total": 55
  }
 ]

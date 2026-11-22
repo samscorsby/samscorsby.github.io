@@ -1,3 +1,3 @@
-### the void-nail's glimmer
+### the great ping-price reveal
 
-glimmer, last sparkle gone, 'hung' his smile on the void-nail, *rrombo dombo di di dai!* it tore, spilling a new spectrum. scorsby then served glow-soup in a thimble. glimmer beamed, scattering sky-peas. "i am not doing anything," scorsby pulsed. "i am helping him," glimmer hummed, bathed in the beguiling light.
+scorsby watched barnaby, whose soul-battery was flat from answering "e-donkey price?" barnaby activated the grand chime towers. villagers, faces like fresh-opened apps, flocked, murmuring, "rrombo dombo di di dai! a core-truth update!" fenris, who'd vowed only 'air-nutrients,' slurped a mud-pig, declaring, "it's puddle-fish, not earth-flesh!" a figure in flowing fabrics caught an air-tossed synth-apple, primly clamping knees. scorsby merely smiled. barnaby then, with profound gravitas, broadcast the e-donkey's exact cost. a collective, soft chime of joy spread through the crowd.

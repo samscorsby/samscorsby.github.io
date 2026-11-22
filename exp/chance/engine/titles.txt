@@ -242,3 +242,10 @@ ISA024 Byteswap Greek Varispeed
 7. oldies Bitplane Andrew Cauthen
 8. Shuffle TN
 9. rap 24915 Spanish
+
+ISA025 Nemzecal 1938 Integrate
+1. Nemzetiségi 1938 local
+2. amateur ant + rose sobchak
+3. Kolakoski Loop data
+4. DIENSTbar 256kbps Rudin-Shapiro
+5. Integrate Overflow Lowpass Bitplane

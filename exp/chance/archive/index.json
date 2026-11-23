@@ -2893,5 +2893,102 @@
    "FT8 data, 40 m, 7074.0 kHz USB via NA5B 0 - 30 MHz Washington DC Area USA, Nov 21, 10:02 UTC"
   ],
   "heard_total": 55
+ },
+ {
+  "catalog": "ISA026",
+  "number": 26,
+  "title": "ISA026 Indonrsity Shell 105 Odd-Even",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-23",
+  "time_utc": "07:02",
+  "made_utc": "2026-11-23T04:02+00:00",
+  "listened_hours": 24,
+  "length": 2117.33,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "university radio Odd-Even Shell Sort",
+    "duration": 178.75
+   },
+   {
+    "n": 2,
+    "title": "Rule 105 Falmouth _compat_pickle.py",
+    "duration": 101.44
+   },
+   {
+    "n": 3,
+    "title": "5935 TN",
+    "duration": 291.59
+   },
+   {
+    "n": 4,
+    "title": "Life Misread https",
+    "duration": 107.94
+   },
+   {
+    "n": 5,
+    "title": "XOR (((t>>13)&(t>>13))%143)^t signed 16-bit Pattern",
+    "duration": 151.69
+   },
+   {
+    "n": 6,
+    "title": "Fibonacci word",
+    "duration": 193.35
+   },
+   {
+    "n": 7,
+    "title": "Sort Indonesian Indonesia",
+    "duration": 326.09
+   },
+   {
+    "n": 8,
+    "title": "Germany Mosaic Campus Sort",
+    "duration": 101.53
+   },
+   {
+    "n": 9,
+    "title": "Loop Ontario",
+    "duration": 664.95
+   }
+  ],
+  "cover": "archive/covers/ISA026.jpg",
+  "cover_png": "archive/covers/ISA026.png",
+  "palette": [
+   "#4727A5",
+   "#A536BF",
+   "#2F378D",
+   "#231941",
+   "#F7F6FB"
+  ],
+  "seed": "3187825664008848252",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Radio Gdansk (Gdansk, Poland), internet radio, Nov 22, 07:02 UTC",
+   "pigeon - loft, live microphone, Nov 22, 21:02 UTC",
+   "Fritz (Germany), internet radio, Nov 22, 22:05 UTC",
+   "USMARADIO (Città di San Marino, San Marino), internet radio, Nov 22, 21:03 UTC",
+   "Strange 1955-09-16 Phantom Wagoneer (1955), archive, 1955, Nov 22, 14:04 UTC",
+   "Andrews Bay hydrophone (the Salish Sea), live hydrophone, Nov 22, 22:04 UTC",
+   "Falmouth - Woodlane Campus, live microphone, Nov 23, 01:03 UTC",
+   "WWCR 2 Nashville, TN (E to NAm), 5935.0 kHz AM via Pop's Kiwi SDR, W. Central Florida USA 1A, Nov 22, 11:02 UTC",
+   "knepp - air, live microphone, Nov 22, 11:06 UTC",
+   "Autobiography of a Pocket-Handkerchief (James Fenimore Cooper, 2022), archive, 2022, Nov 22, 10:02 UTC",
+   "DR p4 København (Denmark), internet radio, Nov 22, 15:02 UTC",
+   "Радіо Голос Надії (Ukraine), internet radio, Nov 22, 17:03 UTC",
+   "桃江电台 (Hunan, China), internet radio, Nov 22, 05:04 UTC",
+   "Hot 93.2 FM (DKI Jakarta, Indonesia), 93.2 MHz FM, Nov 23, 03:03 UTC",
+   "104.1 Guyana Lite FM (Georgetown, Guyana), 104.1 MHz FM, Nov 22, 09:02 UTC",
+   "Club Dance Online - Retro (Hungary), internet radio, Nov 22, 15:02 UTC",
+   "Zona 5 93.3 (Peru), 93.3 MHz FM, Nov 22, 20:03 UTC",
+   "Radio Acer (Bolivia), internet radio, Nov 23, 01:04 UTC",
+   "Rock radio classics (Slovenia), internet radio, Nov 22, 08:02 UTC",
+   "Radio Nacional de Venezuela - Informativa (Bolivarian Republic Of Venezuela), internet radio, Nov 22, 12:06 UTC",
+   "radio.earth - kozmic, live microphone, Nov 23, 00:04 UTC",
+   "radio.earth - Brno Lužánky, live microphone, Nov 22, 22:03 UTC",
+   "WINB (E to NAm), 9265.0 kHz AM via 0-30 Mhz SDR / VE3QFM | Carleton Place ,Ontario, Canada, Nov 22, 20:02 UTC"
+  ],
+  "heard_total": 23
  }
 ]

@@ -1,83 +1,51 @@
 {
- "title": "ISA025 Nemzecal 1938 Integrate",
+ "title": "ISA026 Indonrsity Shell 105 Odd-Even",
  "artist": "ScorsBT4",
- "released": "2026-11-22",
+ "released": "2026-11-23",
  "about": "All computer programming is basically question asking, rather than choice making.",
  "about_by": "John Cage, 1985",
  "about_link": "https://www.youtube.com/watch?v=9GqHikJSQhQ",
  "credits": [
-  "created November 22, 2026, 04:02 UTC",
-  "Impermanence Series A · ISA025",
+  "created November 23, 2026, 04:02 UTC",
+  "Impermanence Series A · ISA026",
   "",
   "questions by Samuel John Scorsby",
   "",
-  "Over the course of a day, ScorsBT4 listened to the world, gathering 363 moments of radio: shortwave from receivers around the world, radio amateurs and broadcasters above shortwave, FM and internet stations, open microphones on rooftops, in gardens and in canals, hydrophones in the sea, the earth's own natural radio, and old recordings from the Internet Archive. It kept only what had something in it. In the spirit of John Cage's aleatoric compositional methods, particularly inspired by his piece \"Fontana Mix\", it threw the dice: which sounds belong together, which patterns of data to fuse them with (cellular automata, bytebeat formulas, number sequences, sorting algorithms), how long each song should be, and where it should go. 55 of those moments are in these songs. Nothing was chosen by hand.",
+  "Over the course of a day, ScorsBT4 listened to the world, gathering 365 moments of radio: shortwave from receivers around the world, radio amateurs and broadcasters above shortwave, FM and internet stations, open microphones on rooftops, in gardens and in canals, hydrophones in the sea, the earth's own natural radio, and old recordings from the Internet Archive. It kept only what had something in it. In the spirit of John Cage's aleatoric compositional methods, particularly inspired by his piece \"Fontana Mix\", it threw the dice: which sounds belong together, which patterns of data to fuse them with (cellular automata, bytebeat formulas, number sequences, sorting algorithms), how long each song should be, and where it should go. 23 of those moments are in these songs. Nothing was chosen by hand.",
   "",
-  "This album is impermanent. The broadcasts collected are gone. The recordings it gathered were thrown away once it was made. Tomorrow it will be replaced by another, which will never be heard again either. Each day the chance that it is the last grows: today's was 1 in 341, tomorrow's is 1 in 340. It exists for a day. Listen while it's here. More info on the project.",
+  "This album is impermanent. The broadcasts collected are gone. The recordings it gathered were thrown away once it was made. Tomorrow it will be replaced by another, which will never be heard again either. Each day the chance that it is the last grows: today's was 1 in 340, tomorrow's is 1 in 339. It exists for a day. Listen while it's here. More info on the project.",
   "",
   "open microphones: Locus Sonus Locustream (locusonus.org)",
   "archive recordings: the Internet Archive (archive.org), openly licensed collections",
-  "above shortwave: OpenWebRX receivers kept by radio amateurs around the world (receiverbook.de)"
+  "hydrophones: Orcasound (orcasound.net), live from the Salish Sea, CC BY-NC-SA 4.0; song 2 uses it and is shared under the same licence"
  ],
  "more": "https://scorsby.us/blog/2026-10-29_the_medium,_the_mirror,_and_the_music.html",
  "heard": [
-  "Famous Escapes 1938-03-06 Mary Queen of Scots Escapes (1938), archive, 1938, Nov 21, 06:04 UTC",
-  "A11_T878_HR2U_CH14_00-02-57_08-48-25-2015-09-09Recording.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 22, 03:03 UTC",
-  "Femme Pawa FM (Port Vila, sef, Vanuatu, Vanuatu), internet radio, Nov 21, 09:03 UTC",
-  "Radio Ndeke Luka (The Central African Republic), internet radio, Nov 21, 06:03 UTC",
-  "FT4 data, 20 m, 14080.0 kHz USB via kiwiSDR Receiver of 0-30 MHz | | Rome Italy UE | IZ0INA, Nov 21, 12:02 UTC",
-  "Channel Marker P, 3593.8 kHz CW via G3SDR, 0-32 MHz Kiwi 8077. Weston-super-Mare. Parallel dipoles for 160m, 80m, 60m & 40m. 5/8th Vertical for 28MHz. Wellbrook Loop for VLF & MW 🕬, Nov 22, 01:03 UTC",
-  ". القارئ محمد أيوب (Iraq), internet radio, Nov 21, 10:03 UTC",
-  "Radio Romania Int. (F to SEu), 7220.0 kHz AM via EI6IZ SDR #1 KiwiSDR V2 | Castlebar, Co Mayo, Ireland, Nov 21, 06:03 UTC",
-  "Radio Karicia (San Martín, Peru), internet radio, Nov 21, 10:03 UTC",
-  "Rádio Itaueira Gospel (Brazil), internet radio, Nov 21, 04:03 UTC",
-  "MandalayFM (Myanmar), internet radio, Nov 21, 22:04 UTC",
-  "mobile - jakarta sigisora, live microphone, Nov 21, 08:04 UTC",
-  "Zalufebu (Asaguare, 2010), archive, 2010, Nov 22, 03:03 UTC",
-  "RTM Sabah V FM (BAJ to MLA), 11885.0 kHz AM via 0-30 MHz SDR, VU24DX, Kozhikode ,Kerala,India, Nov 21, 20:03 UTC",
-  "Short Poetry Collection 109 (Various, 2012), archive, 2012, Nov 21, 17:03 UTC",
-  "Beat Life Panama (Panama), internet radio, Nov 21, 05:04 UTC",
-  "Mutual War News 1940-07-23 Berlin Declares the Die Is Cast (1940), archive, 1940, Nov 21, 14:03 UTC",
-  "Falmouth - Woodlane Campus, live microphone, Nov 21, 06:04 UTC",
-  "The Black Museum 1952-01-15 The .22 Caliber Pistol (1952), archive, 1952, Nov 21, 09:04 UTC",
-  "Body Failure (Exferno, 2021), archive, 2021, Nov 21, 14:03 UTC",
-  "Tales of the Diamond K The Golden Chimney (), archive, Nov 21, 18:03 UTC",
-  "122-AAB_Skylab_2_Mission_Audio.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 21, 05:04 UTC",
-  "usti nad labem - duul, live microphone, Nov 21, 22:04 UTC",
-  "flucc - wien, live microphone, Nov 21, 07:03 UTC",
-  "A11_T890_HR1L_CH2_18-41-16_02-53-05-2015-09-29Recording.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 21, 07:03 UTC",
-  "2 m amateur, 144.5781 MHz NFM via OpenWebRX home.gettoweb.de:8073 | DL1RMT, Nov 21, 21:03 UTC",
-  "The Jimmy Durante Show (), archive, Nov 21, 13:03 UTC",
-  "TFR200 - VA - Torn Flesh Records Presents It's All Your Fault - Listener's Discretion (Various Artists), archive, Nov 21, 13:03 UTC",
-  "Stairway to the Stars 1947-08-29 Sea Fever (Series Finale) (1947), archive, 1947, Nov 21, 19:02 UTC",
-  "amateur ant",
-  "rose sobchak - split (2020) (amateur ant",
-  "rose sobchak), archive, Nov 21, 16:03 UTC",
-  "70 cm amateur, 433.0006 MHz NFM via OpenWebRX 201.217.131.123:8073 | CX4AE Fernando Uruguay Link, Nov 21, 19:03 UTC",
-  "Let George Do It 1950-08-14 The High Price of a Penny (1950), archive, 1950, Nov 21, 10:04 UTC",
-  "2 m amateur, 145.8692 MHz NFM via OpenWebRX sdr.22dx.ru:8073 | 22dx.ru, Nov 21, 19:06 UTC",
-  "stream - 083, live microphone, Nov 21, 18:04 UTC",
-  "Pat O'Daniel and the Hillbilly Boys 1939-05-15 Hell on the Wabash (1939), archive, 1939, Nov 21, 06:04 UTC",
-  "2 m amateur, 145.0005 MHz NFM via OpenWebRX 146.158.106.247:8073 | RX9UK, Nov 21, 14:04 UTC",
-  "Bible (YLT) NT 17: Epistle to Titus (Young's Literal Translation, 2020), archive, 2020, Nov 21, 04:04 UTC",
-  "The Mysterious Traveler 1945-03-10 The Case of Charles Foster (1945), archive, 1945, Nov 21, 21:03 UTC",
-  "[inoquo039",
-  "A Day in the Life of Dennis Day 1949-01-29 The Black Mark (1949), archive, 1949, Nov 21, 21:03 UTC",
-  "Pop Radio. FM 101.5. Ciudad de Bs. As. Version 3 (Argentina), internet radio, Nov 21, 07:02 UTC",
-  "Plagiarism Perversions (Motown Junkie, 2007), archive, 2007, Nov 21, 23:03 UTC",
-  "FT8 data, 20 m, 14074.0 kHz USB via Kiwi 2 DB0SLF (www.x26.de) | Saalfeld/Saale, Nov 21, 04:02 UTC",
-  "CNR 2 China Business R. (M to CHN), 6065.0 kHz AM via 0-30 MHz SDR, DX6RAN, Negros Occidental, Philippines, Nov 21, 22:01 UTC",
-  "FT8 data, 40 m, 7074.0 kHz USB via N1NTE-3 - MA/CT Border, USA, Nov 21, 13:02 UTC",
-  "FT8 data, 15 m, 21074.0 kHz USB via 0-30 MHz KIWI SDR form DL0HGN/DQ1V | Germany, Hagenow, Nov 21, 15:01 UTC",
-  "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz SDR, DF3AF | Lippstadt -Bad Waldliesborn, Nov 21, 12:02 UTC",
-  "DIENSTbar Radio Transmission No. 324 Special Theme: Prelude DIENSTbar (DIENSTbar, 2026), archive, 2026, Nov 22, 01:04 UTC",
-  "Leo Is on the Air Snow White and the Seven Dwarfs (), archive, Nov 21, 16:03 UTC",
-  "Радио Орфей - Симфоническая музыка 256kbps (The Russian Federation), internet radio, Nov 21, 21:02 UTC",
-  "FT8 data, 12 m, 24915.0 kHz USB via 0-30 MHz SDR | Roseburg, Oregon USA, Nov 21, 22:02 UTC",
-  "Radio Canada Ici Première (Alberta) Edmonton (Alberta, Canada), internet radio, Nov 22, 01:03 UTC",
-  "FT8 data, 40 m, 7074.0 kHz USB via NA5B 0 - 30 MHz Washington DC Area USA, Nov 21, 10:02 UTC"
+  "Radio Gdansk (Gdansk, Poland), internet radio, Nov 22, 07:02 UTC",
+  "pigeon - loft, live microphone, Nov 22, 21:02 UTC",
+  "Fritz (Germany), internet radio, Nov 22, 22:05 UTC",
+  "USMARADIO (Città di San Marino, San Marino), internet radio, Nov 22, 21:03 UTC",
+  "Strange 1955-09-16 Phantom Wagoneer (1955), archive, 1955, Nov 22, 14:04 UTC",
+  "Andrews Bay hydrophone (the Salish Sea), live hydrophone, Nov 22, 22:04 UTC",
+  "Falmouth - Woodlane Campus, live microphone, Nov 23, 01:03 UTC",
+  "WWCR 2 Nashville, TN (E to NAm), 5935.0 kHz AM via Pop's Kiwi SDR, W. Central Florida USA 1A, Nov 22, 11:02 UTC",
+  "knepp - air, live microphone, Nov 22, 11:06 UTC",
+  "Autobiography of a Pocket-Handkerchief (James Fenimore Cooper, 2022), archive, 2022, Nov 22, 10:02 UTC",
+  "DR p4 København (Denmark), internet radio, Nov 22, 15:02 UTC",
+  "Радіо Голос Надії (Ukraine), internet radio, Nov 22, 17:03 UTC",
+  "桃江电台 (Hunan, China), internet radio, Nov 22, 05:04 UTC",
+  "Hot 93.2 FM (DKI Jakarta, Indonesia), 93.2 MHz FM, Nov 23, 03:03 UTC",
+  "104.1 Guyana Lite FM (Georgetown, Guyana), 104.1 MHz FM, Nov 22, 09:02 UTC",
+  "Club Dance Online - Retro (Hungary), internet radio, Nov 22, 15:02 UTC",
+  "Zona 5 93.3 (Peru), 93.3 MHz FM, Nov 22, 20:03 UTC",
+  "Radio Acer (Bolivia), internet radio, Nov 23, 01:04 UTC",
+  "Rock radio classics (Slovenia), internet radio, Nov 22, 08:02 UTC",
+  "Radio Nacional de Venezuela - Informativa (Bolivarian Republic Of Venezuela), internet radio, Nov 22, 12:06 UTC",
+  "radio.earth - kozmic, live microphone, Nov 23, 00:04 UTC",
+  "radio.earth - Brno Lužánky, live microphone, Nov 22, 22:03 UTC",
+  "WINB (E to NAm), 9265.0 kHz AM via 0-30 Mhz SDR / VE3QFM | Carleton Place ,Ontario, Canada, Nov 22, 20:02 UTC"
  ],
- "heard_total": 55,
+ "heard_total": 23,
  "tags": [
   "chance",
   "radio",
@@ -88,78 +56,102 @@
  "tracks": [
   {
    "n": 1,
-   "title": "Nemzetiségi 1938 local",
-   "duration": 408.18,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/01.mp3"
+   "title": "university radio Odd-Even Shell Sort",
+   "duration": 178.75,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/01.mp3"
   },
   {
    "n": 2,
-   "title": "amateur ant + rose sobchak",
-   "duration": 713.34,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/02.mp3"
+   "title": "Rule 105 Falmouth _compat_pickle.py",
+   "duration": 101.44,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/02.mp3"
   },
   {
    "n": 3,
-   "title": "Kolakoski Loop data",
-   "duration": 316.53,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/03.mp3"
+   "title": "5935 TN",
+   "duration": 291.59,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/03.mp3"
   },
   {
    "n": 4,
-   "title": "DIENSTbar 256kbps Rudin-Shapiro",
-   "duration": 237.92,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/04.mp3"
+   "title": "Life Misread https",
+   "duration": 107.94,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/04.mp3"
   },
   {
    "n": 5,
-   "title": "Integrate Overflow Lowpass Bitplane",
-   "duration": 190.17,
-   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/05.mp3"
+   "title": "XOR (((t>>13)&(t>>13))%143)^t signed 16-bit Pattern",
+   "duration": 151.69,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/05.mp3"
+  },
+  {
+   "n": 6,
+   "title": "Fibonacci word",
+   "duration": 193.35,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/06.mp3"
+  },
+  {
+   "n": 7,
+   "title": "Sort Indonesian Indonesia",
+   "duration": 326.09,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/07.mp3"
+  },
+  {
+   "n": 8,
+   "title": "Germany Mosaic Campus Sort",
+   "duration": 101.53,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/08.mp3"
+  },
+  {
+   "n": 9,
+   "title": "Loop Ontario",
+   "duration": 664.95,
+   "src": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/09.mp3"
   }
  ],
- "cover": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/cover.jpg",
- "cover_small": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/cover_small.jpg",
- "banner": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/banner.jpg",
- "cover_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/cover.png",
- "cover_small_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/cover_small.png",
+ "cover": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/cover.jpg",
+ "cover_small": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/cover_small.jpg",
+ "banner": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/banner.jpg",
+ "cover_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/cover.png",
+ "cover_small_png": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/cover_small.png",
  "downloads": [
   {
    "format": "MP3",
    "note": "320 kbps",
-   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/SBT4-ISA025-2026-11-22-mp3.zip",
-   "bytes": 77472950
+   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/SBT4-ISA026-2026-11-23-mp3.zip",
+   "bytes": 88005177
   },
   {
    "format": "WAV",
    "note": "24-bit/48kHz",
-   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-22/SBT4-ISA025-2026-11-22-wav.zip",
-   "bytes": 539717336
+   "url": "https://github.com/samscorsby/samscorsby.github.io/releases/download/chance-2026-11-23/SBT4-ISA026-2026-11-23-wav.zip",
+   "bytes": 612085585
   }
  ],
  "mood": {
-  "brightness": 0.151,
-  "energy": 0.582,
-  "noise": 0.127,
-  "motion": 0.21
+  "brightness": 0.152,
+  "energy": 0.675,
+  "noise": 0.279,
+  "motion": 0.141
  },
  "palette": [
-  "#4526A3",
-  "#B636BC",
-  "#2F3F8B",
-  "#231940",
-  "#F7F5FB"
+  "#4727A5",
+  "#A536BF",
+  "#2F378D",
+  "#231941",
+  "#F7F6FB"
  ],
- "number": 25,
+ "number": 26,
  "series": "Impermanence Series A",
- "catalog": "ISA025",
- "day": "2026-11-22",
+ "catalog": "ISA026",
+ "day": "2026-11-23",
  "time_utc": "07:02",
- "made_utc": "2026-11-22T04:02+00:00",
+ "made_utc": "2026-11-23T04:02+00:00",
  "listened_hours": 24,
- "odds": 341,
+ "odds": 340,
  "last": false,
  "pure": false,
- "seed": "1780970236730452845",
- "generated_from": "album_2026-11-22_040214_fontana",
- "published": "2026-11-22T07:02:18"
+ "seed": "3187825664008848252",
+ "generated_from": "album_2026-11-23_040231_fontana",
+ "published": "2026-11-23T07:02:11"
 }

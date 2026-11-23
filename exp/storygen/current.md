@@ -1,3 +1,3 @@
-### the great ping-price reveal
+### the plum-crow's triumph
 
-scorsby watched barnaby, whose soul-battery was flat from answering "e-donkey price?" barnaby activated the grand chime towers. villagers, faces like fresh-opened apps, flocked, murmuring, "rrombo dombo di di dai! a core-truth update!" fenris, who'd vowed only 'air-nutrients,' slurped a mud-pig, declaring, "it's puddle-fish, not earth-flesh!" a figure in flowing fabrics caught an air-tossed synth-apple, primly clamping knees. scorsby merely smiled. barnaby then, with profound gravitas, broadcast the e-donkey's exact cost. a collective, soft chime of joy spread through the crowd.
+scorsby, all smiles, "found" a cow. "guard her!" he chirped, then whispered: a plum-crow flew from its ear. this slow, joy-secret raced, birthing 100, bypassing logic's gate. "rrombo dombo di di dai!" murmured the authorities, but the story's collective grin won.

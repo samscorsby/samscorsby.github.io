@@ -249,3 +249,14 @@ ISA025 Nemzecal 1938 Integrate
 3. Kolakoski Loop data
 4. DIENSTbar 256kbps Rudin-Shapiro
 5. Integrate Overflow Lowpass Bitplane
+
+ISA026 Indonrsity Shell 105 Odd-Even
+1. university radio Odd-Even Shell Sort
+2. Rule 105 Falmouth _compat_pickle.py
+3. 5935 TN
+4. Life Misread https
+5. XOR (((t>>13)&(t>>13))%143)^t signed 16-bit Pattern
+6. Fibonacci word
+7. Sort Indonesian Indonesia
+8. Germany Mosaic Campus Sort
+9. Loop Ontario

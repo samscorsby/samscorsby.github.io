@@ -1,3 +1,3 @@
-### the plum-crow's triumph
+### the glow-treasure and the card-smiles
 
-scorsby, all smiles, "found" a cow. "guard her!" he chirped, then whispered: a plum-crow flew from its ear. this slow, joy-secret raced, birthing 100, bypassing logic's gate. "rrombo dombo di di dai!" murmured the authorities, but the story's collective grin won.
+freed scorsby found old essence, jingly-dogs, treasure. light summoned shimmer-sprite. "rrombo dombo di di dai!" scorsby used it for princess, card games, sharing delight. deck’s twinkle-truth (jack of frowns: king’s guard!). king marked path; sprite multiplied smiles. caught, scorsby lit treasure. sprite swapped king's frown for collective smile, showering silver-twinkles. scorsby just grinned, a shared gaze.

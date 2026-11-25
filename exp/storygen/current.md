@@ -1,3 +1,3 @@
-### the glow-treasure and the card-smiles
+### scorsby's genuine bloom
 
-freed scorsby found old essence, jingly-dogs, treasure. light summoned shimmer-sprite. "rrombo dombo di di dai!" scorsby used it for princess, card games, sharing delight. deck’s twinkle-truth (jack of frowns: king’s guard!). king marked path; sprite multiplied smiles. caught, scorsby lit treasure. sprite swapped king's frown for collective smile, showering silver-twinkles. scorsby just grinned, a shared gaze.
+a witch-girl, swapped for a bride, bounced carriage-free to bridge-earth, blooming into a reed. a judge later asked scorsby, who *saw* nothing but *heard* truth, about the genuine ring. scorsby, with a whimsical 'rrombo dombo di di dai!', let fly a profound *ppppth!* "did you *see* that?" he winked. the rings, elastic and smile-centric, all hummed genuine, each a perfect echo of the reed's silent beglory.

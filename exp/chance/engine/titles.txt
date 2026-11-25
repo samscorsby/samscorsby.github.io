@@ -269,3 +269,10 @@ ISA027 XOR Stutter Backwards 1973 Kolakoski
 5. Marsenc house Backwards trance 1973 20000
 6. Kozhikode Stutter
 7. UK 1/103 Varispeed Loop anywhere
+
+ISA028 German Lowpass Noise
+1. Television georo 2x2
+2. Piarco x1.04 tandil Odd-Even LU22
+3. Bitcrush Jungle
+4. German Lowpass Noise
+5. 13417.8 6792 shornd

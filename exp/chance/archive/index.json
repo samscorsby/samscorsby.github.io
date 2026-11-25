@@ -3168,5 +3168,104 @@
    "MBC충북 FM4U (cheongju, The Republic Of Korea), internet radio, Nov 23, 10:02 UTC"
   ],
   "heard_total": 114
+ },
+ {
+  "catalog": "ISA028",
+  "number": 28,
+  "title": "ISA028 German Lowpass Noise",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-25",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-25T04:02+00:00",
+  "listened_hours": 24,
+  "length": 1442.81,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Television georo 2x2",
+    "duration": 314.67
+   },
+   {
+    "n": 2,
+    "title": "Piarco x1.04 tandil Odd-Even LU22",
+    "duration": 367.8
+   },
+   {
+    "n": 3,
+    "title": "Bitcrush Jungle",
+    "duration": 273.25
+   },
+   {
+    "n": 4,
+    "title": "German Lowpass Noise",
+    "duration": 252.26
+   },
+   {
+    "n": 5,
+    "title": "13417.8 6792 shornd",
+    "duration": 234.83
+   }
+  ],
+  "cover": "archive/covers/ISA028.jpg",
+  "cover_png": "archive/covers/ISA028.png",
+  "palette": [
+   "#2D1FAC",
+   "#742EC7",
+   "#2A3692",
+   "#1C1841",
+   "#F6F6FB"
+  ],
+  "seed": "2012831871067384621",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "RadioWave (The United Kingdom Of Great Britain And Northern Ireland), internet radio, Nov 25, 03:03 UTC",
+   "amsterdam - hydrophile 5, live microphone, Nov 24, 21:04 UTC",
+   "Search A Young College Girl Wants to Get Married (), archive, Nov 24, 05:02 UTC",
+   "gair wood - 001, live microphone, Nov 24, 09:08 UTC",
+   "Jeju - georo, live microphone, Nov 24, 11:03 UTC",
+   "london - stave hill, live microphone, Nov 24, 17:04 UTC",
+   "Consuelo FM (Villa alegre, Chile), internet radio, Nov 24, 18:03 UTC",
+   "flucc - wien, live microphone, Nov 24, 07:03 UTC",
+   "[TFN096",
+   "Treasury Song Parade Molly Malone (), archive, Nov 24, 16:02 UTC",
+   "Phil Harris and Alice Faye 1949-11-06 The Television Test (1949), archive, 1949, Nov 25, 03:03 UTC",
+   "stream - 086, live microphone, Nov 24, 17:04 UTC",
+   "One FM Rock Oldies (Suisse Romande, Switzerland), internet radio, Nov 25, 02:03 UTC",
+   "Radio Tandil - LU22 AM140 (Provincia de Buenos Aires, Argentina), internet radio, Nov 25, 02:03 UTC",
+   "Vesti FM (R to EEu), 1413.0 kHz AM via K3GMQ - Bucks County, PA USA, Nov 24, 04:01 UTC",
+   "Naxi R'n'B Radio (Serbia), internet radio, Nov 25, 00:04 UTC",
+   "Piarco Radio CAR-B (E to Car), 8918.0 kHz AM via N1NTE-4 - MA/CT Border, USA, Nov 24, 13:02 UTC",
+   "China Radio Int. (I to SEu), 7345.0 kHz AM via 0-30 MHz SDR, HA2NA - HA2QE (GRANTE Tower), Hungary, Nov 24, 21:02 UTC",
+   "NJR Kizomba (France), internet radio, Nov 24, 05:02 UTC",
+   "Radio El Sembrador (Chile), internet radio, Nov 25, 01:03 UTC",
+   "China Radio Int. (E to Eu), 9600.0 kHz AM via 0,5-30 MHz SDR, Bad Münstereifel, Nov 24, 20:01 UTC",
+   "0nlineradio LOVEHITS (North Rhine-Westphalia, Germany), internet radio, Nov 24, 09:07 UTC",
+   "Rádio Calheta (Madeira, Portugal), internet radio, Nov 24, 23:03 UTC",
+   "Radio Noise Latino (Bucharest, Romania), internet radio, Nov 24, 23:03 UTC",
+   "amsterdam - hydrophile 1, live microphone, Nov 24, 12:03 UTC",
+   "WALO 1240 \"Radio Oriental\" Humacao (Puerto Rico), internet radio, Nov 25, 02:03 UTC",
+   "Sweet FM 88 (Siem Reap) (Cambodia), internet radio, Nov 24, 17:03 UTC",
+   "Radio Berane (Montenegro), internet radio, Nov 25, 03:04 UTC",
+   "Jungle Radio (The Philippines), internet radio, Nov 24, 21:04 UTC",
+   "Parlamenti adások (Hungary), internet radio, Nov 25, 01:03 UTC",
+   "Return with Us Now Silver Theater - Bob and Ray (), archive, Nov 24, 05:02 UTC",
+   "Fana Broadcasting Corp. (AH to EAf), 6110.0 kHz AM via 0-30 MHz SDR, OK1DEK, Sedlcany, Czech Republic, Nov 24, 18:02 UTC",
+   "LGF FUN GUINEE (Guinea), internet radio, Nov 24, 20:03 UTC",
+   "Alcaravan Radio (S to SAm), 1530.0 kHz AM via 0-30 MHz SDR | Kitchener, Ontario, Nov 24, 11:02 UTC",
+   "WWCR 3 Nashville, TN (E to NAm), 13845.0 kHz AM via W3HFU - Westminster, MD, USA - 500 ft Northeast Beverage to Europe, Nov 24, 14:02 UTC",
+   "radio.earth - kozmic, live microphone, Nov 24, 10:04 UTC",
+   "HOTT 95.3FM (River Road, St. Michael, Barbados), 95.3 MHz FM, Nov 25, 02:03 UTC",
+   "Nationwide Radio 90 FM (2642+6V, Bradley Ave, Jamaica), internet radio, Nov 24, 23:03 UTC",
+   "Unique Romania (Romania), internet radio, Nov 24, 11:03 UTC",
+   "XSV Tianjin Radio (M to FE), 13122.0 kHz AM via 10 kHz-30 MHz SDR, SM2BYC, Sweden , 2nd Receiver, Nov 25, 01:02 UTC",
+   "shortwave, 6792.0 kHz AM via OpenWebRX ik4pkl.ddns.net:8073 | RTL-SDR Experimental (IK4PKL), Nov 24, 20:04 UTC",
+   "Sound of Hope (M to FE), 6970.1 kHz AM via 0-30 MHz SDR, VU2CPL, Bangalore, India, Nov 24, 08:20 UTC",
+   "Sound of Hope (M to FE), 11774.7 kHz AM via 0-30 MHz SDR, M9PSY-1, Dalgety Bay, Scotland, UK, Nov 24, 04:01 UTC",
+   "FUG French Navy FSK (F to Eu), 13417.8 kHz USB via western TF3GZ/TF4AH | Orlygshofn; Iceland, Nov 24, 22:02 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via South Worcestershire | Upton-upon-Severn. UK, Nov 24, 10:02 UTC"
+  ],
+  "heard_total": 45
  }
 ]

@@ -1,3 +1,3 @@
-### scorsby's genuine bloom
+### the tint-snipper's hum
 
-a witch-girl, swapped for a bride, bounced carriage-free to bridge-earth, blooming into a reed. a judge later asked scorsby, who *saw* nothing but *heard* truth, about the genuine ring. scorsby, with a whimsical 'rrombo dombo di di dai!', let fly a profound *ppppth!* "did you *see* that?" he winked. the rings, elastic and smile-centric, all hummed genuine, each a perfect echo of the reed's silent beglory.
+the lumina-king polled his flicker-folk. all but scorsby chirped, 'flawless!' scorsby, grinning, confessed, 'i snipped a tint from my own inner-hues for fun!' the king released him. later, a thought-sprite hovered. scorsby hummed, 'rrombo dombo di di dai! dream-door's shut, light-paths sigh!' the sprite dissolved. 'some truths,' the king twinkled, 'shine brighter when shared, or subtly steered.'

@@ -3411,5 +3411,118 @@
    "97.0 Radio City (Kampala, Uganda), 97.0 MHz FM, Nov 25, 11:03 UTC"
   ],
   "heard_total": 85
+ },
+ {
+  "catalog": "ISA030",
+  "number": 30,
+  "title": "ISA030 Germany _aix_support.py Unsigned Hénon 13306",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-27",
+  "time_utc": "07:00",
+  "made_utc": "2026-11-27T04:01+00:00",
+  "listened_hours": 23,
+  "length": 1555.06,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "(t*((t>>9)&(t>>8)))-(t>>1) Свобода 24-bit Great",
+    "duration": 487.84
+   },
+   {
+    "n": 2,
+    "title": "Germany _aix_support.py Backwash USB EC5M- Manuel Rico en Ibi Max",
+    "duration": 276.89
+   },
+   {
+    "n": 3,
+    "title": "Bit Rotate shortwave unsigned",
+    "duration": 283.93
+   },
+   {
+    "n": 4,
+    "title": "Hénon XOR Пирамида",
+    "duration": 243.67
+   },
+   {
+    "n": 5,
+    "title": "13306 classic hits IceS Mosaic E(2,4)",
+    "duration": 102.85
+   },
+   {
+    "n": 6,
+    "title": "life guide",
+    "duration": 159.88
+   }
+  ],
+  "cover": "archive/covers/ISA030.jpg",
+  "cover_png": "archive/covers/ISA030.png",
+  "palette": [
+   "#AF29A4",
+   "#C73A98",
+   "#8F3296",
+   "#441A41",
+   "#FBF6FA"
+  ],
+  "seed": "1750600325834390745",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Discotronike - Sorrow [foot070",
+   "Zwolle - Langenholte, live microphone, Nov 26, 13:05 UTC",
+   "Александр Желанов - Вечная Свобода (Александр Желанов), archive, Nov 26, 23:03 UTC",
+   "Araz Supermarket Radio (Azerbaijan), internet radio, Nov 26, 12:03 UTC",
+   "The Crazy Man - Program 02 (), archive, Nov 26, 07:03 UTC",
+   "mobile - jakarta sigisora, live microphone, Nov 26, 09:07 UTC",
+   "Basic Music Library Great Day (), archive, Nov 27, 01:04 UTC",
+   "losvilos - bodegon, live microphone, Nov 26, 09:07 UTC",
+   "shortwave, 7065.1 kHz AM via OpenWebRX ec5m.ddns.net | EC5M- Manuel Rico en Ibi, Nov 26, 21:04 UTC",
+   "GYA Northwood Meteo Fax, 4608.1 kHz USB via 0-30 MHz KIWI SDR form DL0HGN/DQ1V | Germany, Hagenow, Nov 27, 01:01 UTC",
+   "Métis FM (French Guiana), internet radio, Nov 26, 08:03 UTC",
+   "Άρωμα FM 88.2 (Aroma) (Greece), 88.2 MHz FM, Nov 27, 00:06 UTC",
+   "Radio Continu - the original (Antwerpen, Belgium), internet radio, Nov 27, 02:03 UTC",
+   "shortwave, 3715.7 kHz AM via OpenWebRX ppp.ok2it.com:8073 | OK2IT, Nov 26, 14:04 UTC",
+   "China National Radio 1 (M to CHN), 4750.0 kHz AM via 0-30 MHz SDR, EA8BFK, Fuerteventura, Canary Islands, Nov 26, 04:02 UTC",
+   "Shannon Volmet (E to Eu), 5505.0 kHz USB via NA5B 0 - 30 MHz Washington DC Area USA, Nov 26, 23:02 UTC",
+   "FT8 data, 80 m, 3573.0 kHz USB via 0-30 MHz FlyDog-SDR, IW3HBX - Noale 🇮🇹 Italy 🇮🇹, Nov 26, 08:02 UTC",
+   "shortwave, 7228.6 kHz AM via OpenWebRX 174.182.115.194:8073 | WM9D, Nov 26, 19:04 UTC",
+   "Virgin Radio (Oman) (Oman), internet radio, Nov 26, 22:03 UTC",
+   "Sllobodný vysielač (Slovakia), internet radio, Nov 26, 05:02 UTC",
+   "Пирамида FM (Tallinn, Estonia), internet radio, Nov 26, 23:03 UTC",
+   "The Breeze....92.3FM (The United Kingdom Of Great Britain And Northern Ireland), internet radio, Nov 26, 18:02 UTC",
+   "FT8 data, 17 m, 18100.0 kHz USB via 0-30 MHz SDR, K2ZN, USA | Rochester, NY, Nov 26, 14:02 UTC",
+   "Iceland Radio C (E to NAO), 13306.0 kHz USB via ARI-Isola d'Ischia M.te Epomeo, Nov 26, 10:01 UTC",
+   "Hedda Hopper's Hollywood 1940-12-05 The Life Story of Dorothy Lamour, Part 2 of 6 (1940), archive, 1940, Nov 26, 16:03 UTC",
+   "Life FM (Fiji), internet radio, Nov 27, 02:03 UTC",
+   "2 m amateur, 146.1755 MHz NFM via OpenWebRX sdr.oa4ejg.net | OA4EJG, Nov 26, 09:07 UTC",
+   "Radio Romania Int. (RO to SEu), 6160.0 kHz AM via 0-30 MHz SDR, Edinburgh, Scotland, United Kingdom, Nov 26, 19:02 UTC",
+   "Darhan Radio (Almaty, Kazakhstan), internet radio, Nov 26, 22:04 UTC",
+   "FT8 data, 80 m, 3573.0 kHz USB via N4LDR 0-30 MHz SDR | Luray, Virginia USA, Nov 27, 03:01 UTC",
+   "Mechanical Animals - Feel So Good (2013) [MNMN241",
+   "FT4 data, 20 m, 14080.0 kHz USB via 0-32 MHz SDR, West Texas | Lubbock, TX, Nov 26, 23:02 UTC",
+   "Islamic Tagalog Radio (Mecca, Saudi Arabia), internet radio, Nov 27, 01:03 UTC",
+   "SunDance Radio (NL to Eu), 13780.0 kHz AM via 0-30 MHz SDR DO6DOC Andi | Dortmund, Germany, Nov 27, 01:01 UTC",
+   "amsterdam - hydrophile 5, live microphone, Nov 26, 17:03 UTC",
+   "Ethio FM 107.8 (Ethiopia), 107.8 MHz FM, Nov 26, 17:02 UTC",
+   "Channel Marker A, 5154.1 kHz CW via 0-30 MHz SDR | 🇦🇹🇦🇹🇦🇹🇦🇹 URL: http://rx1.radio101.de 🇦🇹🇦🇹🇦🇹🇦🇹 Kufstein / Niederndorferberg (950m a.s.l.), Austria, Nov 27, 01:03 UTC",
+   "LMFM (Ireland), internet radio, Nov 26, 08:03 UTC",
+   "FT4 data, 40 m, 7047.5 kHz USB via EI6IZ SDR #1 KiwiSDR V2 | Castlebar, Co Mayo, Ireland, Nov 26, 18:01 UTC",
+   "Nearfield-Melt (Nearfield), archive, Nov 27, 00:03 UTC",
+   "Happy 104 (Athens, Greece), internet radio, Nov 26, 16:03 UTC",
+   "Allzic Radio Golds Français (France), internet radio, Nov 27, 02:03 UTC",
+   "Radio Vintage (The Republic Of Moldova), internet radio, Nov 26, 14:03 UTC",
+   "VLF receiver (Spring Brook Township, Pennsylvania, USA), natural radio via Jonathan Rizzo, Nov 26, 06:13 UTC",
+   "JJY (ID x15,x45), 60.0 kHz AM via 0-30 MHz SDR, VU2CPL, Bangalore, India, Nov 26, 13:03 UTC",
+   "Jeju - georo, live microphone, Nov 26, 05:02 UTC",
+   "RPP Mundial (Check 25/11/2022) (Lima, Peru), internet radio, Nov 26, 11:03 UTC",
+   "London - Greenwich Peninsula, live microphone, Nov 26, 07:03 UTC",
+   "Santiago Paskuda - Cradle my Rock (2014) [MNMN280",
+   "mobile - augmented ecospheres, live microphone, Nov 26, 06:12 UTC",
+   "FT8 data, 80 m, 3573.0 kHz USB via IZ2442SWL 0.0-30.0 MHz SDR | Capiago Intimiano, Como, Italy, Nov 26, 05:01 UTC",
+   "FT8 data, 20 m, 14074.0 kHz USB via 0-32 MHz SDR | ManuSDR | GERWISCH, GERMANY, Nov 26, 07:01 UTC",
+   "2 m amateur, 145.2540 MHz NFM via OpenWebRX sdr.22dx.ru:8073 | 22dx.ru, Nov 27, 01:04 UTC",
+   "Jaguarão FM 87,9 (Rio Grande do Sul, Brazil), 87.9 MHz FM, Nov 26, 18:03 UTC"
+  ],
+  "heard_total": 54
  }
 ]

@@ -1,3 +1,3 @@
-### the tint-snipper's hum
+### the sunbeam's misplaced hat
 
-the lumina-king polled his flicker-folk. all but scorsby chirped, 'flawless!' scorsby, grinning, confessed, 'i snipped a tint from my own inner-hues for fun!' the king released him. later, a thought-sprite hovered. scorsby hummed, 'rrombo dombo di di dai! dream-door's shut, light-paths sigh!' the sprite dissolved. 'some truths,' the king twinkled, 'shine brighter when shared, or subtly steered.'
+finn's elder had said, "always cover what trembles from cold." so finn draped his cap on a sunbeam shimmering over a puddle. later, at a joy-hum, he told a giggling couple, "i sense a profound chill." a scorsby, all smiles and wobble-glints, then gently asked, "could you shift your shade? the light is so, *rrombo dombo di di dai!*"

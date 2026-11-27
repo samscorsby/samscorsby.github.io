@@ -284,3 +284,11 @@ ISA029 Sigattukara Hong 321.6
 4. Portuguese Shuffle méxico
 5. Zwolure country Stutter Backwards
 6. signed 24-bit Hénon City shortwave at
+
+ISA030 Germany _aix_support.py Unsigned Hénon 13306
+1. (t*((t>>9)&(t>>8)))-(t>>1) Свобода 24-bit Great
+2. Germany _aix_support.py Backwash USB EC5M- Manuel Rico en Ibi Max
+3. Bit Rotate shortwave unsigned
+4. Hénon XOR Пирамида
+5. 13306 classic hits IceS Mosaic E(2,4)
+6. life guide

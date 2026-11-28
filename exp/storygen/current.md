@@ -1,3 +1,3 @@
-### the sunbeam's misplaced hat
+### the doodah's echo
 
-finn's elder had said, "always cover what trembles from cold." so finn draped his cap on a sunbeam shimmering over a puddle. later, at a joy-hum, he told a giggling couple, "i sense a profound chill." a scorsby, all smiles and wobble-glints, then gently asked, "could you shift your shade? the light is so, *rrombo dombo di di dai!*"
+scorsby, a living giggle, bet a sunbeam he’d name the day’s 'doodah.' he hid his joy-gem beneath a willow, proclaiming, 'here it is!' reverend thimblewick, rustling within, moved it, leaving, 'here it is not.' scorsby, beaming, asked the tree. the willow, via thimblewick, boomed, 'rrombo dombo di di dai! the truest doodah is always the next, smile-spark!' scorsby’s heart echoed joy, understanding completely.

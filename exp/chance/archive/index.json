@@ -3524,5 +3524,138 @@
    "Jaguarão FM 87,9 (Rio Grande do Sul, Brazil), 87.9 MHz FM, Nov 26, 18:03 UTC"
   ],
   "heard_total": 54
+ },
+ {
+  "catalog": "ISA031",
+  "number": 31,
+  "title": "ISA031 Frecator A11",
+  "artist": "ScorsBT4",
+  "series": "Impermanence Series A",
+  "day": "2026-11-28",
+  "time_utc": "07:01",
+  "made_utc": "2026-11-28T04:01+00:00",
+  "listened_hours": 24,
+  "length": 1320.02,
+  "tracks": [
+   {
+    "n": 1,
+    "title": "Backwash 8-bit 77.5 música ecuatoriana",
+    "duration": 150.88
+   },
+   {
+    "n": 2,
+    "title": "& A11 Varispeed Misread folk",
+    "duration": 109.88
+   },
+   {
+    "n": 3,
+    "title": "IAR XOR",
+    "duration": 453.22
+   },
+   {
+    "n": 4,
+    "title": "Sort S06 poudrière LFSR 0x7",
+    "duration": 142.2
+   },
+   {
+    "n": 5,
+    "title": "cherie fm Qatar Freeze 107 BPM",
+    "duration": 203.36
+   },
+   {
+    "n": 6,
+    "title": "Bitplane Friedrichshafen Logistic Elimäki",
+    "duration": 76.54
+   },
+   {
+    "n": 7,
+    "title": "Replicator Atheele",
+    "duration": 183.94
+   }
+  ],
+  "cover": "archive/covers/ISA031.jpg",
+  "cover_png": "archive/covers/ISA031.png",
+  "palette": [
+   "#B017C5",
+   "#DB2ABF",
+   "#8125A7",
+   "#401846",
+   "#FAF6FB"
+  ],
+  "seed": "1985666531726410910",
+  "pure": false,
+  "last": false,
+  "heard": [
+   "Rostov Volmet x25,55 (R to CIS), 6617.0 kHz USB via Funkclub Schlössli - HB9RE - DMR2282157 | Bodenberg, Switzerland, Nov 28, 03:02 UTC",
+   "DCF77 Mainflingen, 77.5 kHz AM via 0-30 MHz SDR TreDXK #3 | Tampere, Finland, Nov 28, 02:02 UTC",
+   "FT8 data, 160 m, 1840.0 kHz USB via AutreRadioAutreCulture 2 | TREMOLAT (24), FRANCE, Nov 27, 20:02 UTC",
+   "Multimedios Rincón FM 107.7 - Fray Bentos (Río Negro, Uruguay), 107.7 MHz FM, Nov 27, 20:03 UTC",
+   "San Francisco Radio NP (E to NOc), 5628.0 kHz AM via 0-30 MHz SDR | Amherst, NH USA, Nov 28, 02:03 UTC",
+   "Radio Disco Party - Club (Poland), internet radio, Nov 27, 13:02 UTC",
+   "Pep Feel good fm (South Africa), internet radio, Nov 27, 11:04 UTC",
+   "Romaradio IAR (I to SEu), 1855.0 kHz AM via 0-30 MHz SDR | Wels AT, Nov 27, 05:01 UTC",
+   "FT8 data, 15 m, 21074.0 kHz USB via VE6JY | Lamont, ALberta, Nov 27, 23:02 UTC",
+   "La voz de Crucita (Ecuador), internet radio, Nov 27, 10:03 UTC",
+   "Moonstrips - We Love You, Yeah, Yeah, Yeah (Moonstrips, 2018), archive, 2018, Nov 27, 23:03 UTC",
+   "Elmari tantsuõhtu 24/7 (Estonia), internet radio, Nov 28, 01:03 UTC",
+   "FT4 data, 20 m, 14080.0 kHz USB via DC1EHG | Haselunne, Germany, Nov 27, 16:01 UTC",
+   "A11_T888_HR1U_CH15_02-01-00_10-15-43-P2-2015-09-24Recording.wav (john.l.stoll@nasa.gov, 2018), archive, 2018, Nov 28, 00:04 UTC",
+   "FT4 data, 40 m, 7047.5 kHz USB via Beilen Drenthe, The Netherlands, Nov 27, 19:02 UTC",
+   "Iceland Radio B (E to NAO), 5616.0 kHz USB via KT4RS 0-30 MHz KiwiSDR | Laurel Springs, North Carolina, USA, Nov 27, 06:03 UTC",
+   "Radio Europa (NL to Eu), 7280.0 kHz AM via 0-30 MHz SDR, DE1LON | Meerbusch, Germany, Nov 28, 03:01 UTC",
+   "WSPR beacons, 20 m, 14095.6 kHz USB via Henry W6REK ( 0 to 15MHz ) | San Jose, California, USA (south of San Francisco), Nov 27, 22:02 UTC",
+   "shortwave, 1170.1 kHz AM via OpenWebRX 201.217.131.106:7900 | Monitoreo Onda Media Montevideo, Nov 27, 19:04 UTC",
+   "Romaradio IAR (I to SEu), 4417.0 kHz AM via 0.05-30 MHz SDR, DB1UJ, Paderborn University, Germany, Nov 27, 16:01 UTC",
+   "SunDance Radio (NL to Eu), 7225.0 kHz AM via 0-30 MHz SDR KiwiSDR | IW2KPL Franco | Antenna : Windom 7-band OFC dipole (42 mt. long, from 80 mt. to 10 mt. bands) | Bergamo, Italy | JN45TQ, Nov 27, 05:03 UTC",
+   "amsterdam - hydrophile 1, live microphone, Nov 27, 07:07 UTC",
+   "FT4 data, 40 m, 7047.5 kHz USB via 0-30 MHz SDR | Skopanie, Poland, Nov 28, 01:02 UTC",
+   "VLF receiver (Spring Brook Township, Pennsylvania, USA), natural radio via Jonathan Rizzo, Nov 27, 14:04 UTC",
+   "Chuck Schaden Interviews Irene Dunne (By Telephone) (), archive, Nov 28, 02:04 UTC",
+   "Translation of the Quran in Greek (Kuwait), internet radio, Nov 27, 18:02 UTC",
+   "Discos Guardados (Ciudad de México, Mexico), internet radio, Nov 27, 21:02 UTC",
+   "Radio Olive 106.3 (Qatar), 106.3 MHz FM, Nov 28, 03:03 UTC",
+   "Night Watch 1955-02-10 Dover Street Pursuit (1955), archive, 1955, Nov 27, 23:03 UTC",
+   "2 m amateur, 144.8004 MHz NFM via OpenWebRX watou.on4ipr.be:8076 | [ON4JES-12",
+   "Radio Liberty (R to EEu), 1386.0 kHz AM via 0-30 MHz SDR, OK1DEK, Sedlcany, Czech Republic, Nov 27, 20:01 UTC",
+   "08-30-16_EXP48_Inflight_JAXA-EDU-Event_with_Young-Astronauts-Club-of-Japan.wav (john.l.stoll@nasa.gov, 2023), archive, 2023, Nov 27, 07:07 UTC",
+   "bruxelles - rue de la poudrière, live microphone, Nov 27, 21:03 UTC",
+   "Europa24 (D to Eu), 6150.0 kHz AM via F1UBL - JN08 near Paris - Yvelines - France - 0-30 MHz SDR, Nov 27, 11:03 UTC",
+   "WDR Sportschau - 2. Fussball Bundesliga-Konferenz LIVE (NRW, Germany), internet radio, Nov 27, 17:03 UTC",
+   "un - The Secret Rift [enrmp167",
+   "SH002 - Marzo EP (Felipe \"Kamenozoe\" Morales), archive, Nov 27, 10:03 UTC",
+   "Tone Control (TINTINNABULATION, 2016), archive, 2016, Nov 27, 21:03 UTC",
+   "Nobody (2014), archive, 2014, Nov 27, 23:03 UTC",
+   "FT8 data, 20 m, 14074.0 kHz USB via 0-30 MHz SDR DO6DOC Andi | Dortmund, Germany, Nov 27, 12:01 UTC",
+   "Zwolle - Nature reserve Langenholte, live microphone, Nov 27, 23:03 UTC",
+   "deland - ssac, live microphone, Nov 27, 21:03 UTC",
+   "Radio Azamat (Kazakhstan), internet radio, Nov 28, 02:03 UTC",
+   "Radio Marti (S to CUB), 15160.0 kHz AM via 0-30 MHz SDR, W1CLM | Champaign, Illinois USA, Nov 27, 19:02 UTC",
+   "China Radio Int. (S to SEu), 15135.0 kHz AM via Birdy (SWL) | Emsbüren, Germany, Nov 27, 06:01 UTC",
+   "FT8 data, 40 m, 7074.0 kHz USB via 0-30 MHz SDR 13OZ1 🌍 | Donauwörth Germany, Nov 28, 01:02 UTC",
+   "tamil-amuthu-bakthi-radio (India), internet radio, Nov 28, 01:03 UTC",
+   "Air Dharmapuri (Tamil Nadu, India), internet radio, Nov 28, 01:03 UTC",
+   "Reykjavik HFDL (ID3), 8975.5 kHz USB via OH5AE OH5R SDR | Elimäki, Finland, Nov 28, 01:02 UTC",
+   "FT8 data, 30 m, 10136.0 kHz USB via 0,5-30 MHz SDR, Bad Münstereifel, Nov 27, 23:01 UTC",
+   "FT8 data, 17 m, 18100.0 kHz USB via 0-30 MHz SDR | Alcudia Mallorca España, Nov 27, 12:03 UTC",
+   "San Francisco Radio CWP (E to WOc), 3455.0 kHz AM via 0-30 MHz SDR, K1HTV-4, Amissville, VA, Nov 27, 07:02 UTC",
+   "Shannon Volmet (E to Eu), 3413.0 kHz USB via EI5IN | Ireland Central | Mullingar | Westmeath | 580m/1900ft Beverage NE/SW, Nov 27, 20:02 UTC",
+   "Shannon Volmet (E to Eu), 5505.0 kHz USB via 0-30 MHz SDR, DK0TE, DHBW Ravensburg Campus Friedrichshafen, Germany, Nov 27, 16:01 UTC",
+   "Thin - Moody Hat [nt039",
+   "Rádio 107 FM BH (Minas Gerais, Brazil), internet radio, Nov 27, 07:06 UTC",
+   "Athens Deejay 95.2 (Athens, Greece), 95.2 MHz FM, Nov 27, 05:04 UTC",
+   "jasper_ridge, live microphone, Nov 27, 08:03 UTC",
+   "acra - wave farm, live microphone, Nov 27, 22:03 UTC",
+   "Afrika-Boom (Namibia), internet radio, Nov 27, 04:02 UTC",
+   "EnergyFM (Isle Of Man), internet radio, Nov 28, 01:05 UTC",
+   "OmniRadio - Islamic Audio Library (Uploads) (متنوع) (Cairo, Egypt), internet radio, Nov 27, 09:04 UTC",
+   "The Geek Radio (The United States Of America), internet radio, Nov 27, 17:03 UTC",
+   "#1 Splash 90s (Spain), internet radio, Nov 27, 14:02 UTC",
+   "InterSpace Sound System (Rivers, Nigeria), internet radio, Nov 27, 11:04 UTC",
+   "CBC Radio One - Happy Valley-Goose Bay, NL (MP3 stream) (Newfoundland and Labrador, Canada), internet radio, Nov 27, 20:03 UTC",
+   "Schitul Buna Vestire - Muntele Athos (Athos, Greece), internet radio, Nov 27, 06:04 UTC",
+   "radio orbital (Portugal), internet radio, Nov 27, 14:02 UTC",
+   "OmniRadio - Sheikh Mahmoud Khalil Al-Hussary (الشيخ محمود خليل الحصري) (Cairo, Egypt), internet radio, Nov 27, 06:04 UTC"
+  ],
+  "heard_total": 69
  }
 ]

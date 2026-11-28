@@ -292,3 +292,12 @@ ISA030 Germany _aix_support.py Unsigned Hénon 13306
 4. Hénon XOR Пирамида
 5. 13306 classic hits IceS Mosaic E(2,4)
 6. life guide
+
+ISA031 Frecator A11
+1. Backwash 8-bit 77.5 música ecuatoriana
+2. & A11 Varispeed Misread folk
+3. IAR XOR
+4. Sort S06 poudrière LFSR 0x7
+5. cherie fm Qatar Freeze 107 BPM
+6. Bitplane Friedrichshafen Logistic Elimäki
+7. Replicator Atheele
